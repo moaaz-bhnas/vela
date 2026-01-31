@@ -1,7 +1,8 @@
 "use client"
 
 import { Popover, Transition } from "@headlessui/react"
-import { Button } from "@medusajs/ui"
+import { ShoppingBag } from "@medusajs/icons"
+import { Button, IconButton } from "@medusajs/ui"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -78,10 +79,24 @@ const CartDropdown = ({
       <Popover className="relative h-full">
         <Popover.Button className="h-full">
           <LocalizedClientLink
-            className="hover:text-ui-fg-base"
             href="/cart"
             data-testid="nav-cart-link"
-          >{`Cart (${totalItems})`}</LocalizedClientLink>
+            className="flex items-center justify-center h-full"
+          >
+            <IconButton
+              variant="transparent"
+              size="base"
+              className="relative"
+              aria-label={`Cart (${totalItems} items)`}
+            >
+              <ShoppingBag />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </IconButton>
+          </LocalizedClientLink>
         </Popover.Button>
         <Transition
           show={cartDropdownOpen}
@@ -95,7 +110,7 @@ const CartDropdown = ({
         >
           <Popover.Panel
             static
-            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className="hidden lg:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
             data-testid="nav-cart-dropdown"
           >
             <div className="p-4 flex items-center justify-center">
