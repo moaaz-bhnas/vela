@@ -2,6 +2,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@layer base {
+  * {
+    @apply box-border
+  }
+}
+
 @layer utilities {
 
   /* Chrome, Safari and Opera */

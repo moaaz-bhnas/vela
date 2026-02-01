@@ -74,14 +74,18 @@ export default async function Home({
     // Maintain order from cookie
     recentlyVisitedProducts = productIdsToFetch
       .map((id) => fetchedProducts.find((p) => p.id === id))
-      .filter((product): product is HttpTypes.StoreProduct => product !== undefined)
+      .filter(
+        (product): product is HttpTypes.StoreProduct => product !== undefined
+      )
   }
 
   return (
     <>
-      {carouselSlides && <div className="container pt-8">
-        <Carousel carouselSlides={carouselSlides} />
-      </div>}
+      {carouselSlides && (
+        <div className="container pt-8">
+          <Carousel carouselSlides={carouselSlides} />
+        </div>
+      )}
 
       {recentlyVisitedProducts.length > 0 && (
         <div className="container">
@@ -99,7 +103,10 @@ export default async function Home({
           )}
           {categories.length > 0 && (
             <div className="container">
-              <ShopByCategory countryCode={countryCode} categories={categories} />
+              <ShopByCategory
+                countryCode={countryCode}
+                categories={categories}
+              />
             </div>
           )}
         </>
@@ -108,7 +115,10 @@ export default async function Home({
         <>
           {categories.length > 0 && (
             <div className="container">
-              <ShopByCategory countryCode={countryCode} categories={categories} />
+              <ShopByCategory
+                countryCode={countryCode}
+                categories={categories}
+              />
             </div>
           )}
           {bestSellersProducts.length > 0 && (
