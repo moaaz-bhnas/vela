@@ -2,7 +2,7 @@
 
 import { Popover, Transition } from "@headlessui/react"
 import { ShoppingBag } from "@medusajs/icons"
-import { Button, IconButton } from "@medusajs/ui"
+import { Button, clx } from "@medusajs/ui"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -71,32 +71,25 @@ const CartDropdown = ({
   }, [totalItems, itemRef.current])
 
   return (
-    <div
-      className="h-full z-50"
-      onMouseEnter={openAndCancel}
-      onMouseLeave={close}
-    >
+    <div className="z-50" onMouseEnter={openAndCancel} onMouseLeave={close}>
       <Popover className="relative h-full">
-        <Popover.Button className="h-full">
-          <LocalizedClientLink
-            href="/cart"
-            data-testid="nav-cart-link"
-            className="flex items-center justify-center h-full"
-          >
-            <IconButton
-              variant="transparent"
-              size="base"
-              className="relative"
-              aria-label={`Cart (${totalItems} items)`}
-            >
-              <ShoppingBag />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </IconButton>
-          </LocalizedClientLink>
+        <Popover.Button
+          className={clx(
+            "transition-fg relative inline-flex items-center justify-center overflow-hidden rounded-md outline-none",
+            "disabled:bg-ui-bg-disabled disabled:shadow-buttons-neutral disabled:text-ui-fg-disabled disabled:after:hidden",
+            "text-ui-fg-subtle bg-ui-button-transparent hover:bg-ui-button-transparent-hover active:bg-ui-button-transparent-pressed",
+            "focus-visible:shadow-buttons-neutral-focus focus-visible:bg-ui-bg-base disabled:!bg-transparent disabled:!shadow-none",
+            "h-8 w-8 p-1.5"
+          )}
+          data-testid="nav-cart-link"
+          aria-label={`Cart (${totalItems} items)`}
+        >
+          <ShoppingBag />
+          {totalItems > 0 && (
+            <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {totalItems}
+            </span>
+          )}
         </Popover.Button>
         <Transition
           show={cartDropdownOpen}
