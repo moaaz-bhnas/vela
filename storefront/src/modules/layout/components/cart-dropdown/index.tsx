@@ -71,8 +71,12 @@ const CartDropdown = ({
   }, [totalItems, itemRef.current])
 
   return (
-    <div className="z-50" onMouseEnter={openAndCancel} onMouseLeave={close}>
-      <Popover className="relative h-full">
+    <div
+      className="z-50 h-full"
+      onMouseEnter={openAndCancel}
+      onMouseLeave={close}
+    >
+      <Popover className="relative h-full flex items-center">
         <Popover.Button
           className={clx(
             "transition-fg relative inline-flex items-center justify-center overflow-hidden rounded-md outline-none",
