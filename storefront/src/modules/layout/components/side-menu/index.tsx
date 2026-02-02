@@ -1,19 +1,15 @@
 "use client"
 
-import { Dialog, Disclosure, Transition } from "@headlessui/react"
-import {
-  ArrowRightMini,
-  BarsThree,
-  ChevronDownMini,
-  XMark,
-} from "@medusajs/icons"
+import { Dialog, Transition } from "@headlessui/react"
+import { ArrowRightMini, BarsThree, XMark } from "@medusajs/icons"
 import { Button, IconButton, Text, clx, useToggleState } from "@medusajs/ui"
 import { Fragment, useState } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NavSearchInput from "../nav-search-input"
-import { HttpTypes } from "@medusajs/types"
+import SideMenuCategories from "../side-menu-categories"
 import CountrySelect from "../country-select"
+import { HttpTypes } from "@medusajs/types"
 
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
@@ -63,7 +59,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
 
             <div className="fixed inset-0 overflow-hidden">
               <div className="absolute inset-0 overflow-hidden">
-                <div className="pointer-events-none fixed inset-y-0 left-0 flex max-w-full pr-4 sm:pr-0 sm:max-w-[33.333%] 2xl:max-w-[25%] w-full">
+                <div className="pointer-events-none fixed inset-y-0 left-0 flex max-w-full pr-10 sm:pr-0 sm:max-w-[33.333%] 2xl:max-w-[25%] w-full">
                   <Transition.Child
                     as={Fragment}
                     enter="transition ease-out duration-150"
@@ -100,72 +96,10 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                           </div>
 
                           {/* Categories */}
-                          <ul className="flex flex-col py-1">
-                            {parentCategories.map((category) => {
-                              const hasChildren =
-                                category.category_children?.length > 0
-                              if (!hasChildren) {
-                                return (
-                                  <li key={category.id}>
-                                    <LocalizedClientLink
-                                      href={`/categories/${category.handle}`}
-                                      className="block hover:bg-ui-bg-base-hover px-4 py-3 text-base font-medium"
-                                      onClick={() => setOpen(false)}
-                                      data-testid="nav-menu-category-link"
-                                    >
-                                      {category.name}
-                                    </LocalizedClientLink>
-                                  </li>
-                                )
-                              }
-                              return (
-                                <li key={category.id} className="w-full">
-                                  <Disclosure>
-                                    {({ open: disclosureOpen }) => (
-                                      <>
-                                        <Disclosure.Button
-                                          className={clx(
-                                            "flex items-center justify-between w-full text-base hover:bg-ui-bg-base-hover px-4 py-3 font-medium"
-                                          )}
-                                        >
-                                          <span>{category.name}</span>
-                                          <ChevronDownMini
-                                            className={clx(
-                                              "transition-transform duration-150",
-                                              disclosureOpen && "-rotate-180"
-                                            )}
-                                          />
-                                        </Disclosure.Button>
-                                        <Disclosure.Panel className="flex flex-col">
-                                          <LocalizedClientLink
-                                            href={`/categories/${category.handle}`}
-                                            className="text-base hover:bg-ui-bg-base-hover px-4 py-3"
-                                            onClick={() => setOpen(false)}
-                                            data-testid="nav-menu-category-link"
-                                          >
-                                            All {category.name}
-                                          </LocalizedClientLink>
-                                          {category.category_children?.map(
-                                            (child) => (
-                                              <LocalizedClientLink
-                                                key={child.id}
-                                                href={`/categories/${category.handle}/${child.handle}`}
-                                                className="text-base hover:bg-ui-bg-base-hover px-4 py-3"
-                                                onClick={() => setOpen(false)}
-                                                data-testid="nav-menu-category-link"
-                                              >
-                                                {child.name}
-                                              </LocalizedClientLink>
-                                            )
-                                          )}
-                                        </Disclosure.Panel>
-                                      </>
-                                    )}
-                                  </Disclosure>
-                                </li>
-                              )
-                            })}
-                          </ul>
+                          <SideMenuCategories
+                            categories={parentCategories}
+                            onLinkClick={() => setOpen(false)}
+                          />
 
                           {/* Shipping to */}
                           <div
@@ -173,9 +107,6 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                             onMouseEnter={toggleState.open}
                             onMouseLeave={toggleState.close}
                           >
-                            <Text className="txt-compact-small text-ui-fg-subtle">
-                              Shipping to
-                            </Text>
                             {regions && (
                               <CountrySelect
                                 toggleState={toggleState}
@@ -196,7 +127,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                         </div>
 
                         {/* Sticky footer: Shop all */}
-                        <div className="flex-shrink-0 pt-4">
+                        <div className="flex-shrink-0 px-4 py-3 border-t">
                           <Button className="w-full" size="large" asChild>
                             <LocalizedClientLink
                               href="/store"
