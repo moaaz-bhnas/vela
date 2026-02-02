@@ -19,7 +19,12 @@ export default async function Nav() {
   return (
     <div className="pb-28">
       <div className="fixed top-0 inset-x-0 z-50 group">
-        <NavFirstBar regions={regions} logo={logo} siteTitle={siteTitle}>
+        <NavFirstBar
+          regions={regions}
+          categories={categories || []}
+          logo={logo}
+          siteTitle={siteTitle}
+        >
           <Suspense
             fallback={
               <LocalizedClientLink

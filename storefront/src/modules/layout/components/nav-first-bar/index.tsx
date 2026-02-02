@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 
-import { StoreRegion } from "@medusajs/types"
+import { StoreProductCategory, StoreRegion } from "@medusajs/types"
 import { AnimatePresence, LayoutGroup, motion } from "motion/react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import SideMenu from "@modules/layout/components/side-menu"
@@ -12,6 +12,7 @@ import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
 
 type NavFirstBarProps = {
   regions: StoreRegion[]
+  categories: StoreProductCategory[]
   logo?: { url?: string; alt?: string; width?: number; height?: number } | null
   siteTitle: string
   children: React.ReactNode
@@ -19,6 +20,7 @@ type NavFirstBarProps = {
 
 const NavFirstBar = ({
   regions,
+  categories,
   logo,
   siteTitle,
   children,
@@ -43,7 +45,7 @@ const NavFirstBar = ({
                 }}
                 className="h-full flex items-center overflow-hidden"
               >
-                <SideMenu regions={regions} />
+                <SideMenu regions={regions} categories={categories} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -90,7 +92,7 @@ const NavFirstBar = ({
         {/* Left: Menu (on scroll desktop / always mobile) and Logo */}
         <div className="flex items-center h-full gap-x-2">
           <div className="h-full flex items-center lg:hidden">
-            <SideMenu regions={regions} />
+            <SideMenu regions={regions} categories={categories} />
           </div>
           <div className="flex items-center h-full">
             <LocalizedClientLink
