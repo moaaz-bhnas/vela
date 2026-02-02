@@ -8,8 +8,6 @@ export const useNavScroll = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [{ y }] = useWindowScroll()
 
-  console.log("✨✨", { y })
-
   useEffect(
     function handleScroll() {
       if (_.isNumber(y)) {

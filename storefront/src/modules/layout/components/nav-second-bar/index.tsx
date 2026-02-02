@@ -13,9 +13,10 @@ type NavSecondBarProps = {
 const NavSecondBar = ({ categories }: NavSecondBarProps) => {
   const isScrolled = useNavScroll()
 
-  // Filter to only show parent categories (no parent_category)
-  const parentCategories =
+  // Filter to only show parent categories (no parent_category), max 8
+  const parentCategories = (
     categories?.filter((cat) => !cat.parent_category) || []
+  ).slice(0, 8)
 
   return (
     <AnimatePresence>
