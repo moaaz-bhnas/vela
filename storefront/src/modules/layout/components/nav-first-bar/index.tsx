@@ -2,19 +2,24 @@
 
 import Image from "next/image"
 
+import { Phone } from "@medusajs/icons"
 import { StoreProductCategory, StoreRegion } from "@medusajs/types"
-import { AnimatePresence, LayoutGroup, motion } from "motion/react"
+import { clx } from "@medusajs/ui"
+import { AnimatePresence, motion } from "motion/react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import SideMenu from "@modules/layout/components/side-menu"
 import AccountIconButton from "@modules/layout/components/account-icon-button"
 import NavSearchInput from "@modules/layout/components/nav-search-input"
 import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
+import type { FormattedPhone } from "@lib/util/format-phone"
+import { Headphones, Headset } from "lucide-react"
 
 type NavFirstBarProps = {
   regions: StoreRegion[]
   categories: StoreProductCategory[]
   logo?: { url?: string; alt?: string; width?: number; height?: number } | null
   siteTitle: string
+  phone?: FormattedPhone | null
   children: React.ReactNode
 }
 
@@ -23,6 +28,7 @@ const NavFirstBar = ({
   categories,
   logo,
   siteTitle,
+  phone,
   children,
 }: NavFirstBarProps) => {
   const isScrolled = useNavScroll()
@@ -77,8 +83,26 @@ const NavFirstBar = ({
           <NavSearchInput />
         </div>
 
-        {/* Right: Account and Cart */}
+        {/* Right: Contact phone (if set) + Account + Cart */}
         <div className="flex items-center gap-x-2 h-full">
+          {phone && (
+            <a
+              href={phone.href}
+              className={clx(
+                "inline-flex items-center gap-x-1.5 rounded-md px-2 py-1.5",
+                "text-ui-fg-subtle hover:text-ui-fg-base bg-ui-bg-subtle-hover",
+                "transition-fg focus-visible:shadow-borders-interactive-with-active focus-visible:outline-none",
+                "border border-transparent hover:border-ui-border-base"
+              )}
+              aria-label={`Call us: ${phone.display}`}
+              data-testid="nav-phone-link"
+            >
+              <Headphones className="size-4" />
+              <span className="hidden sm:inline txt-compact-small font-medium">
+                {phone.display}
+              </span>
+            </a>
+          )}
           <AccountIconButton />
           {children}
         </div>
@@ -118,8 +142,22 @@ const NavFirstBar = ({
           </div>
         </div>
 
-        {/* Right: Account and Cart */}
+        {/* Right: Contact phone (if set) + Account + Cart */}
         <div className="flex items-center gap-x-2 h-full">
+          {phone && (
+            <a
+              href={phone.href}
+              className={clx(
+                "inline-flex items-center gap-x-1.5 rounded-md p-1.5 min-w-[2rem] justify-center",
+                "text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-subtle-hover",
+                "transition-fg focus-visible:shadow-borders-interactive-with-active focus-visible:outline-none"
+              )}
+              aria-label={`Call us: ${phone.display}`}
+              data-testid="nav-phone-link"
+            >
+              <Headphones className="size-4" />
+            </a>
+          )}
           <AccountIconButton />
           {children}
         </div>
