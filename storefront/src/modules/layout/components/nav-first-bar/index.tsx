@@ -76,7 +76,7 @@ const NavFirstBar = ({
         </div>
 
         {/* Right: Account and Cart */}
-        <div className="flex items-center gap-x-4 h-full">
+        <div className="flex items-center gap-x-2 h-full">
           <AccountIconButton />
           {children}
         </div>
@@ -117,7 +117,7 @@ const NavFirstBar = ({
         </div>
 
         {/* Right: Account and Cart */}
-        <div className="flex items-center gap-x-4 h-full">
+        <div className="flex items-center gap-x-2 h-full">
           <AccountIconButton />
           {children}
         </div>

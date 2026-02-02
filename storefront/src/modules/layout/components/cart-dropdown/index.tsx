@@ -77,9 +77,10 @@ const CartDropdown = ({
       onMouseLeave={close}
     >
       <Popover className="relative h-full flex items-center">
-        <Popover.Button
+        <LocalizedClientLink
+          href="/cart"
           className={clx(
-            "transition-fg relative inline-flex items-center justify-center overflow-hidden rounded-md outline-none",
+            "transition-fg relative inline-flex items-center justify-center rounded-md outline-none",
             "disabled:bg-ui-bg-disabled disabled:shadow-buttons-neutral disabled:text-ui-fg-disabled disabled:after:hidden",
             "text-ui-fg-subtle bg-ui-button-transparent hover:bg-ui-button-transparent-hover active:bg-ui-button-transparent-pressed",
             "focus-visible:shadow-buttons-neutral-focus focus-visible:bg-ui-bg-base disabled:!bg-transparent disabled:!shadow-none",
@@ -90,11 +91,11 @@ const CartDropdown = ({
         >
           <ShoppingBag />
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
               {totalItems}
             </span>
           )}
-        </Popover.Button>
+        </LocalizedClientLink>
         <Transition
           show={cartDropdownOpen}
           as={Fragment}
