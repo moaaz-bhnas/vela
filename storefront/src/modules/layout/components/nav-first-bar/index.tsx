@@ -36,7 +36,7 @@ const NavFirstBar = ({
               <motion.div
                 key="side-menu"
                 initial={{ opacity: 0, width: 0, marginRight: 0 }}
-                animate={{ opacity: 1, width: "auto", marginRight: 16 }}
+                animate={{ opacity: 1, width: "auto", marginRight: 8 }}
                 exit={{ opacity: 0, width: 0, marginRight: 0 }}
                 transition={{
                   duration: 0.2,
@@ -88,7 +88,7 @@ const NavFirstBar = ({
     return (
       <div className="flex items-center justify-between h-full">
         {/* Left: Menu (on scroll desktop / always mobile) and Logo */}
-        <div className="flex items-center h-full gap-x-4">
+        <div className="flex items-center h-full gap-x-2">
           <div className="h-full flex items-center lg:hidden">
             <SideMenu regions={regions} />
           </div>
