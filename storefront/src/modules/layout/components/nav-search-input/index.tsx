@@ -8,15 +8,18 @@ import { clx } from "@medusajs/ui"
 type NavSearchInputProps = {
   className?: string
   placeholder?: string
+  onNavigate?: () => void
 }
 
 const NavSearchInput = ({
   className,
   placeholder = "Search products...",
+  onNavigate,
 }: NavSearchInputProps) => {
   const router = useRouter()
 
   const handleClick = () => {
+    onNavigate?.()
     router.push("/search")
   }
 
