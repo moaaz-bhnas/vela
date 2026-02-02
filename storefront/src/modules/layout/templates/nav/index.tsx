@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { listRegions } from "@lib/data/regions"
 import { listCategories } from "@lib/data/categories"
 import { getBrandingConfig } from "@lib/data/branding"
+import { formatPhone } from "@lib/util/format-phone"
 import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NavFirstBar from "@modules/layout/components/nav-first-bar"
@@ -15,6 +16,7 @@ export default async function Nav() {
 
   const logo = branding?.logos?.main
   const siteTitle = branding?.site_title || "Medusa Store"
+  const phone = formatPhone(branding?.contact_info?.phone)
 
   return (
     <div className="pb-28">
@@ -24,6 +26,7 @@ export default async function Nav() {
           categories={categories || []}
           logo={logo}
           siteTitle={siteTitle}
+          phone={phone}
         >
           <Suspense
             fallback={
