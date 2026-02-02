@@ -63,7 +63,7 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
               </div>
 
               {/* Mobile: Search only */}
-              <div className="flex lg:hidden items-center h-full w-full px-4">
+              <div className="flex lg:hidden items-center h-full w-full">
                 <NavSearchInput className="w-full" />
               </div>
             </div>
