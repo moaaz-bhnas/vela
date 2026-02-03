@@ -42,7 +42,7 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
           <nav className="content-container flex items-center justify-center h-full overflow-x-auto">
             <div className="flex items-center gap-x-6 h-full w-full">
               {/* Desktop: Categories */}
-              <div className="hidden lg:flex items-center gap-x-6 h-full">
+              <div className="hidden lg:flex items-center gap-x-6 h-full text-ui-fg-subtle">
                 {parentCategories.map((category) => (
                   <LocalizedClientLink
                     key={category.id}

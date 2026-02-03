@@ -49,7 +49,7 @@ const NavFirstBar = ({
                 transition={{
                   duration: 0.2,
                 }}
-                className="h-full flex items-center overflow-hidden"
+                className="h-full flex items-center"
               >
                 <SideMenu regions={regions} categories={categories} />
               </motion.div>
@@ -89,7 +89,7 @@ const NavFirstBar = ({
             <a
               href={phone.href}
               className={clx(
-                "inline-flex items-center gap-x-1.5 rounded-md px-2 py-1.5",
+                "inline-flex items-center gap-x-2 rounded-md px-3 py-1.5 me-1.5",
                 "text-ui-fg-subtle hover:text-ui-fg-base bg-ui-bg-subtle-hover",
                 "transition-fg focus-visible:shadow-borders-interactive-with-active focus-visible:outline-none",
                 "border border-transparent hover:border-ui-border-base"
@@ -97,10 +97,13 @@ const NavFirstBar = ({
               aria-label={`Call us: ${phone.display}`}
               data-testid="nav-phone-link"
             >
-              <Headphones className="size-4" />
-              <span className="hidden sm:inline txt-compact-small font-medium">
-                {phone.display}
-              </span>
+              <Headphones className="size-7" />
+              <div className="flex flex-col">
+                <span className="text-[11px] leading-4 font-extrabold uppercase font-heading">
+                  How can we help?
+                </span>
+                <span className="text-[11px] leading-4">{phone.display}</span>
+              </div>
             </a>
           )}
           <AccountIconButton />
