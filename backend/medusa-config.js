@@ -57,6 +57,9 @@ const medusaConfig = {
       resolve: "./src/modules/product-sales",
     },
     {
+      resolve: "./src/modules/product-search-popularity",
+    },
+    {
       key: Modules.FILE,
       resolve: "@medusajs/file",
       options: {

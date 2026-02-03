@@ -17,13 +17,19 @@ export type ProductHit = {
 
 type HitProps = {
   hit: ProductHit
+  onHitClick?: (hit: ProductHit) => void
 }
 
-const Hit = ({ hit }: HitProps) => {
+const Hit = ({ hit, onHitClick }: HitProps) => {
+  const handleClick = () => {
+    onHitClick?.(hit)
+  }
+
   return (
     <LocalizedClientLink
       href={`/products/${hit.handle}`}
       data-testid="search-result"
+      onClick={handleClick}
     >
       <Container
         key={hit.id}

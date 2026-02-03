@@ -6,12 +6,16 @@ import {
   useSearchBox,
 } from "react-instantsearch-hooks-web"
 
+import { sdk } from "@lib/config"
 import { ProductHit } from "../hit"
 import ShowAll from "../show-all"
 
 type HitsProps<THit> = React.ComponentProps<"div"> &
   UseHitsProps & {
-    hitComponent: (props: { hit: THit }) => JSX.Element
+    hitComponent: (props: {
+      hit: THit
+      onHitClick?: (hit: THit) => void
+    }) => JSX.Element
   }
 
 const Hits = ({
@@ -21,6 +25,17 @@ const Hits = ({
 }: HitsProps<ProductHit>) => {
   const { query } = useSearchBox()
   const { hits } = useHits(props)
+
+  const handleHitClick = (hit: ProductHit) => {
+    if (hit?.id) {
+      sdk.client
+        .fetch("/store/search-popularity", {
+          method: "POST",
+          body: { product_id: hit.id },
+        })
+        .catch(() => {})
+    }
+  }
 
   return (
     <div
@@ -44,7 +59,10 @@ const Hits = ({
               "hidden sm:block": index > 2,
             })}
           >
-            <Hit hit={hit as unknown as ProductHit} />
+            <Hit
+              hit={hit as unknown as ProductHit}
+              onHitClick={handleHitClick}
+            />
           </li>
         ))}
       </div>

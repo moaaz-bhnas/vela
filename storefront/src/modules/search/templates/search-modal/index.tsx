@@ -4,6 +4,7 @@ import { InstantSearch } from "react-instantsearch-hooks-web"
 import { useRouter } from "next/navigation"
 import { MagnifyingGlassMini } from "@medusajs/icons"
 
+import { sdk } from "@lib/config"
 import { SEARCH_INDEX_NAME, searchClient } from "@lib/search-client"
 import Hit from "@modules/search/components/hit"
 import Hits from "@modules/search/components/hits"
@@ -13,6 +14,27 @@ import { useEffect, useRef } from "react"
 export default function SearchModal() {
   const router = useRouter()
   const searchRef = useRef(null)
+
+  // Query and log product search popularity when search page opens
+  useEffect(function logSearchPopularity() {
+    sdk.client
+      .fetch<{
+        product_search_popularity: Array<{
+          id: string
+          product_id: string
+          click_count: number
+        }>
+        count?: number
+        limit?: number
+        offset?: number
+      }>("/store/search-popularity", { query: { limit: 20 } })
+      .then((data) => {
+        console.log("[Search] Product search popularity:", data)
+      })
+      .catch((err) => {
+        console.warn("[Search] Failed to fetch search popularity:", err)
+      })
+  }, [])
 
   // close modal on outside click
   const handleOutsideClick = (event: MouseEvent) => {
