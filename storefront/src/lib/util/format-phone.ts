@@ -22,7 +22,7 @@ export function formatPhone(
   try {
     const parsed = parsePhoneNumberWithError(trimmed)
     return {
-      display: parsed.formatInternational(),
+      display: parsed.formatNational(),
       href: `tel:${parsed.number}`,
     }
   } catch {
