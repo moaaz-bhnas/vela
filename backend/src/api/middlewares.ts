@@ -5,6 +5,10 @@ import {
 } from "@medusajs/framework/http";
 import { PostAdminUpdateBranding } from "./admin/branding/validators";
 import { GetBestSellersSchema } from "./store/best-sellers/validators";
+import {
+  GetSearchPopularitySchema,
+  PostSearchPopularitySchema,
+} from "./store/search-popularity/validators";
 
 export default defineMiddlewares({
   routes: [
@@ -18,11 +22,31 @@ export default defineMiddlewares({
       method: "GET",
       middlewares: [
         validateAndTransformQuery(GetBestSellersSchema, {
-          defaults: ["id", "product_id", "category_id", "collection_id", "selling_count"],
+          defaults: [
+            "id",
+            "product_id",
+            "category_id",
+            "collection_id",
+            "selling_count",
+          ],
           isList: true,
         }),
       ],
     },
+    {
+      matcher: "/store/search-popularity",
+      method: "GET",
+      middlewares: [
+        validateAndTransformQuery(GetSearchPopularitySchema, {
+          defaults: ["id", "product_id", "click_count", "product.*"],
+          isList: true,
+        }),
+      ],
+    },
+    {
+      matcher: "/store/search-popularity",
+      method: "POST",
+      middlewares: [validateAndTransformBody(PostSearchPopularitySchema)],
+    },
   ],
 });
-

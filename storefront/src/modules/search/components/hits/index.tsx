@@ -1,54 +1,67 @@
-import { clx } from "@medusajs/ui"
+import { Heading, clx } from "@medusajs/ui"
 import React from "react"
-import {
-  UseHitsProps,
-  useHits,
-  useSearchBox,
-} from "react-instantsearch-hooks-web"
 
 import { ProductHit } from "../hit"
-import ShowAll from "../show-all"
 
-type HitsProps<THit> = React.ComponentProps<"div"> &
-  UseHitsProps & {
-    hitComponent: (props: { hit: THit }) => JSX.Element
+type HitsProps<THit> = React.ComponentProps<"div"> & {
+  hits: THit[]
+  title?: string
+  hitComponent: (props: {
+    hit: THit
+    onHitClick?: (hit: THit) => void
+  }) => JSX.Element
+  onHitClick?: (hit: THit) => void
+  titleTestId?: string
+  resultsTestId?: string
+}
+
+const MAX_VISIBLE = 6
+const MOBILE_VISIBLE = 3
+
+const Hits = <THit extends ProductHit>({
+  hits,
+  title,
+  hitComponent: Hit,
+  onHitClick,
+  className,
+  titleTestId,
+  resultsTestId = "search-results",
+  ...rest
+}: HitsProps<THit>) => {
+  const displayHits = hits.slice(0, MAX_VISIBLE)
+
+  if (displayHits.length === 0) {
+    return null
   }
 
-const Hits = ({
-  hitComponent: Hit,
-  className,
-  ...props
-}: HitsProps<ProductHit>) => {
-  const { query } = useSearchBox()
-  const { hits } = useHits(props)
-
   return (
-    <div
-      className={clx(
-        "transition-[height,max-height,opacity] duration-300 ease-in-out sm:overflow-hidden w-full sm:w-[50vw] mb-1 p-px",
-        className,
-        {
-          "max-h-full opacity-100": !!query,
-          "max-h-0 opacity-0": !query && !hits.length,
-        }
+    <div className={clx("mb-4", className)} {...rest}>
+      {title && (
+        <div className="mb-3 px-1">
+          <Heading
+            level="h3"
+            className="text-ui-fg-subtle text-[0.75rem] uppercase tracking-wide"
+            data-testid={titleTestId}
+          >
+            {title}
+          </Heading>
+        </div>
       )}
-    >
       <div
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4"
-        data-testid="search-results"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+        data-testid={resultsTestId}
       >
-        {hits.slice(0, 6).map((hit, index) => (
+        {displayHits.map((hit, index) => (
           <li
-            key={index}
+            key={(hit as ProductHit).id ?? index}
             className={clx("list-none", {
-              "hidden sm:block": index > 2,
+              "hidden sm:block": index >= MOBILE_VISIBLE,
             })}
           >
-            <Hit hit={hit as unknown as ProductHit} />
+            <Hit hit={hit} onHitClick={onHitClick} />
           </li>
         ))}
       </div>
-      <ShowAll />
     </div>
   )
 }

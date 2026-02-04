@@ -1,7 +1,9 @@
 import "server-only"
 import { cookies } from "next/headers"
 
-export const getAuthHeaders = async (): Promise<{ authorization: string } | {}> => {
+export const getAuthHeaders = async (): Promise<
+  { authorization: string } | {}
+> => {
   const cookiesStore = await cookies()
   const token = cookiesStore.get("_medusa_jwt")?.value
 
@@ -55,14 +57,19 @@ export const removeCartId = async () => {
  */
 export const getPersonalizationCategoryIds = async (): Promise<string[]> => {
   const cookiesStore = await cookies()
-  const categoryIdsCookie = cookiesStore.get("_personalization_category_ids")?.value
+  const categoryIdsCookie = cookiesStore.get(
+    "_personalization_category_ids"
+  )?.value
 
   if (!categoryIdsCookie) {
     return []
   }
 
   // Parse comma-separated string into array
-  const categoryIds = categoryIdsCookie.split(",").map((id) => id.trim()).filter(Boolean)
+  const categoryIds = categoryIdsCookie
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
   return categoryIds
 }
 
@@ -70,9 +77,13 @@ export const getPersonalizationCategoryIds = async (): Promise<string[]> => {
  * Reads the collection_id cookie and returns the collection ID
  * Returns null if cookie doesn't exist
  */
-export const getPersonalizationCollectionId = async (): Promise<string | null> => {
+export const getPersonalizationCollectionId = async (): Promise<
+  string | null
+> => {
   const cookiesStore = await cookies()
-  const collectionIdCookie = cookiesStore.get("_personalization_collection_id")?.value
+  const collectionIdCookie = cookiesStore.get(
+    "_personalization_collection_id"
+  )?.value
 
   return collectionIdCookie || null
 }
@@ -83,13 +94,40 @@ export const getPersonalizationCollectionId = async (): Promise<string | null> =
  */
 export const getRecentProductIds = async (): Promise<string[]> => {
   const cookiesStore = await cookies()
-  const recentProductIdsCookie = cookiesStore.get("_personalization_recent_product_ids")?.value
+  const recentProductIdsCookie = cookiesStore.get(
+    "_personalization_recent_product_ids"
+  )?.value
 
   if (!recentProductIdsCookie) {
     return []
   }
 
   // Parse comma-separated string into array
-  const productIds = recentProductIdsCookie.split(",").map((id) => id.trim()).filter(Boolean)
+  const productIds = recentProductIdsCookie
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
+  return productIds
+}
+
+/**
+ * Reads the search_history_product_ids cookie and returns an array of product IDs
+ * Returns empty array if cookie doesn't exist or is invalid
+ */
+export const getSearchHistoryProductIds = async (): Promise<string[]> => {
+  const cookiesStore = await cookies()
+  const searchHistoryCookie = cookiesStore.get(
+    "_personalization_search_history_product_ids"
+  )?.value
+
+  if (!searchHistoryCookie) {
+    return []
+  }
+
+  // Parse comma-separated string into array
+  const productIds = searchHistoryCookie
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
   return productIds
 }

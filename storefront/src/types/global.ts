@@ -1,3 +1,5 @@
+import { HttpTypes } from "@medusajs/types"
+
 export type FeaturedProduct = {
   id: string
   title: string
@@ -13,4 +15,16 @@ export type VariantPrice = {
   currency_code: string
   price_type: string
   percentage_diff: string
+}
+
+export type PopularityResponse = {
+  product_search_popularity: Array<{
+    id: string
+    product_id: string
+    click_count: number
+    product: HttpTypes.StoreProduct
+  }>
+  count?: number
+  limit?: number
+  offset?: number
 }
