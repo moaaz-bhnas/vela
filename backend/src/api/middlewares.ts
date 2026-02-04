@@ -14,7 +14,7 @@ export default defineMiddlewares({
   routes: [
     {
       matcher: "/admin/branding",
-      method: ["POST", "PUT"],
+      method: "POST",
       middlewares: [validateAndTransformBody(PostAdminUpdateBranding)],
     },
     {

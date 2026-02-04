@@ -2,7 +2,7 @@
 
 import { Popover, Transition } from "@headlessui/react"
 import { ShoppingBag } from "@medusajs/icons"
-import { Button, clx } from "@medusajs/ui"
+import { Button, Heading, Text, clx } from "@medusajs/ui"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -91,7 +91,11 @@ const CartDropdown = ({
         >
           <ShoppingBag />
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+            <span
+              aria-live="polite"
+              aria-label={`${totalItems} items in cart`}
+              className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-ui-bg-base"
+            >
               {totalItems}
             </span>
           )}
@@ -108,11 +112,13 @@ const CartDropdown = ({
         >
           <Popover.Panel
             static
-            className="hidden lg:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className="hidden lg:block absolute top-[calc(100%+1px)] right-0 bg-ui-bg-base border-x border-b border-ui-border-base w-[420px] text-ui-fg-base"
             data-testid="nav-cart-dropdown"
           >
             <div className="p-4 flex items-center justify-center">
-              <h3 className="text-large-semi">Cart</h3>
+              <Heading level="h3" className="text-large-semi">
+                Cart
+              </Heading>
             </div>
             {cartState && cartState.items?.length ? (
               <>
@@ -143,25 +149,30 @@ const CartDropdown = ({
                           <div className="flex flex-col flex-1">
                             <div className="flex items-start justify-between">
                               <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
-                                <h3 className="text-base-regular overflow-hidden text-ellipsis">
+                                <Text
+                                  size="small"
+                                  className="text-base-regular overflow-hidden text-ellipsis"
+                                  asChild
+                                >
                                   <LocalizedClientLink
                                     href={`/products/${item.variant?.product?.handle}`}
                                     data-testid="product-link"
                                   >
                                     {item.title}
                                   </LocalizedClientLink>
-                                </h3>
+                                </Text>
                                 <LineItemOptions
                                   variant={item.variant}
                                   data-testid="cart-item-variant"
                                   data-value={item.variant}
                                 />
-                                <span
+                                <Text
+                                  size="small"
                                   data-testid="cart-item-quantity"
                                   data-value={item.quantity}
                                 >
                                   Quantity: {item.quantity}
-                                </span>
+                                </Text>
                               </div>
                               <div className="flex justify-end">
                                 <LineItemPrice item={item} style="tight" />
@@ -181,11 +192,17 @@ const CartDropdown = ({
                 </div>
                 <div className="p-4 flex flex-col gap-y-4 text-small-regular">
                   <div className="flex items-center justify-between">
-                    <span className="text-ui-fg-base font-semibold">
+                    <Text
+                      size="small"
+                      className="text-ui-fg-base font-semibold"
+                    >
                       Subtotal{" "}
-                      <span className="font-normal">(excl. taxes)</span>
-                    </span>
-                    <span
+                      <Text size="small" className="font-normal" asChild>
+                        <span>(excl. taxes)</span>
+                      </Text>
+                    </Text>
+                    <Text
+                      size="small"
                       className="text-large-semi"
                       data-testid="cart-subtotal"
                       data-value={subtotal}
@@ -194,7 +211,7 @@ const CartDropdown = ({
                         amount: subtotal,
                         currency_code: cartState.currency_code,
                       })}
-                    </span>
+                    </Text>
                   </div>
                   <LocalizedClientLink href="/cart" passHref>
                     <Button
@@ -210,10 +227,12 @@ const CartDropdown = ({
             ) : (
               <div>
                 <div className="flex py-16 flex-col gap-y-4 items-center justify-center">
-                  <div className="bg-gray-900 text-small-regular flex items-center justify-center w-6 h-6 rounded-full text-white">
-                    <span>0</span>
+                  <div className="bg-ui-bg-component text-small-regular flex items-center justify-center w-6 h-6 rounded-full text-ui-fg-on-color">
+                    <Text size="small">0</Text>
                   </div>
-                  <span>Your shopping bag is empty.</span>
+                  <Text size="small" className="text-ui-fg-base">
+                    Your shopping bag is empty.
+                  </Text>
                   <div>
                     <LocalizedClientLink href="/store">
                       <>

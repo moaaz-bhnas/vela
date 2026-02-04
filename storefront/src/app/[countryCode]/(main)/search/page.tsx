@@ -12,42 +12,56 @@ export default async function SearchModalRoute({
 }: {
   params: Promise<{ countryCode: string }>
 }) {
-  const { countryCode } = await params
-  const region = await getRegion(countryCode)
+  let popularProducts: HttpTypes.StoreProduct[] = []
+  let searchHistoryProducts: HttpTypes.StoreProduct[] = []
 
-  const popularProducts = await (async function getPopularProducts() {
-    try {
-      const data = await sdk.client.fetch<PopularityResponse>(
-        "/store/search-popularity",
-        { query: { limit: 3, order: "-click_count" } }
-      )
-      return data.product_search_popularity.map((item) => item.product)
-    } catch {
-      return []
-    }
-  })()
+  try {
+    const { countryCode } = await params
+    const region = await getRegion(countryCode)
 
-  const searchHistoryProducts = await (async function getSearchHistory() {
-    if (!region) return []
+    const [popular, history] = await Promise.all([
+      (async function getPopularProducts() {
+        try {
+          const data = await sdk.client.fetch<PopularityResponse>(
+            "/store/search-popularity",
+            { query: { limit: 3, order: "-click_count" } }
+          )
+          return (
+            data.product_search_popularity?.map((item) => item.product) ?? []
+          )
+        } catch {
+          return []
+        }
+      })(),
+      (async function getSearchHistory() {
+        if (!region) return []
+        try {
+          const searchHistoryIds = await getSearchHistoryProductIds()
+          if (searchHistoryIds.length === 0) return []
 
-    try {
-      const searchHistoryIds = await getSearchHistoryProductIds()
-      if (searchHistoryIds.length === 0) return []
+          const productIdsToFetch = searchHistoryIds.slice(0, 3)
+          const fetchedProducts = await getProductsById({
+            ids: productIdsToFetch,
+            regionId: region.id,
+          })
+          return productIdsToFetch
+            .map((id) => fetchedProducts.find((p) => p.id === id))
+            .filter(
+              (product): product is HttpTypes.StoreProduct =>
+                product != undefined
+            )
+        } catch {
+          return []
+        }
+      })(),
+    ])
 
-      const productIdsToFetch = searchHistoryIds.slice(0, 3)
-      const fetchedProducts = await getProductsById({
-        ids: productIdsToFetch,
-        regionId: region.id,
-      })
-      return productIdsToFetch
-        .map((id) => fetchedProducts.find((p) => p.id === id))
-        .filter(
-          (product): product is HttpTypes.StoreProduct => product != undefined
-        )
-    } catch {
-      return []
-    }
-  })()
+    popularProducts = popular
+    searchHistoryProducts = history
+  } catch {
+    // On any error (region, network, etc.), keep empty arrays so the modal
+    // still renders with instant search for empty query; no error shown.
+  }
 
   return (
     <SearchModal
