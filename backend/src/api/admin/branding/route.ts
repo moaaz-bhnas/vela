@@ -2,6 +2,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { BRANDING_MODULE } from "../../../modules/branding";
 import BrandingModuleService from "../../../modules/branding/service";
 import { PostAdminUpdateBrandingType } from "./validators";
+import { updateBrandingWorkflow } from "../../../workflows/update-branding";
+import { deleteBrandingWorkflow } from "../../../workflows/delete-branding";
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const brandingModuleService: BrandingModuleService =
@@ -22,35 +24,17 @@ export const POST = async (
   req: MedusaRequest<PostAdminUpdateBrandingType>,
   res: MedusaResponse
 ) => {
-  const brandingModuleService: BrandingModuleService =
-    req.scope.resolve(BRANDING_MODULE);
+  const { result } = await updateBrandingWorkflow(req.scope).run({
+    input: req.validatedBody,
+  });
 
-  const updatedConfig = await brandingModuleService.updateConfig(
-    req.validatedBody
-  );
-
-  res.json({ branding: updatedConfig });
-};
-
-export const PUT = async (
-  req: MedusaRequest<PostAdminUpdateBrandingType>,
-  res: MedusaResponse
-) => {
-  const brandingModuleService: BrandingModuleService =
-    req.scope.resolve(BRANDING_MODULE);
-
-  const updatedConfig = await brandingModuleService.updateConfig(
-    req.validatedBody
-  );
-
-  res.json({ branding: updatedConfig });
+  res.json({ branding: result.branding });
 };
 
 export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
-  const brandingModuleService: BrandingModuleService =
-    req.scope.resolve(BRANDING_MODULE);
-
-  await brandingModuleService.deleteConfig();
+  await deleteBrandingWorkflow(req.scope).run({
+    input: {},
+  });
 
   res.status(204).send();
 };
