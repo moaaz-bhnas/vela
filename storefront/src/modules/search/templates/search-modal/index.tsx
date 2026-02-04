@@ -1,42 +1,108 @@
 "use client"
 
-import { InstantSearch } from "react-instantsearch-hooks-web"
+import {
+  InstantSearch,
+  useHits,
+  useSearchBox,
+} from "react-instantsearch-hooks-web"
 import { useRouter } from "next/navigation"
 import { MagnifyingGlassMini } from "@medusajs/icons"
+import { clx } from "@medusajs/ui"
 
+import { addSearchHistoryProduct } from "@lib/utils/personalization-cookies"
 import { sdk } from "@lib/config"
 import { SEARCH_INDEX_NAME, searchClient } from "@lib/search-client"
-import Hit from "@modules/search/components/hit"
+import Hit, { ProductHit } from "@modules/search/components/hit"
 import Hits from "@modules/search/components/hits"
 import SearchBox from "@modules/search/components/search-box"
+import ShowAll from "@modules/search/components/show-all"
 import { useEffect, useRef } from "react"
+import { HttpTypes } from "@medusajs/types"
 
-export default function SearchModal() {
+type SearchModalProps = {
+  popularProducts: HttpTypes.StoreProduct[]
+  searchHistoryProducts?: HttpTypes.StoreProduct[]
+}
+
+function SearchModalContent({
+  searchHistoryHits,
+  popularHits,
+}: {
+  searchHistoryHits: ProductHit[]
+  popularHits: ProductHit[]
+}) {
+  const { query } = useSearchBox()
+  const { hits } = useHits()
+
+  function handleHitClick(hit: ProductHit) {
+    addSearchHistoryProduct(hit.id)
+    sdk.client
+      .fetch("/store/search-popularity", {
+        method: "POST",
+        body: { product_id: hit.id },
+      })
+      .catch(() => {})
+  }
+
+  const isEmptyQuery = !query
+  const hasSearchHistoryHits = searchHistoryHits.length > 0
+  const hasPopularHits = popularHits.length > 0
+  const hasSearchHits = hits.length > 0
+  const isVisible =
+    (isEmptyQuery && (hasSearchHistoryHits || hasPopularHits)) || !isEmptyQuery
+
+  return (
+    <div
+      className={clx(
+        "transition-[height,max-height,opacity] duration-300 ease-in-out sm:overflow-hidden w-full sm:w-[50vw] mb-1 p-px",
+        {
+          "max-h-full opacity-100": isVisible,
+          "max-h-0 opacity-0": !isVisible,
+        }
+      )}
+    >
+      {isEmptyQuery && hasSearchHistoryHits && (
+        <Hits
+          hits={searchHistoryHits}
+          title="Search history"
+          hitComponent={Hit}
+          onHitClick={handleHitClick}
+          titleTestId="search-history-title"
+          resultsTestId="search-history-results"
+        />
+      )}
+      {isEmptyQuery && hasPopularHits && (
+        <Hits
+          hits={popularHits}
+          title="Popular searches"
+          hitComponent={Hit}
+          onHitClick={handleHitClick}
+          titleTestId="search-popular-title"
+          resultsTestId="search-results"
+        />
+      )}
+      {!isEmptyQuery && hasSearchHits && (
+        <Hits
+          hits={hits as unknown as ProductHit[]}
+          hitComponent={Hit}
+          onHitClick={handleHitClick}
+          resultsTestId="search-results"
+        />
+      )}
+      <ShowAll />
+    </div>
+  )
+}
+
+export default function SearchModal({
+  popularProducts,
+  searchHistoryProducts = [],
+}: SearchModalProps) {
   const router = useRouter()
   const searchRef = useRef(null)
+  const searchHistoryHits = productToProductHit(searchHistoryProducts)
+  const popularHits = productToProductHit(popularProducts)
 
-  // Query and log product search popularity when search page opens
-  useEffect(function logSearchPopularity() {
-    sdk.client
-      .fetch<{
-        product_search_popularity: Array<{
-          id: string
-          product_id: string
-          click_count: number
-        }>
-        count?: number
-        limit?: number
-        offset?: number
-      }>("/store/search-popularity", { query: { limit: 20 } })
-      .then((data) => {
-        console.log("[Search] Product search popularity:", data)
-      })
-      .catch((err) => {
-        console.warn("[Search] Failed to fetch search popularity:", err)
-      })
-  }, [])
-
-  // close modal on outside click
   const handleOutsideClick = (event: MouseEvent) => {
     if (event.target === searchRef.current) {
       router.back()
@@ -94,7 +160,10 @@ export default function SearchModal() {
                 <SearchBox />
               </div>
               <div className="flex-1 mt-6">
-                <Hits hitComponent={Hit} />
+                <SearchModalContent
+                  searchHistoryHits={searchHistoryHits}
+                  popularHits={popularHits}
+                />
               </div>
             </div>
           </InstantSearch>
@@ -102,4 +171,17 @@ export default function SearchModal() {
       </div>
     </div>
   )
+}
+
+function productToProductHit(products: HttpTypes.StoreProduct[]): ProductHit[] {
+  return products.map((product) => ({
+    id: product.id,
+    title: product.title,
+    handle: product.handle,
+    description: product.description ?? null,
+    thumbnail: product.thumbnail ?? null,
+    variants: (product.variants ?? []) as HttpTypes.StoreProductVariant[],
+    collection_handle: product.collection?.handle ?? null,
+    collection_id: product.collection?.id ?? null,
+  }))
 }
