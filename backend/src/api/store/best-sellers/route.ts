@@ -17,7 +17,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   // Order by selling_count DESC
   const { data: productSales, metadata } = await query.graph({
     entity: "product_sales",
-    filters,
+    // filters,
     pagination: {
       ...req.queryConfig?.pagination,
       order: {

@@ -24,24 +24,6 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "category_id": {
-          "name": "category_id",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "text"
-        },
-        "collection_id": {
-          "name": "collection_id",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "text"
-        },
         "selling_count": {
           "name": "selling_count",
           "type": "integer",
@@ -105,24 +87,6 @@
           "primary": false,
           "unique": false,
           "expression": "CREATE INDEX IF NOT EXISTS \"IDX_product_sales_deleted_at\" ON \"product_sales\" (deleted_at) WHERE deleted_at IS NULL"
-        },
-        {
-          "keyName": "IDX_product_sales_category_id",
-          "columnNames": [],
-          "composite": false,
-          "constraint": false,
-          "primary": false,
-          "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_product_sales_category_id\" ON \"product_sales\" (category_id) WHERE deleted_at IS NULL"
-        },
-        {
-          "keyName": "IDX_product_sales_collection_id",
-          "columnNames": [],
-          "composite": false,
-          "constraint": false,
-          "primary": false,
-          "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_product_sales_collection_id\" ON \"product_sales\" (collection_id) WHERE deleted_at IS NULL"
         },
         {
           "keyName": "product_sales_pkey",
