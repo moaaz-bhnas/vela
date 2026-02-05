@@ -6,20 +6,20 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
   const { data: productSearchPopularity, metadata } = await query.graph({
     entity: "product_search_popularity",
+    ...req.queryConfig,
     pagination: {
       ...req.queryConfig?.pagination,
       order: {
         click_count: "DESC",
       },
     },
-    ...req.queryConfig,
   });
 
   res.json({
     product_search_popularity: productSearchPopularity,
-    count: metadata?.count,
-    limit: metadata?.take,
-    offset: metadata?.skip,
+    count: metadata?.count ?? 0,
+    limit: metadata?.take ?? 0,
+    offset: metadata?.skip ?? 0,
   });
 };
 
