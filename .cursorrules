@@ -1,0 +1,125 @@
+# Storefront Cursor Rules
+
+## Workspace Structure
+
+- **Main working directory**: `vela/` - This is where all active development and code changes should be made
+- **Reference directories** (read-only for reference):
+  - `guides/` - Contains documentation and guides for reference only
+  - `medusa/` - Contains the Medusa framework source code for reference only
+
+## File Organization
+
+> **Note**: This section applies specifically to `vela/storefront/`
+
+- **Always** organize components and templates following the existing pattern in `src/modules/`
+- Structure: `src/modules/[module-name]/components/[component-name]/index.tsx`
+- Structure: `src/modules/[module-name]/templates/[template-name]/index.tsx` or `[template-name].tsx`
+- Each component should have its own folder with an `index.tsx` file
+- Use descriptive, kebab-case names for component folders
+
+## Component Usage
+
+> **Note**: This section applies specifically to `vela/storefront/`
+
+- **Always** use components from `@medusajs/ui` package
+- Import components directly: `import { Button, Heading, Text, Label, Container, Badge, clx, ... } from "@medusajs/ui"`
+- Reference the Medusa UI documentation: https://docs.medusajs.com/ui
+- Prefer Medusa UI components over custom implementations when available
+- Use the `clx` utility from `@medusajs/ui` for conditional class names
+
+## Styling and Classes
+
+- **Always** use Tailwind CSS classes from `@medusajs/ui-preset`
+- Use the `ui-` prefixed classes for consistent styling:
+  - Backgrounds: `bg-ui-bg-base`, `bg-ui-bg-subtle`, `bg-ui-bg-field`, `bg-ui-bg-field-hover`
+  - Text: `text-ui-fg-base`, `text-ui-fg-subtle`, `text-ui-fg-muted`
+  - Borders: `border-ui-border-base`, `border-ui-border-interactive`
+  - Focus states: `focus:shadow-borders-interactive-with-active`
+- Avoid custom color values; use the design system tokens from the preset
+- Follow the existing Tailwind configuration which extends `@medusajs/ui-preset`
+- **Always** use Tailwind's default breakpoints for media queries: `sm`, `md`, `lg`, `xl`, `2xl` (e.g. `sm:flex`, `lg:hidden`). Do not use custom breakpoint names such as `small`, `xsmall`, `medium`, `large`, etc.
+
+## Accessibility
+
+- For buttons that only show an icon (no visible text), **always** add an `aria-label` that describes the action (e.g. `aria-label="Toggle sidebar"`, `aria-label="Open cart"`, `aria-label="Close menu"`).
+
+## Code Patterns
+
+- Use TypeScript for all components
+- Export components as default exports
+- Use React functional components with proper TypeScript typing
+- Follow the existing patterns for props interfaces and component structure
+- Use the `clx` utility for combining class names conditionally
+- **Always** use named function expressions for `useEffect` hooks (e.g., `useEffect(function myEffect() { ... }, [])`)
+
+## Medusa Admin Dashboard Customizations
+
+> **Note**: This section applies specifically to `vela/backend/src/admin/`
+
+- **Always** follow the same patterns as the existing Medusa UI in `medusa/packages/admin/dashboard/` when creating custom widgets or pages in `backend/src/admin/`
+- For custom widgets (`backend/src/admin/widgets/`):
+  - Export a React component as the default export
+  - Export a `config` object using `defineWidgetConfig` from `@medusajs/admin-sdk` or `@medusajs/admin-shared`
+  - Use `@medusajs/ui` components (Container, Heading, etc.) for consistent styling
+  - Follow the widget injection zone patterns (e.g., `product.details.after`, `order.list.before`)
+- For custom pages/routes (`backend/src/admin/routes/`):
+  - Use layout components like `SingleColumnPage` from the dashboard package when appropriate
+  - Use the `useExtension()` hook and `getWidgets()` method to integrate with the widget system
+  - Follow the route structure patterns: `src/routes/[route-name]/[route-name].tsx` with an `index.ts` that exports the component
+  - Use TypeScript for all route components
+  - Reference existing routes in `medusa/packages/admin/dashboard/src/routes/` for structure and patterns
+
+## Module Structure Examples
+
+```
+src/modules/
+  [module-name]/
+    components/
+      [component-name]/
+        index.tsx
+    templates/
+      [template-name].tsx
+      or
+      [template-name]/
+        index.tsx
+```
+
+## Examples
+
+### Good Component Structure
+
+```tsx
+import { Button, Heading, clx } from "@medusajs/ui";
+
+type MyComponentProps = {
+  title: string;
+  className?: string;
+};
+
+const MyComponent = ({ title, className }: MyComponentProps) => {
+  return (
+    <div className={clx("bg-ui-bg-subtle p-4", className)}>
+      <Heading level="h1" className="text-ui-fg-base">
+        {title}
+      </Heading>
+      <Button>Click me</Button>
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+
+### Good Class Usage
+
+```tsx
+// ✅ Correct - using ui- prefixed classes
+<div className="bg-ui-bg-base text-ui-fg-base border-ui-border-base">
+  Content
+</div>
+
+// ❌ Avoid - custom colors not from preset
+<div className="bg-blue-500 text-gray-800">
+  Content
+</div>
+```

@@ -22,13 +22,7 @@ export default defineMiddlewares({
       method: "GET",
       middlewares: [
         validateAndTransformQuery(GetBestSellersSchema, {
-          defaults: [
-            "id",
-            "product_id",
-            "category_id",
-            "collection_id",
-            "selling_count",
-          ],
+          defaults: ["id", "product_id", "selling_count", "product.*"],
           isList: true,
         }),
       ],
