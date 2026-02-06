@@ -2,6 +2,7 @@ import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { cache } from "react"
 import { getProductsById } from "./products"
+import _ from "lodash"
 
 export type ProductSales = {
   id: string
@@ -22,7 +23,7 @@ export const getBestSellers = cache(async function ({
   category_ids,
   collection_id,
   regionId,
-  limit = 12,
+  limit = 100,
   offset = 0,
 }: {
   category_ids?: string[]
@@ -32,22 +33,10 @@ export const getBestSellers = cache(async function ({
   offset?: number
 }): Promise<HttpTypes.StoreProduct[]> {
   try {
-    const queryParams: any = {
-      limit,
-      offset,
-    }
-
-    // category_ids takes priority over collection_id
-    if (category_ids && category_ids.length > 0) {
-      queryParams.category_ids = category_ids
-    } else if (collection_id) {
-      queryParams.collection_id = collection_id
-    }
-
     const response = await sdk.client.fetch<BestSellersResponse>(
       "/store/best-sellers",
       {
-        query: queryParams,
+        query: { limit, offset },
         next: { tags: ["best-sellers"] },
       }
     )
@@ -60,7 +49,27 @@ export const getBestSellers = cache(async function ({
     const productIds = response.product_sales.map((ps) => ps.product_id)
     const products = await getProductsById({ ids: productIds, regionId })
 
-    return products || []
+    // Sort products by preferred category and collection
+    const sortedProducts = _.sortBy(products, [
+      function sortProducts(product) {
+        const hasPreferredCategory =
+          category_ids &&
+          _.some(product.categories, (c) => category_ids.includes(c.id))
+        if (hasPreferredCategory) {
+          return 0
+        }
+
+        const hasPreferredCollection =
+          collection_id && product.collection_id === collection_id
+        if (hasPreferredCollection) {
+          return 1
+        }
+
+        return 2
+      },
+    ])
+
+    return sortedProducts
   } catch (error) {
     console.error("Error fetching best sellers:", error)
     return []
