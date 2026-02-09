@@ -35,7 +35,7 @@ const Hits = <THit extends ProductHit>({
   }
 
   return (
-    <div className={clx("mb-4", className)} {...rest}>
+    <div className={clx("", className)} {...rest}>
       {title && (
         <div className="mb-3 px-1">
           <Heading

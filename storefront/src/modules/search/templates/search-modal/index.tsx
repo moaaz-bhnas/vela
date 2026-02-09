@@ -7,7 +7,7 @@ import {
 } from "react-instantsearch-hooks-web"
 import { useRouter } from "next/navigation"
 import { MagnifyingGlassMini } from "@medusajs/icons"
-import { clx } from "@medusajs/ui"
+import { clx, Container, Text } from "@medusajs/ui"
 
 import { addSearchHistoryProduct } from "@lib/utils/personalization-cookies"
 import { sdk } from "@lib/config"
@@ -54,14 +54,22 @@ function SearchModalContent({
   return (
     <div
       className={clx(
-        "transition-[height,max-height,opacity] duration-300 ease-in-out sm:overflow-hidden w-full sm:w-[50vw] mb-1 p-px",
+        "transition-[height,max-height,opacity] duration-300 ease-in-out w-full sm:w-[50vw] mb-1 p-px flex flex-col gap-4",
         {
           "max-h-full opacity-100": isVisible,
           "max-h-0 opacity-0": !isVisible,
         }
       )}
     >
-      {isEmptyQuery && hasSearchHistoryHits && (
+      {!isEmptyQuery && !hasSearchHits && (
+        <Container
+          className="text-center"
+          data-testid="no-search-results-container"
+        >
+          <Text>No results for {query}.</Text>
+        </Container>
+      )}
+      {(isEmptyQuery || !hasSearchHits) && hasSearchHistoryHits && (
         <Hits
           hits={searchHistoryHits}
           title="Search history"
@@ -71,7 +79,7 @@ function SearchModalContent({
           resultsTestId="search-history-results"
         />
       )}
-      {isEmptyQuery && hasPopularHits && (
+      {(isEmptyQuery || !hasSearchHits) && hasPopularHits && (
         <Hits
           hits={popularHits}
           title="Popular searches"
@@ -118,13 +126,13 @@ export default function SearchModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // disable scroll on body when modal is open
-  useEffect(() => {
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = "unset"
-    }
-  }, [])
+  // // disable scroll on body when modal is open
+  // useEffect(() => {
+  //   document.body.style.overflow = "hidden"
+  //   return () => {
+  //     document.body.style.overflow = "unset"
+  //   }
+  // }, [])
 
   // on escape key press, close modal
   useEffect(() => {
@@ -144,8 +152,8 @@ export default function SearchModal({
 
   return (
     <div className="relative z-[75]">
-      <div className="fixed inset-0 bg-opacity-75 backdrop-blur-md opacity-100 h-screen w-screen" />
-      <div className="fixed inset-0 px-5 sm:p-0" ref={searchRef}>
+      <div className="fixed inset-0 bg-opacity-75 backdrop-blur-md opacity-100" />
+      <div className="fixed inset-0 px-5 sm:p-0 overflow-auto" ref={searchRef}>
         <div className="flex flex-col justify-start w-full h-fit transform p-5 items-center text-left align-middle transition-all max-h-[75vh] bg-transparent shadow-none">
           <InstantSearch
             indexName={SEARCH_INDEX_NAME}

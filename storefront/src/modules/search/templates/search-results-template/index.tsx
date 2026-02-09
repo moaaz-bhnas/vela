@@ -1,11 +1,13 @@
+import type { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
-import Link from "next/link"
-
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Divider from "@modules/common/components/divider"
+import BestSellers from "@modules/home/components/best-sellers"
+import ShopByCategory from "@modules/home/components/shop-by-category"
+import Container from "@modules/common/components/container-section"
 
 type SearchResultsTemplateProps = {
   query: string
@@ -13,6 +15,7 @@ type SearchResultsTemplateProps = {
   sortBy?: SortOptions
   page?: string
   countryCode: string
+  region: HttpTypes.StoreRegion
 }
 
 const SearchResultsTemplate = ({
@@ -21,17 +24,30 @@ const SearchResultsTemplate = ({
   sortBy,
   page,
   countryCode,
+  region,
 }: SearchResultsTemplateProps) => {
   const pageNumber = page ? parseInt(page) : 1
+  const isEmpty = ids.length === 0
 
   return (
-    <div className="container space-y-10">
-      <div className="flex justify-between w-full items-center">
+    <>
+      <Container className="flex justify-between w-full items-center">
         <div className="flex flex-col items-start">
-          <Text className="text-ui-fg-muted">Search Results for:</Text>
-          <Heading>
-            {decodeURI(query)} ({ids.length})
-          </Heading>
+          {isEmpty ? (
+            <>
+              <Heading>No results for {decodeURI(query)}</Heading>
+              <Text className="text-ui-fg-muted mt-1">
+                Try one of the suggestions below or browse by category.
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text className="text-ui-fg-muted">Search Results for:</Text>
+              <Heading>
+                {decodeURI(query)} ({ids.length})
+              </Heading>
+            </>
+          )}
         </div>
         <LocalizedClientLink
           href="/store"
@@ -39,26 +55,33 @@ const SearchResultsTemplate = ({
         >
           Clear
         </LocalizedClientLink>
-      </div>
+      </Container>
 
-      <Divider />
+      <Container className="!py-0">
+        <Divider />
+      </Container>
 
-      <div className="flex flex-col small:flex-row small:items-start">
-        {ids.length > 0 ? (
-          <>
-            <RefinementList sortBy={sortBy || "created_at"} search />
-            <PaginatedProducts
-              productsIds={ids}
-              sortBy={sortBy}
-              page={pageNumber}
-              countryCode={countryCode}
-            />
-          </>
-        ) : (
-          <Text className="ml-8 small:ml-14 mt-3">No results.</Text>
-        )}
-      </div>
-    </div>
+      {isEmpty ? (
+        <>
+          <Container>
+            <BestSellers region={region} />
+          </Container>
+          <Container>
+            <ShopByCategory />
+          </Container>
+        </>
+      ) : (
+        <div className="flex flex-col small:flex-row small:items-start">
+          <RefinementList sortBy={sortBy || "created_at"} search />
+          <PaginatedProducts
+            productsIds={ids}
+            sortBy={sortBy}
+            page={pageNumber}
+            countryCode={countryCode}
+          />
+        </div>
+      )}
+    </>
   )
 }
 

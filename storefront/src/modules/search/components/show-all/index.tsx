@@ -10,17 +10,7 @@ const ShowAll = () => {
 
   if (query === "") return null
   if (hits.length > 0 && hits.length <= 6) return null
-
-  if (hits.length === 0) {
-    return (
-      <Container
-        className="flex gap-2 justify-center h-fit py-2"
-        data-testid="no-search-results-container"
-      >
-        <Text>No results found.</Text>
-      </Container>
-    )
-  }
+  if (hits.length === 0) return null
 
   return (
     <Container className="flex sm:flex-col small:flex-row gap-2 justify-center items-center h-fit py-4 small:py-2">
