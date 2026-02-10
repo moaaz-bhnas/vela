@@ -71,7 +71,7 @@ const SearchResultsTemplate = ({
           </Container>
         </>
       ) : (
-        <div className="flex flex-col small:flex-row small:items-start">
+        <Container className="flex flex-col small:flex-row small:items-start">
           <RefinementList sortBy={sortBy || "created_at"} search />
           <PaginatedProducts
             productsIds={ids}
@@ -79,7 +79,7 @@ const SearchResultsTemplate = ({
             page={pageNumber}
             countryCode={countryCode}
           />
-        </div>
+        </Container>
       )}
     </>
   )
