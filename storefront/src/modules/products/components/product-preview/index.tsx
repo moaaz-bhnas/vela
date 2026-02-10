@@ -1,7 +1,8 @@
-import { Text } from "@medusajs/ui"
+import { Badge, Text } from "@medusajs/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { getProductOptionsSummary } from "@lib/util/get-product-options-summary"
+import { isProductNew } from "@lib/util/is-product-new"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
@@ -30,17 +31,33 @@ export default async function ProductPreview({
     product: pricedProduct,
   })
 
+  const isOnSale = cheapestPrice?.price_type === "sale"
+  const isNew = isProductNew(product)
+
+  const badgeLabel = isOnSale ? "SALE" : isNew ? "NEW" : null
+
   const optionsSummary = getProductOptionsSummary(product)
 
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group">
-      <div data-testid="product-wrapper" className="space-y-4">
-        <Thumbnail
-          thumbnail={product.thumbnail}
-          images={product.images}
-          size="full"
-          isFeatured={isFeatured}
-        />
+      <div data-testid="product-wrapper" className="space-y-3">
+        <div className="relative">
+          {badgeLabel && (
+            <Badge
+              size="small"
+              color={badgeLabel === "SALE" ? "red" : "blue"}
+              className="absolute left-2 top-2 z-10"
+            >
+              {badgeLabel}
+            </Badge>
+          )}
+          <Thumbnail
+            thumbnail={product.thumbnail}
+            images={product.images}
+            size="full"
+            isFeatured={isFeatured}
+          />
+        </div>
         <div className="txt-compact-medium justify-between flex flex-col gap-y-0.5">
           <Text className="font-bold" data-testid="product-title">
             {product.title}
