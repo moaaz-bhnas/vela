@@ -4,7 +4,7 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import { getProductOptionsSummary } from "@lib/util/get-product-options-summary"
 import { isProductNew } from "@lib/util/is-product-new"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Thumbnail from "../thumbnail"
+import ProductPreviewCarousel from "./product-preview-carousel"
 import PreviewPrice from "./price"
 import { getProductsById } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
@@ -51,7 +51,7 @@ export default async function ProductPreview({
               {badgeLabel}
             </Badge>
           )}
-          <Thumbnail
+          <ProductPreviewCarousel
             thumbnail={product.thumbnail}
             images={product.images}
             size="full"
