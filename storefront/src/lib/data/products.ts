@@ -17,7 +17,8 @@ export const getProductsById = cache(async function ({
       {
         id: ids,
         region_id: regionId,
-        fields: "*variants.calculated_price,+variants.inventory_quantity,*categories",
+        fields:
+          "*variants.calculated_price,+variants.inventory_quantity,*categories",
       },
       { next: { tags: ["products"] } }
     )
@@ -33,7 +34,8 @@ export const getProductByHandle = cache(async function (
       {
         handle,
         region_id: regionId,
-        fields: "*variants.calculated_price,+variants.inventory_quantity,*categories",
+        fields:
+          "*variants.calculated_price,+variants.inventory_quantity,*categories",
       },
       { next: { tags: ["products"] } }
     )
@@ -54,7 +56,7 @@ export const getProductsList = cache(async function ({
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
 }> {
   const limit = queryParams?.limit || 12
-  const validPageParam = Math.max(pageParam, 1);
+  const validPageParam = Math.max(pageParam, 1)
   const offset = (validPageParam - 1) * limit
   const region = await getRegion(countryCode)
 
@@ -70,7 +72,7 @@ export const getProductsList = cache(async function ({
         limit,
         offset,
         region_id: region.id,
-        fields: "*variants.calculated_price,*categories",
+        fields: "*variants.calculated_price,*categories,*product_sales",
         ...queryParams,
       },
       { next: { tags: ["products"] } }
@@ -96,7 +98,7 @@ export const getProductsList = cache(async function ({
 export const getProductsListWithSort = cache(async function ({
   page = 0,
   queryParams,
-  sortBy = "created_at",
+  sortBy = "popularity",
   countryCode,
 }: {
   page?: number
@@ -116,7 +118,7 @@ export const getProductsListWithSort = cache(async function ({
     pageParam: 0,
     queryParams: {
       ...queryParams,
-      limit: 100,
+      limit: 1000,
     },
     countryCode,
   })
