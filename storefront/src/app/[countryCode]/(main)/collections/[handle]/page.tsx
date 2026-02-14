@@ -6,16 +6,17 @@ import {
   getCollectionsList,
 } from "@lib/data/collections"
 import { listRegions } from "@lib/data/regions"
+import {
+  searchParamsToProductFilters,
+  type StoreSearchParams,
+} from "@lib/util/parse-filter-params"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 type Props = {
   params: { handle: string; countryCode: string }
-  searchParams: {
-    page?: string
-    sortBy?: SortOptions
-  }
+  searchParams: StoreSearchParams
 }
 
 export const PRODUCT_LIMIT = 12
@@ -68,6 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CollectionPage({ params, searchParams }: Props) {
   const { sortBy, page } = searchParams
+  const filters = searchParamsToProductFilters(searchParams)
 
   const collection = await getCollectionByHandle(params.handle).then(
     (collection: StoreCollection) => collection
@@ -83,6 +85,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
       page={page}
       sortBy={sortBy}
       countryCode={params.countryCode}
+      filters={filters}
     />
   )
 }
