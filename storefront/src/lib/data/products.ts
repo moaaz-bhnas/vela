@@ -4,6 +4,12 @@ import { cache } from "react"
 import { getRegion } from "./regions"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { sortProducts } from "@lib/util/sort-products"
+import {
+  filterProducts,
+  getOptionValueCounts,
+  type ProductFilters,
+} from "@lib/util/filter-products"
+import { extractAvailableOptions } from "@lib/util/extract-product-options"
 
 export const getProductsById = cache(async function ({
   ids,
@@ -92,28 +98,31 @@ export const getProductsList = cache(async function ({
 })
 
 /**
- * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.
- * It will then return the paginated products based on the page and limit parameters.
+ * Fetches products, then filters, sorts, and paginates. Returns filtered count and option metadata for the refinement UI.
  */
 export const getProductsListWithSort = cache(async function ({
   page = 0,
   queryParams,
   sortBy = "popularity",
+  filters,
   countryCode,
 }: {
   page?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   sortBy?: SortOptions
+  filters?: ProductFilters
   countryCode: string
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
+  availableOptions: Record<string, string[]>
+  optionValueCounts: Record<string, Record<string, number>>
   nextPage: number | null
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
 }> {
   const limit = queryParams?.limit || 12
 
   const {
-    response: { products, count },
+    response: { products: unfilteredProducts },
   } = await getProductsList({
     pageParam: 0,
     queryParams: {
@@ -123,19 +132,29 @@ export const getProductsListWithSort = cache(async function ({
     countryCode,
   })
 
-  const sortedProducts = sortProducts(products, sortBy)
+  const { products: filteredProducts, count } = filterProducts(
+    unfilteredProducts,
+    filters ?? {}
+  )
+  const sortedProducts = sortProducts(filteredProducts, sortBy)
 
   const pageParam = (page - 1) * limit
-
   const nextPage = count > pageParam + limit ? pageParam + limit : null
-
   const paginatedProducts = sortedProducts.slice(pageParam, pageParam + limit)
+
+  const availableOptions = extractAvailableOptions(unfilteredProducts)
+  const optionValueCounts = getOptionValueCounts(
+    unfilteredProducts,
+    filters ?? {}
+  )
 
   return {
     response: {
       products: paginatedProducts,
       count,
     },
+    availableOptions,
+    optionValueCounts,
     nextPage,
     queryParams,
   }
