@@ -29,15 +29,6 @@ const RefinementList = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams)
-      params.set(name, value)
-      return params.toString()
-    },
-    [searchParams]
-  )
-
   const setQueryParams = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams)
     params.set(name, value)
@@ -90,7 +81,8 @@ const RefinementList = ({
     const counts = optionValueCounts[title]
     const allValues = availableOptions[title] ?? []
     return allValues.some(
-      (v) => (counts?.[v] ?? 0) > 0 || (selectedOptions[title] ?? []).includes(v)
+      (v) =>
+        (counts?.[v] ?? 0) > 0 || (selectedOptions[title] ?? []).includes(v)
     )
   })
 
@@ -111,11 +103,11 @@ const RefinementList = ({
         data-testid={dataTestId}
       />
       <FilterPriceRange
-          priceMin={filters?.priceMin}
-          priceMax={filters?.priceMax}
-          onChange={setPriceRange}
-          data-testid="filter-price-range"
-        />
+        priceMin={filters?.priceMin}
+        priceMax={filters?.priceMax}
+        onChange={setPriceRange}
+        data-testid="filter-price-range"
+      />
       {optionTitles.map((title) => (
         <FilterOptionCheckboxes
           key={title}

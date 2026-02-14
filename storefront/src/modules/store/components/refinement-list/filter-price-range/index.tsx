@@ -1,6 +1,6 @@
 "use client"
 
-import { Text } from "@medusajs/ui"
+import { Input, Text } from "@medusajs/ui"
 
 type FilterPriceRangeProps = {
   priceMin?: number
@@ -31,25 +31,27 @@ const FilterPriceRange = ({
     <div className="flex gap-x-3 flex-col gap-y-3" data-testid={dataTestId}>
       <Text className="txt-compact-small-plus text-ui-fg-muted">Price</Text>
       <div className="flex gap-2 items-center">
-        <input
+        <Input
           type="number"
           min={0}
           step={1}
           placeholder="Min"
           value={priceMin ?? ""}
           onChange={handleMinChange}
-          className="w-full rounded-rounded border border-ui-border-base bg-ui-bg-subtle px-2 py-1.5 txt-compact-small text-ui-fg-base placeholder:text-ui-fg-muted focus:border-ui-border-interactive focus:outline-none"
+          size="small"
+          className="w-full"
           aria-label="Minimum price"
         />
         <span className="txt-compact-small text-ui-fg-muted">–</span>
-        <input
+        <Input
           type="number"
           min={0}
           step={1}
           placeholder="Max"
           value={priceMax ?? ""}
           onChange={handleMaxChange}
-          className="w-full rounded-rounded border border-ui-border-base bg-ui-bg-subtle px-2 py-1.5 txt-compact-small text-ui-fg-base placeholder:text-ui-fg-muted focus:border-ui-border-interactive focus:outline-none"
+          size="small"
+          className="w-full"
           aria-label="Maximum price"
         />
       </div>
