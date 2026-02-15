@@ -6,11 +6,13 @@ import { getProductsListWithSort } from "@lib/data/products"
 import type { ProductFilters } from "@lib/util/filter-products"
 import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
+import ListingHeader from "@modules/common/components/listing-header"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import TrackCategoryVisit from "@modules/categories/components/track-category-visit"
+import Container from "@modules/common/components/container-section"
 
 const PRODUCT_LIMIT = 12
 
@@ -42,6 +44,8 @@ export default async function CategoryTemplate({
   const {
     availableOptions,
     optionValueCounts,
+    priceBounds,
+    response: { count },
   } = await getProductsListWithSort({
     page: pageNumber,
     queryParams,
@@ -53,22 +57,28 @@ export default async function CategoryTemplate({
   return (
     <>
       <TrackCategoryVisit categoryId={category.id} />
-      <div
-        className="flex flex-col small:flex-row small:items-start py-6 content-container"
+      <Container
+        className="flex flex-col small:flex-row small:items-start py-6 gap-6"
         data-testid="category-container"
       >
-        <RefinementList
-          sortBy={sort}
-          availableOptions={availableOptions}
-          optionValueCounts={optionValueCounts}
-          filters={filters}
-          data-testid="sort-by-container"
-        />
+        <div className="hidden small:block small:w-80">
+          <RefinementList
+            sortBy={sort}
+            availableOptions={availableOptions}
+            optionValueCounts={optionValueCounts}
+            priceBounds={priceBounds}
+            filters={filters}
+            data-testid="sort-by-container"
+          />
+        </div>
         <div className="w-full">
-          <div className="flex flex-row mb-8 text-2xl-semi gap-4">
+          <div className="flex flex-row flex-wrap items-center mb-8 gap-4">
             {parents &&
               parents.map((parent) => (
-                <span key={parent.id} className="text-ui-fg-subtle">
+                <span
+                  key={parent.id}
+                  className="text-ui-fg-subtle text-2xl-semi"
+                >
                   <LocalizedClientLink
                     className="mr-4 hover:text-black"
                     href={`/categories/${parent.handle}`}
@@ -79,7 +89,21 @@ export default async function CategoryTemplate({
                   /
                 </span>
               ))}
-            <h1 data-testid="category-page-title">{category.name}</h1>
+            <ListingHeader
+              title={category.name}
+              count={count}
+              titleTestId="category-page-title"
+              filterDrawerContent={
+                <RefinementList
+                  sortBy={sort}
+                  availableOptions={availableOptions}
+                  optionValueCounts={optionValueCounts}
+                  priceBounds={priceBounds}
+                  filters={filters}
+                  data-testid="filter-sidebar-refinement-list"
+                />
+              }
+            />
           </div>
           {category.description && (
             <div className="mb-8 text-base-regular">
@@ -109,7 +133,7 @@ export default async function CategoryTemplate({
             />
           </Suspense>
         </div>
-      </div>
+      </Container>
     </>
   )
 }

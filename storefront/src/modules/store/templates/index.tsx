@@ -7,6 +7,8 @@ import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 import PaginatedProducts from "./paginated-products"
+import Container from "@modules/common/components/container-section"
+import ListingHeader from "@modules/common/components/listing-header"
 
 const PRODUCT_LIMIT = 12
 
@@ -27,6 +29,8 @@ const StoreTemplate = async ({
   const {
     availableOptions,
     optionValueCounts,
+    priceBounds,
+    response: { count },
   } = await getProductsListWithSort({
     page: pageNumber,
     queryParams: { limit: PRODUCT_LIMIT },
@@ -36,20 +40,35 @@ const StoreTemplate = async ({
   })
 
   return (
-    <div
-      className="flex flex-col small:flex-row small:items-start py-6 content-container"
+    <Container
+      className="flex flex-col small:flex-row small:items-start py-6 gap-6"
       data-testid="category-container"
     >
-      <RefinementList
-        sortBy={sort}
-        availableOptions={availableOptions}
-        optionValueCounts={optionValueCounts}
-        filters={filters}
-      />
-      <div className="w-full">
-        <div className="mb-8 text-2xl-semi">
-          <h1 data-testid="store-page-title">All products</h1>
-        </div>
+      <div className="hidden small:block small:w-80">
+        <RefinementList
+          sortBy={sort}
+          availableOptions={availableOptions}
+          optionValueCounts={optionValueCounts}
+          priceBounds={priceBounds}
+          filters={filters}
+        />
+      </div>
+      <div className="w-full space-y-8">
+        <ListingHeader
+          title="All products"
+          count={count}
+          titleTestId="store-page-title"
+          filterDrawerContent={
+            <RefinementList
+              sortBy={sort}
+              availableOptions={availableOptions}
+              optionValueCounts={optionValueCounts}
+              priceBounds={priceBounds}
+              filters={filters}
+              data-testid="filter-sidebar-refinement-list"
+            />
+          }
+        />
         <Suspense fallback={<SkeletonProductGrid />}>
           <PaginatedProducts
             sortBy={sort}
@@ -59,7 +78,7 @@ const StoreTemplate = async ({
           />
         </Suspense>
       </div>
-    </div>
+    </Container>
   )
 }
 
