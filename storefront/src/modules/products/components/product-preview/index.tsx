@@ -6,6 +6,7 @@ import { isProductNew } from "@lib/util/is-product-new"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ProductPreviewCarousel from "./product-preview-carousel"
 import PreviewPrice from "./price"
+import { getBestSellers } from "@lib/data/best-sellers"
 import { getProductsById } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 
@@ -18,10 +19,10 @@ export default async function ProductPreview({
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
 }) {
-  const [pricedProduct] = await getProductsById({
-    ids: [product.id!],
-    regionId: region.id,
-  })
+  const [bestSellers, [pricedProduct]] = await Promise.all([
+    getBestSellers({ regionId: region.id, limit: 10 }),
+    getProductsById({ ids: [product.id!], regionId: region.id }),
+  ])
 
   if (!pricedProduct) {
     return null
@@ -31,10 +32,35 @@ export default async function ProductPreview({
     product: pricedProduct,
   })
 
-  const isOnSale = cheapestPrice?.price_type === "sale"
-  const isNew = isProductNew(product)
-
-  const badgeLabel = isOnSale ? "SALE" : isNew ? "NEW" : null
+  const badgeConfig = [
+    {
+      priority: 1,
+      check() {
+        return bestSellers.some((p) => p.id === product.id)
+      },
+      label: "BEST SELLER",
+      color: "green" as const,
+    },
+    {
+      priority: 2,
+      check() {
+        return cheapestPrice?.price_type === "sale"
+      },
+      label: "SALE",
+      color: "red" as const,
+    },
+    {
+      priority: 3,
+      check() {
+        return isProductNew(product)
+      },
+      label: "NEW",
+      color: "blue" as const,
+    },
+  ]
+  const badge = badgeConfig
+    .filter((b) => b.check())
+    .sort((a, b) => a.priority - b.priority)[0]
 
   const optionsSummary = getProductOptionsSummary(product)
 
@@ -42,13 +68,13 @@ export default async function ProductPreview({
     <LocalizedClientLink href={`/products/${product.handle}`} className="group">
       <div data-testid="product-wrapper" className="space-y-3">
         <div className="relative">
-          {badgeLabel && (
+          {badge && (
             <Badge
               size="small"
-              color={badgeLabel === "SALE" ? "red" : "blue"}
+              color={badge.color}
               className="absolute left-2 top-2 z-10"
             >
-              {badgeLabel}
+              {badge.label}
             </Badge>
           )}
           <ProductPreviewCarousel
