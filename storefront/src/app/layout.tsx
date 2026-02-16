@@ -2,6 +2,7 @@ import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Bricolage_Grotesque } from "next/font/google"
 import "styles/globals.css"
+import NProgressProvider from "@modules/common/components/progress-bar-provider"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -16,7 +17,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" data-mode="light" className={bricolageGrotesque.variable}>
       <body>
-        <main className="relative">{props.children}</main>
+        <NProgressProvider>
+          <main className="relative">{props.children}</main>
+        </NProgressProvider>
       </body>
     </html>
   )

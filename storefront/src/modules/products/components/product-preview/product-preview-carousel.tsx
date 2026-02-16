@@ -141,6 +141,7 @@ export default function ProductPreviewCarousel({
               "opacity-100 md:opacity-0 md:group-hover:opacity-100"
             )}
             aria-label="Carousel navigation"
+            data-prevent-progress="true"
           >
             <IconButton
               type="button"
@@ -173,6 +174,7 @@ export default function ProductPreviewCarousel({
               "opacity-100 md:opacity-0 md:group-hover:opacity-100"
             )}
             aria-label="Carousel pagination"
+            data-prevent-progress="true"
           >
             {displayUrls.map((_, slideIndex) => (
               <button
