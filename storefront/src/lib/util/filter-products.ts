@@ -27,6 +27,42 @@ export function getProductMinPrice(
   return minPrice === Infinity ? undefined : minPrice
 }
 
+/**
+ * Returns the maximum variant price for a product.
+ */
+export function getProductMaxPrice(
+  product: HttpTypes.StoreProduct
+): number | undefined {
+  if (!product.variants?.length) return undefined
+
+  const prices = product.variants.map(
+    (variant) => variant?.calculated_price?.calculated_amount ?? -Infinity
+  )
+  const maxPrice = Math.max(...prices)
+
+  return maxPrice === -Infinity ? undefined : maxPrice
+}
+
+/**
+ * Returns the min and max price across all products (for price range filter UI).
+ */
+export function getPriceBounds(
+  products: HttpTypes.StoreProduct[]
+): { min: number; max: number } | undefined {
+  let min = Infinity
+  let max = -Infinity
+
+  for (const product of products) {
+    const pMin = getProductMinPrice(product)
+    const pMax = getProductMaxPrice(product)
+    if (pMin != null && pMin < min) min = pMin
+    if (pMax != null && pMax > max) max = pMax
+  }
+
+  if (min === Infinity || max === -Infinity || min > max) return undefined
+  return { min, max }
+}
+
 function productMatchesOptions(
   product: HttpTypes.StoreProduct,
   optionsFilter: Record<string, string[]>

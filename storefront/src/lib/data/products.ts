@@ -7,6 +7,7 @@ import { sortProducts } from "@lib/util/sort-products"
 import {
   filterProducts,
   getOptionValueCounts,
+  getPriceBounds,
   type ProductFilters,
 } from "@lib/util/filter-products"
 import { extractAvailableOptions } from "@lib/util/extract-product-options"
@@ -116,6 +117,7 @@ export const getProductsListWithSort = cache(async function ({
   response: { products: HttpTypes.StoreProduct[]; count: number }
   availableOptions: Record<string, string[]>
   optionValueCounts: Record<string, Record<string, number>>
+  priceBounds: { min: number; max: number } | undefined
   nextPage: number | null
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
 }> {
@@ -147,6 +149,7 @@ export const getProductsListWithSort = cache(async function ({
     unfilteredProducts,
     filters ?? {}
   )
+  const priceBounds = getPriceBounds(unfilteredProducts)
 
   return {
     response: {
@@ -155,6 +158,7 @@ export const getProductsListWithSort = cache(async function ({
     },
     availableOptions,
     optionValueCounts,
+    priceBounds,
     nextPage,
     queryParams,
   }

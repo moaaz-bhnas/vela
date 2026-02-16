@@ -7,12 +7,14 @@ import type { ProductFilters } from "@lib/util/filter-products"
 import FilterOptionCheckboxes from "./filter-option-checkboxes"
 import FilterPriceRange from "./filter-price-range"
 import SortProducts, { SortOptions } from "./sort-products"
+import Divider from "@modules/common/components/divider"
 
 type RefinementListProps = {
   sortBy: SortOptions
   search?: boolean
   availableOptions?: Record<string, string[]>
   optionValueCounts?: Record<string, Record<string, number>>
+  priceBounds?: { min: number; max: number }
   filters?: ProductFilters
   "data-testid"?: string
 }
@@ -21,6 +23,7 @@ const RefinementList = ({
   sortBy,
   availableOptions = {},
   optionValueCounts = {},
+  priceBounds,
   filters,
   "data-testid": dataTestId,
 }: RefinementListProps) => {
@@ -96,15 +99,19 @@ const RefinementList = ({
   }
 
   return (
-    <div className="flex small:flex-col gap-12 py-4 mb-8 small:px-0 pl-6 small:min-w-[250px] small:ml-[1.675rem]">
+    <div className="flex flex-col gap-8">
       <SortProducts
         sortBy={sortBy}
         setQueryParams={setQueryParams}
         data-testid={dataTestId}
       />
+
+      <Divider className="m-0" />
+
       <FilterPriceRange
         priceMin={filters?.priceMin}
         priceMax={filters?.priceMax}
+        priceBounds={priceBounds}
         onChange={setPriceRange}
         data-testid="filter-price-range"
       />
