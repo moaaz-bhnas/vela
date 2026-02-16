@@ -58,7 +58,7 @@ export default async function CategoryTemplate({
     <>
       <TrackCategoryVisit categoryId={category.id} />
       <Container
-        className="flex flex-col small:flex-row small:items-start py-6 gap-6"
+        className="flex flex-col small:flex-row small:items-start py-0 small:py-6 gap-10"
         data-testid="category-container"
       >
         <div className="hidden small:block small:w-80">
@@ -72,9 +72,9 @@ export default async function CategoryTemplate({
           />
         </div>
         <div className="w-full">
-          <div className="flex flex-row flex-wrap items-center mb-8 gap-4">
-            {parents &&
-              parents.map((parent) => (
+          {parents && parents.length > 0 && (
+            <div className="flex flex-row flex-wrap items-center mb-4 gap-4">
+              {parents.map((parent) => (
                 <span
                   key={parent.id}
                   className="text-ui-fg-subtle text-2xl-semi"
@@ -89,22 +89,24 @@ export default async function CategoryTemplate({
                   /
                 </span>
               ))}
-            <ListingHeader
-              title={category.name}
-              count={count}
-              titleTestId="category-page-title"
-              filterDrawerContent={
-                <RefinementList
-                  sortBy={sort}
-                  availableOptions={availableOptions}
-                  optionValueCounts={optionValueCounts}
-                  priceBounds={priceBounds}
-                  filters={filters}
-                  data-testid="filter-sidebar-refinement-list"
-                />
-              }
-            />
-          </div>
+            </div>
+          )}
+          <ListingHeader
+            title={category.name}
+            count={count}
+            titleTestId="category-page-title"
+            className="mb-8"
+            filterDrawerContent={
+              <RefinementList
+                sortBy={sort}
+                availableOptions={availableOptions}
+                optionValueCounts={optionValueCounts}
+                priceBounds={priceBounds}
+                filters={filters}
+                data-testid="filter-sidebar-refinement-list"
+              />
+            }
+          />
           {category.description && (
             <div className="mb-8 text-base-regular">
               <p>{category.description}</p>

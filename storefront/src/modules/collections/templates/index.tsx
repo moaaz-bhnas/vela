@@ -50,7 +50,7 @@ export default async function CollectionTemplate({
   return (
     <>
       <TrackCollectionVisit collectionId={collection.id} />
-      <Container className="flex flex-col small:flex-row small:items-start py-6 gap-6">
+      <Container className="flex flex-col small:flex-row small:items-start py-0 small:py-6 gap-10">
         <div className="hidden small:block small:w-80">
           <RefinementList
             sortBy={sort}
