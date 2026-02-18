@@ -12,11 +12,9 @@ import { HttpTypes } from "@medusajs/types"
 
 export default async function ProductPreview({
   product,
-  isFeatured,
   region,
 }: {
   product: HttpTypes.StoreProduct
-  isFeatured?: boolean
   region: HttpTypes.StoreRegion
 }) {
   const [bestSellers, [pricedProduct]] = await Promise.all([
@@ -81,7 +79,6 @@ export default async function ProductPreview({
             thumbnail={product.thumbnail}
             images={product.images}
             size="full"
-            isFeatured={isFeatured}
           />
         </div>
         <div className="txt-compact-medium justify-between flex flex-col gap-y-0.5">

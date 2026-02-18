@@ -44,7 +44,9 @@ export default async function PaginatedProducts({
   if (productsIds) queryParams["id"] = productsIds
   if (sortBy === "created_at") queryParams["order"] = "created_at"
 
-  const { response: { products, count } } = await getProductsListWithSort({
+  const {
+    response: { products, count },
+  } = await getProductsListWithSort({
     page,
     queryParams,
     sortBy: sortBy ?? "popularity",
@@ -57,7 +59,7 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+        className="grid grid-cols-2 w-full small:grid-cols-3 gap-x-6 gap-y-8"
         data-testid="products-list"
       >
         {products.map((p) => {
