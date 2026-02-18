@@ -13,7 +13,6 @@ import { useMediaQuery } from "@uidotdev/usehooks"
 type ProductPreviewCarouselProps = {
   thumbnail?: string | null
   images?: { url?: string }[] | null
-  isFeatured?: boolean
   size?: "small" | "medium" | "large" | "full" | "square"
 }
 
@@ -35,7 +34,6 @@ function buildSlideUrls(
 export default function ProductPreviewCarousel({
   thumbnail,
   images,
-  isFeatured,
   size = "full",
 }: ProductPreviewCarouselProps) {
   const MAX_SLIDES = 6
@@ -91,8 +89,7 @@ export default function ProductPreviewCarousel({
       className={clx(
         "relative w-full overflow-hidden p-4 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large group-hover:shadow-elevation-card-hover transition-shadow ease-in-out duration-150",
         {
-          "aspect-[11/14]": isFeatured,
-          "aspect-[9/16]": !isFeatured && size !== "square",
+          "aspect-[11/14]": size !== "square",
           "aspect-[1/1]": size === "square",
           "w-[180px]": size === "small",
           "w-[290px]": size === "medium",

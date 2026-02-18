@@ -38,7 +38,7 @@ export default async function RecentlyVisited({
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">
         {products.map((product) => (
           <li key={product.id}>
-            <ProductPreview product={product} region={region} isFeatured />
+            <ProductPreview product={product} region={region} />
           </li>
         ))}
       </ul>
