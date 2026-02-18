@@ -1,3 +1,4 @@
+import Container from "@modules/common/components/container-section"
 import SkeletonOrderConfirmedHeader from "@modules/skeletons/components/skeleton-order-confirmed-header"
 import SkeletonOrderInformation from "@modules/skeletons/components/skeleton-order-information"
 import SkeletonOrderItems from "@modules/skeletons/components/skeleton-order-items"
@@ -5,7 +6,7 @@ import SkeletonOrderItems from "@modules/skeletons/components/skeleton-order-ite
 const SkeletonOrderConfirmed = () => {
   return (
     <div className="bg-gray-50 py-6 min-h-[calc(100vh-64px)] animate-pulse">
-      <div className="content-container flex justify-center">
+      <Container noPadding className="flex justify-center">
         <div className="max-w-4xl h-full bg-white w-full p-10">
           <SkeletonOrderConfirmedHeader />
 
@@ -13,7 +14,7 @@ const SkeletonOrderConfirmed = () => {
 
           <SkeletonOrderInformation />
         </div>
-      </div>
+      </Container>
     </div>
   )
 }

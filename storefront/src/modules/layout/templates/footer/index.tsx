@@ -2,6 +2,7 @@ import { getCategoriesList } from "@lib/data/categories"
 import { getCollectionsList } from "@lib/data/collections"
 import { Text, clx } from "@medusajs/ui"
 
+import Container from "@modules/common/components/container-section"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
 
@@ -11,7 +12,7 @@ export default async function Footer() {
 
   return (
     <footer className="border-t border-ui-border-base w-full">
-      <div className="content-container flex flex-col w-full">
+      <Container noPadding className="flex flex-col w-full">
         <div className="flex flex-col gap-y-6 sm:flex-row items-start justify-between py-40">
           <div>
             <LocalizedClientLink
@@ -149,7 +150,7 @@ export default async function Footer() {
           </Text>
           <MedusaCTA />
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

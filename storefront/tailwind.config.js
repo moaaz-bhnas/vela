@@ -12,6 +12,17 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        // Section spacing (between sections / page-level vertical padding)
+        // Values from CSS variables in globals.css :root
+        "section-y": "var(--spacing-section-y)",
+        "section-y-lg": "var(--spacing-section-y-lg)",
+        // Within-section spacing (e.g. between heading and content)
+        "section-inner": "var(--spacing-section-inner)",
+        "section-inner-lg": "var(--spacing-section-inner-lg)",
+        // Tight block (e.g. title + subtitle)
+        "block-gap": "var(--spacing-block-gap)",
+      },
       transitionProperty: {
         width: "width margin",
         height: "height",

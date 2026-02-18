@@ -41,8 +41,8 @@ const StoreTemplate = async ({
 
   return (
     <Container
-      className="flex flex-col small:flex-row small:items-start py-0 small:py-6 gap-10"
-      data-testid="category-container"
+      className="flex flex-col small:flex-row small:items-start gap-section-inner-lg pt-0 small:pt-section-y-lg"
+      data-testid="store-container"
     >
       <div className="hidden small:block small:w-80">
         <RefinementList
@@ -53,7 +53,7 @@ const StoreTemplate = async ({
           filters={filters}
         />
       </div>
-      <div className="w-full space-y-2 small:space-y-6">
+      <div className="w-full flex flex-col gap-section-inner sm:gap-section-inner-lg">
         <ListingHeader
           title="All products"
           count={count}
