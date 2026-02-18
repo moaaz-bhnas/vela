@@ -1,6 +1,7 @@
 "use client"
 
 import { HttpTypes } from "@medusajs/types"
+import Container from "@modules/common/components/container-section"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NavSearchInput from "@modules/layout/components/nav-search-input"
 import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
@@ -39,7 +40,8 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
           }}
           className="border-b border-ui-border-base bg-white h-12"
         >
-          <nav className="content-container flex items-center justify-center h-full overflow-x-auto">
+          <nav className="flex items-center justify-center h-full overflow-x-auto">
+            <Container noPadding className="flex items-center justify-center h-full overflow-x-auto">
             <div className="flex items-center gap-x-6 h-full w-full">
               {/* Desktop: Categories */}
               <div className="hidden lg:flex items-center gap-x-6 h-full text-ui-fg-subtle">
@@ -67,6 +69,7 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
                 <NavSearchInput className="w-full" />
               </div>
             </div>
+            </Container>
           </nav>
         </motion.div>
       ) : null}

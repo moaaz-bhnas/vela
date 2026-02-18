@@ -3,6 +3,15 @@
 @import "tailwindcss/utilities";
 
 @layer base {
+  :root {
+    /* Spacing: single source of truth for section and block spacing */
+    --spacing-section-y: 2.5rem;
+    --spacing-section-y-lg: 4rem;
+    --spacing-section-inner: 1.5rem;
+    --spacing-section-inner-lg: 2.5rem;
+    --spacing-block-gap: 0.5rem;
+  }
+
   * {
     @apply box-border
   }
@@ -59,12 +68,14 @@
 }
 
 @layer components {
-  .content-container {
+  /* Base container: width + horizontal padding only */
+  .container {
     @apply max-w-[1440px] w-full mx-auto px-6;
   }
 
-  .container {
-    @apply max-w-[1440px] w-full mx-auto px-6 py-10 sm:py-16;
+  /* Section variant: adds consistent vertical padding (use with .container) */
+  .container--section {
+    @apply py-section-y sm:py-section-y-lg;
   }
 
   .contrast-btn {

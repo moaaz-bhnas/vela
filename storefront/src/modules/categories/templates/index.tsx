@@ -58,7 +58,7 @@ export default async function CategoryTemplate({
     <>
       <TrackCategoryVisit categoryId={category.id} />
       <Container
-        className="flex flex-col small:flex-row small:items-start py-0 small:py-6 gap-10"
+        className="flex flex-col small:flex-row small:items-start gap-section-inner-lg pt-0 small:pt-section-y-lg"
         data-testid="category-container"
       >
         <div className="hidden small:block small:w-80">
@@ -71,9 +71,9 @@ export default async function CategoryTemplate({
             data-testid="sort-by-container"
           />
         </div>
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-section-inner sm:gap-section-inner-lg">
           {parents && parents.length > 0 && (
-            <div className="flex flex-row flex-wrap items-center mb-4 gap-4">
+            <div className="flex flex-row flex-wrap items-center gap-4">
               {parents.map((parent) => (
                 <span
                   key={parent.id}
@@ -95,7 +95,6 @@ export default async function CategoryTemplate({
             title={category.name}
             count={count}
             titleTestId="category-page-title"
-            className="mb-8"
             filterDrawerContent={
               <RefinementList
                 sortBy={sort}
@@ -108,13 +107,13 @@ export default async function CategoryTemplate({
             }
           />
           {category.description && (
-            <div className="mb-8 text-base-regular">
+            <div className="text-base-regular">
               <p>{category.description}</p>
             </div>
           )}
           {category.category_children && (
-            <div className="mb-8 text-base-large">
-              <ul className="grid grid-cols-1 gap-2">
+            <div className="text-base-large">
+              <ul className="grid grid-cols-1 gap-block-gap">
                 {category.category_children?.map((c) => (
                   <li key={c.id}>
                     <InteractiveLink href={`/categories/${c.handle}`}>

@@ -25,8 +25,8 @@ export default async function BestSellers({ region }: BestSellersProps) {
   })
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-10">
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
+      <div className="flex flex-col gap-block-gap">
         <Heading
           level="h2"
           className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
@@ -37,7 +37,7 @@ export default async function BestSellers({ region }: BestSellersProps) {
           Discover our most popular products
         </Text>
       </div>
-      <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">
         {products.map((product) => (
           <li key={product.id}>
             <ProductPreview product={product} region={region} isFeatured />

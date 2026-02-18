@@ -12,8 +12,8 @@ export default async function ShopByCategorySection() {
   }
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-10">
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
+      <div className="flex flex-col gap-block-gap">
         <Heading
           level="h2"
           className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"

@@ -6,6 +6,7 @@ import { Phone } from "@medusajs/icons"
 import { StoreProductCategory, StoreRegion } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
 import { AnimatePresence, motion } from "motion/react"
+import Container from "@modules/common/components/container-section"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import SideMenu from "@modules/layout/components/side-menu"
 import AccountIconButton from "@modules/layout/components/account-icon-button"
@@ -170,9 +171,11 @@ const NavFirstBar = ({
 
   return (
     <header className="relative mx-auto border-b duration-200 bg-ui-bg-base border-ui-border-base h-16 z-10">
-      <nav className="content-container txt-xsmall-plus text-ui-fg-subtle text-small-regular h-full">
-        <div className="hidden lg:block h-full">{renderDesktop()}</div>
-        <div className="lg:hidden h-full">{renderMobile()}</div>
+      <nav className="txt-xsmall-plus text-ui-fg-subtle text-small-regular h-full">
+        <Container noPadding className="h-full">
+          <div className="hidden lg:block h-full">{renderDesktop()}</div>
+          <div className="lg:hidden h-full">{renderMobile()}</div>
+        </Container>
       </nav>
     </header>
   )

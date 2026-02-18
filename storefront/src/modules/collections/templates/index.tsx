@@ -50,7 +50,10 @@ export default async function CollectionTemplate({
   return (
     <>
       <TrackCollectionVisit collectionId={collection.id} />
-      <Container className="flex flex-col small:flex-row small:items-start py-0 small:py-6 gap-10">
+      <Container
+        className="flex flex-col small:flex-row small:items-start gap-section-inner-lg pt-0 small:pt-section-y-lg"
+        data-testid="collection-container"
+      >
         <div className="hidden small:block small:w-80">
           <RefinementList
             sortBy={sort}
@@ -60,11 +63,10 @@ export default async function CollectionTemplate({
             filters={filters}
           />
         </div>
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-section-inner sm:gap-section-inner-lg">
           <ListingHeader
             title={collection.title}
             count={count}
-            className="mb-8"
             filterDrawerContent={
               <RefinementList
                 sortBy={sort}
