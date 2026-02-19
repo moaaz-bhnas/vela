@@ -32,11 +32,14 @@ const RefinementList = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const setQueryParams = (name: string, value: string) => {
-    const params = new URLSearchParams(searchParams)
-    params.set(name, value)
-    router.push(`${pathname}?${params.toString()}`)
-  }
+  const setQueryParams = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams)
+      params.set(name, value)
+      router.push(`${pathname}?${params.toString()}`)
+    },
+    [pathname, router, searchParams]
+  )
 
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {

@@ -1,5 +1,7 @@
 "use client"
 
+import { useTransition } from "react"
+
 import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 
 export type SortOptions =
@@ -38,9 +40,15 @@ const SortProducts = ({
   sortBy,
   setQueryParams,
 }: SortProductsProps) => {
+  const [isPending, startTransition] = useTransition()
+
   const handleChange = (value: string) => {
-    setQueryParams("sortBy", value as SortOptions)
+    startTransition(() => {
+      setQueryParams("sortBy", value as SortOptions)
+    })
   }
+
+  console.log("[sort-products] isPending", isPending)
 
   return (
     <FilterRadioGroup
@@ -48,6 +56,7 @@ const SortProducts = ({
       items={sortOptions}
       value={sortBy}
       handleChange={handleChange}
+      isLoading={isPending}
       data-testid={dataTestId}
     />
   )
