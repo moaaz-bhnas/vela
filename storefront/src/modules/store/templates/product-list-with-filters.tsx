@@ -199,8 +199,7 @@ export default function ProductListWithFilters({
           currencyCode={currencyCode}
           onClearPrice={() => onPriceRangeChange(undefined, undefined)}
           onClearOption={(optionTitle, value) => {
-            const current =
-              parseOptionsOptions(optionsStr)[optionTitle] ?? []
+            const current = parseOptionsOptions(optionsStr)[optionTitle] ?? []
             onOptionFilterChange(
               optionTitle,
               current.filter((v) => v !== value)
@@ -208,7 +207,7 @@ export default function ProductListWithFilters({
           }}
         />
         <ul
-          className="grid grid-cols-2 w-full small:grid-cols-3 gap-x-6 gap-y-8"
+          className="grid grid-cols-2 w-full small:grid-cols-3 gap-section-inner"
           data-testid="products-list"
         >
           {paginatedProducts.map((p: HttpTypes.StoreProduct) => (
