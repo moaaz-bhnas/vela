@@ -24,7 +24,7 @@ export default async function ShopByCategorySection() {
           Browse our curated collection of categories
         </Text>
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-section-inner md:grid-cols-3 lg:grid-cols-4">
         {topLevelCategories.slice(0, 8).map((category) => {
           const href = `/categories/${category.handle}`
           const image = (
