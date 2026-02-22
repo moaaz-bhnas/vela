@@ -77,6 +77,7 @@ export default async function CategoryTemplate({
         headerExtra={headerExtra}
         contentAfterHeader={contentAfterHeader}
         currencyCode={region?.currency_code}
+        showCategoryFilter={false}
       />
     </>
   )

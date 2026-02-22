@@ -8,7 +8,9 @@ import {
   filterProducts,
   getOptionValueCounts,
   getPriceBounds,
+  getAvailableCategories,
   type ProductFilters,
+  type CategoryInfo,
 } from "@lib/util/filter-products"
 import { extractAvailableOptions } from "@lib/util/extract-product-options"
 
@@ -103,6 +105,7 @@ export type StoreProductsForClient = {
   availableOptions: Record<string, string[]>
   optionValueCounts: Record<string, Record<string, number>>
   priceBounds: { min: number; max: number } | undefined
+  availableCategories: CategoryInfo[]
 }
 
 export type GetProductsForClientOptions = {
@@ -139,14 +142,31 @@ export const getProductsForClient = cache(async function (
   const availableOptions = extractAvailableOptions(products)
   const optionValueCounts = getOptionValueCounts(products, {})
   const priceBounds = getPriceBounds(products)
+  const availableCategories = getAvailableCategories(products)
 
   return {
     products,
     availableOptions,
     optionValueCounts,
     priceBounds,
+    availableCategories,
   }
 })
+
+/**
+ * Builds StoreProductsForClient from a product array (e.g. for best-sellers or search results).
+ */
+export function buildStoreProductsForClient(
+  products: HttpTypes.StoreProduct[]
+): StoreProductsForClient {
+  return {
+    products,
+    availableOptions: extractAvailableOptions(products),
+    optionValueCounts: getOptionValueCounts(products, {}),
+    priceBounds: getPriceBounds(products),
+    availableCategories: getAvailableCategories(products),
+  }
+}
 
 /**
  * Fetches products, then filters, sorts, and paginates. Returns filtered count and option metadata for the refinement UI.

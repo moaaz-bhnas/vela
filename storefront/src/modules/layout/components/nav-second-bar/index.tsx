@@ -41,34 +41,47 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
           className="border-b border-ui-border-base bg-white h-12"
         >
           <nav className="flex items-center justify-center h-full overflow-x-auto">
-            <Container noPadding className="flex items-center justify-center h-full overflow-x-auto">
-            <div className="flex items-center gap-x-6 h-full w-full">
-              {/* Desktop: Categories */}
-              <div className="hidden lg:flex items-center gap-x-6 h-full text-ui-fg-subtle">
-                {parentCategories.map((category) => (
+            <Container
+              noPadding
+              className="flex items-center justify-center h-full overflow-x-auto"
+            >
+              <div className="flex items-center h-full w-full">
+                {/* Desktop: Categories */}
+                <div className="hidden lg:flex items-center gap-x-2 h-full text-ui-fg-subtle">
+                  {parentCategories.map((category) => (
+                    <LocalizedClientLink
+                      key={category.id}
+                      href={`/categories/${category.handle}`}
+                      className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap p-2"
+                      data-testid="nav-category-link"
+                    >
+                      {category.name}
+                    </LocalizedClientLink>
+                  ))}
+                  <span className="txt-compact-small text-ui-fg-subtle whitespace-nowrap p-2">
+                    |
+                  </span>
                   <LocalizedClientLink
-                    key={category.id}
-                    href={`/categories/${category.handle}`}
-                    className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap"
-                    data-testid="nav-category-link"
+                    href="/store"
+                    className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap p-2"
+                    data-testid="nav-store-link"
                   >
-                    {category.name}
+                    Shop All
                   </LocalizedClientLink>
-                ))}
-                <LocalizedClientLink
-                  href="/bestsellers"
-                  className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap"
-                  data-testid="nav-bestsellers-link"
-                >
-                  Bestsellers
-                </LocalizedClientLink>
-              </div>
+                  <LocalizedClientLink
+                    href="/best-sellers"
+                    className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap p-2"
+                    data-testid="nav-bestsellers-link"
+                  >
+                    Bestsellers
+                  </LocalizedClientLink>
+                </div>
 
-              {/* Mobile: Search only */}
-              <div className="flex lg:hidden items-center h-full w-full">
-                <NavSearchInput className="w-full" />
+                {/* Mobile: Search only */}
+                <div className="flex lg:hidden items-center h-full w-full">
+                  <NavSearchInput className="w-full" />
+                </div>
               </div>
-            </div>
             </Container>
           </nav>
         </motion.div>
