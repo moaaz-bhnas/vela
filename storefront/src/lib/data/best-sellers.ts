@@ -1,7 +1,14 @@
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { cache } from "react"
-import { getProductsById } from "./products"
+import { getProductsById, type StoreProductsForClient } from "./products"
+import { getRegion } from "./regions"
+import {
+  getOptionValueCounts,
+  getPriceBounds,
+  getAvailableCategories,
+} from "@lib/util/filter-products"
+import { extractAvailableOptions } from "@lib/util/extract-product-options"
 import _ from "lodash"
 
 export type ProductSales = {
@@ -73,5 +80,27 @@ export const getBestSellers = cache(async function ({
   } catch (error) {
     console.error("Error fetching best sellers:", error)
     return []
+  }
+})
+
+/**
+ * Fetches best-selling products and returns them in the same shape as getProductsForClient,
+ * for use with ProductListWithFilters (client-side filtering, sorting, pagination).
+ */
+export const getBestSellersForClient = cache(async function (
+  countryCode: string
+): Promise<StoreProductsForClient> {
+  const region = await getRegion(countryCode)
+  const products =
+    region?.id != null
+      ? await getBestSellers({ regionId: region.id })
+      : []
+
+  return {
+    products,
+    availableOptions: extractAvailableOptions(products),
+    optionValueCounts: getOptionValueCounts(products, {}),
+    priceBounds: getPriceBounds(products),
+    availableCategories: getAvailableCategories(products),
   }
 })

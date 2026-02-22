@@ -4,6 +4,8 @@ export type ProductFilters = {
   priceMin?: number
   priceMax?: number
   options?: Record<string, string[]>
+  /** Category IDs to filter by (product must be in at least one). */
+  categoryIds?: string[]
 }
 
 type VariantOption = {
@@ -99,6 +101,16 @@ function buildVariantOptionsMap(options: unknown[]): Map<string, string> {
   return optionMap
 }
 
+function productMatchesCategories(
+  product: HttpTypes.StoreProduct,
+  categoryIds: string[]
+): boolean {
+  if (categoryIds.length === 0) return true
+  const productCategoryIds =
+    product.categories?.map((c) => c.id).filter(Boolean) ?? []
+  return productCategoryIds.some((id) => categoryIds.includes(id))
+}
+
 function productMatchesPriceRange(
   product: HttpTypes.StoreProduct,
   filters: ProductFilters
@@ -132,8 +144,13 @@ export function filterProducts<T extends HttpTypes.StoreProduct>(
 ): { products: T[]; count: number } {
   const hasOptionFilters =
     filters.options && Object.keys(filters.options).length > 0
+  const hasCategoryFilter =
+    filters.categoryIds != null && filters.categoryIds.length > 0
   const hasAnyFilters =
-    filters.priceMin != null || filters.priceMax != null || hasOptionFilters
+    filters.priceMin != null ||
+    filters.priceMax != null ||
+    hasOptionFilters ||
+    hasCategoryFilter
 
   if (!hasAnyFilters) {
     return { products: [...products], count: products.length }
@@ -142,6 +159,11 @@ export function filterProducts<T extends HttpTypes.StoreProduct>(
   const filtered = products.filter((product) => {
     if (!productMatchesPriceRange(product, filters)) return false
     if (hasOptionFilters && !productMatchesOptions(product, filters.options!))
+      return false
+    if (
+      hasCategoryFilter &&
+      !productMatchesCategories(product, filters.categoryIds!)
+    )
       return false
     return true
   })
@@ -186,5 +208,45 @@ export function getOptionValueCounts(
     }
   }
 
+  return counts
+}
+
+export type CategoryInfo = { id: string; name: string }
+
+/**
+ * Returns unique categories from products (for refinement list).
+ */
+export function getAvailableCategories(
+  products: HttpTypes.StoreProduct[]
+): CategoryInfo[] {
+  const byId = new Map<string, string>()
+  for (const product of products) {
+    for (const cat of product.categories ?? []) {
+      if (cat?.id && cat?.name != null && !byId.has(cat.id)) {
+        byId.set(cat.id, cat.name)
+      }
+    }
+  }
+  return Array.from(byId.entries(), ([id, name]) => ({ id, name })).sort(
+    (a, b) => a.name.localeCompare(b.name)
+  )
+}
+
+/**
+ * Returns product count per category for products matching the current filters.
+ */
+export function getCategoryCounts(
+  products: HttpTypes.StoreProduct[],
+  filters: ProductFilters
+): Record<string, number> {
+  const { products: filtered } = filterProducts(products, filters)
+  const counts: Record<string, number> = {}
+  for (const product of filtered) {
+    for (const cat of product.categories ?? []) {
+      if (cat?.id) {
+        counts[cat.id] = (counts[cat.id] ?? 0) + 1
+      }
+    }
+  }
   return counts
 }

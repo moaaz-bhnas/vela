@@ -11,7 +11,11 @@ import { HttpTypes } from "@medusajs/types"
 
 import type { StoreProductsForClient } from "@lib/data/products"
 import type { ProductFilters } from "@lib/util/filter-products"
-import { filterProducts, getOptionValueCounts } from "@lib/util/filter-products"
+import {
+  filterProducts,
+  getOptionValueCounts,
+  getCategoryCounts,
+} from "@lib/util/filter-products"
 import { sortProducts } from "@lib/util/sort-products"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import ActiveFiltersChips from "@modules/store/components/active-filters-chips"
@@ -36,6 +40,7 @@ export const productListParsers = {
   priceMin: parseAsInteger,
   priceMax: parseAsInteger,
   options: parseAsString,
+  categories: parseAsString,
 }
 
 export function parseOptionsOptions(
@@ -70,6 +75,10 @@ export type ProductListWithFiltersProps = {
   contentAfterHeader?: ReactNode
   /** Currency code for formatting price filter chips (e.g. from region). Defaults to "usd". */
   currencyCode?: string
+  /** When false, hides the category filter and category chips (e.g. on category pages). Defaults to true. */
+  showCategoryFilter?: boolean
+  /** When false, hides the sort dropdown and forces popularity order (e.g. on best sellers). Defaults to true. */
+  showSortOptions?: boolean
 }
 
 export default function ProductListWithFilters({
@@ -80,10 +89,21 @@ export default function ProductListWithFilters({
   headerExtra,
   contentAfterHeader,
   currencyCode = "usd",
+  showCategoryFilter = true,
+  showSortOptions = true,
 }: ProductListWithFiltersProps) {
   const [queryState, setQueryState] = useQueryStates(productListParsers)
 
-  const { sortBy, page, priceMin, priceMax, options: optionsStr } = queryState
+  const { sortBy, page, priceMin, priceMax, options: optionsStr, categories: categoriesStr } =
+    queryState
+
+  const categoryIds = useMemo(() => {
+    if (!categoriesStr?.trim()) return undefined
+    return categoriesStr
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+  }, [categoriesStr])
 
   const filters: ProductFilters = useMemo(
     () => ({
@@ -93,8 +113,10 @@ export default function ProductListWithFilters({
         const opts = parseOptionsOptions(optionsStr)
         return Object.keys(opts).length > 0 ? opts : undefined
       })(),
+      categoryIds:
+        categoryIds?.length ? categoryIds : undefined,
     }),
-    [priceMin, priceMax, optionsStr]
+    [priceMin, priceMax, optionsStr, categoryIds]
   )
 
   const { products: filteredProducts, count: filteredCount } = useMemo(
@@ -102,9 +124,10 @@ export default function ProductListWithFilters({
     [initialData.products, filters]
   )
 
+  const effectiveSortBy = showSortOptions ? sortBy : "popularity"
   const sortedProducts = useMemo(
-    () => sortProducts([...filteredProducts], sortBy as SortOptions),
-    [filteredProducts, sortBy]
+    () => sortProducts([...filteredProducts], effectiveSortBy as SortOptions),
+    [filteredProducts, effectiveSortBy]
   )
 
   const pageStart = (page - 1) * PRODUCT_LIMIT
@@ -116,6 +139,10 @@ export default function ProductListWithFilters({
   const totalPages = Math.max(1, Math.ceil(filteredCount / PRODUCT_LIMIT))
   const optionValueCounts = useMemo(
     () => getOptionValueCounts(initialData.products, filters),
+    [initialData.products, filters]
+  )
+  const categoryCounts = useMemo(
+    () => getCategoryCounts(initialData.products, filters),
     [initialData.products, filters]
   )
 
@@ -153,6 +180,16 @@ export default function ProductListWithFilters({
     [optionsStr, setQueryState]
   )
 
+  const onCategoryFilterChange = useCallback(
+    (ids: string[]) => {
+      setQueryState({
+        categories: ids.length > 0 ? ids.join(",") : null,
+        page: 1,
+      })
+    },
+    [setQueryState]
+  )
+
   const onPageChange = useCallback(
     (newPage: number) => {
       setQueryState({ page: newPage })
@@ -161,15 +198,21 @@ export default function ProductListWithFilters({
   )
 
   const refinementListProps = {
-    sortBy: sortBy as SortOptions,
+    sortBy: effectiveSortBy as SortOptions,
+    showSortOptions,
     availableOptions: initialData.availableOptions,
     optionValueCounts,
     priceBounds: initialData.priceBounds,
+    availableCategories: showCategoryFilter
+      ? initialData.availableCategories
+      : [],
+    categoryCounts,
     filters,
     currencyCode,
     onSortChange,
     onPriceRangeChange,
     onOptionFilterChange,
+    onCategoryFilterChange,
   }
 
   return (
@@ -196,7 +239,9 @@ export default function ProductListWithFilters({
         {contentAfterHeader}
         <ActiveFiltersChips
           filters={filters}
+          availableCategories={initialData.availableCategories}
           currencyCode={currencyCode}
+          showCategoryChips={showCategoryFilter}
           onClearPrice={() => onPriceRangeChange(undefined, undefined)}
           onClearOption={(optionTitle, value) => {
             const current = parseOptionsOptions(optionsStr)[optionTitle] ?? []
@@ -204,6 +249,10 @@ export default function ProductListWithFilters({
               optionTitle,
               current.filter((v) => v !== value)
             )
+          }}
+          onClearCategory={(categoryId) => {
+            const current = categoryIds ?? []
+            onCategoryFilterChange(current.filter((id) => id !== categoryId))
           }}
         />
         <ul

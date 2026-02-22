@@ -5,21 +5,30 @@ import { XMarkMini } from "@medusajs/icons"
 import { Badge, IconButton, clx } from "@medusajs/ui"
 
 import type { ProductFilters } from "@lib/util/filter-products"
+import type { CategoryInfo } from "@lib/util/filter-products"
 import { convertToLocale } from "@lib/util/money"
 
 export type ActiveFiltersChipsProps = {
   filters: ProductFilters
+  /** Used to show category names in chips. */
+  availableCategories?: CategoryInfo[]
   /** Currency code for formatting price chip (e.g. from region). */
   currencyCode?: string
+  /** When false, category chips are hidden (e.g. on category pages). Defaults to true. */
+  showCategoryChips?: boolean
   onClearPrice: () => void
   onClearOption: (optionTitle: string, value: string) => void
+  onClearCategory: (categoryId: string) => void
 }
 
 export default function ActiveFiltersChips({
   filters,
+  availableCategories = [],
   currencyCode = "usd",
+  showCategoryChips = true,
   onClearPrice,
   onClearOption,
+  onClearCategory,
 }: ActiveFiltersChipsProps) {
   const optionChips = useMemo(() => {
     const opts = filters.options ?? {}
@@ -27,6 +36,12 @@ export default function ActiveFiltersChips({
       (values ?? []).map((value) => ({ optionTitle, value }))
     )
   }, [filters.options])
+
+  const categoryChips = useMemo(() => {
+    const ids = filters.categoryIds ?? []
+    const byId = new Map(availableCategories.map((c) => [c.id, c.name]))
+    return ids.map((id) => ({ id, name: byId.get(id) ?? id }))
+  }, [filters.categoryIds, availableCategories])
 
   const priceChipLabel = useMemo(() => {
     const hasPriceFilter =
@@ -53,7 +68,10 @@ export default function ActiveFiltersChips({
   }, [filters.priceMin, filters.priceMax, currencyCode])
 
   const hasPriceFilter = priceChipLabel.length > 0
-  const hasActiveFilters = hasPriceFilter || optionChips.length > 0
+  const hasActiveFilters =
+    hasPriceFilter ||
+    optionChips.length > 0 ||
+    (showCategoryChips && categoryChips.length > 0)
 
   if (!hasActiveFilters) return null
 
@@ -82,6 +100,28 @@ export default function ActiveFiltersChips({
           </IconButton>
         </Badge>
       )}
+      {showCategoryChips &&
+        categoryChips.map(({ id, name }) => (
+        <Badge
+          key={`category-${id}`}
+          className={clx(
+            "gap-1 pe-1 py-1 rounded-full",
+            "bg-ui-bg-component border border-ui-border-base"
+          )}
+        >
+          <span className="txt-compact-small-plus">Category: {name}</span>
+          <IconButton
+            type="button"
+            variant="transparent"
+            size="small"
+            className="rounded-full text-ui-fg-muted hover:text-ui-fg-base"
+            onClick={() => onClearCategory(id)}
+            aria-label={`Clear category ${name} filter`}
+          >
+            <XMarkMini />
+          </IconButton>
+        </Badge>
+      ))}
       {optionChips.map(({ optionTitle, value }) => (
         <Badge
           key={`${optionTitle}-${value}`}
