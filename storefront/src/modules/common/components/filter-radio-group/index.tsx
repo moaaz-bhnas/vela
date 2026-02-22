@@ -1,7 +1,5 @@
 import { Label, RadioGroup, Text, clx } from "@medusajs/ui"
 
-import Spinner from "@modules/common/icons/spinner"
-
 type FilterRadioGroupProps = {
   title: string
   items: {
@@ -10,8 +8,6 @@ type FilterRadioGroupProps = {
   }[]
   value: string
   handleChange: (value: string) => void
-  /** When true, shows a loading spinner next to the title. */
-  isLoading?: boolean
   "data-testid"?: string
 }
 
@@ -20,20 +16,15 @@ const FilterRadioGroup = ({
   items,
   value,
   handleChange,
-  isLoading = false,
   "data-testid": dataTestId,
 }: FilterRadioGroupProps) => {
   return (
-    <div className="flex flex-col gap-y-3" aria-busy={isLoading}>
-      <div className="flex items-center gap-x-2">
-        <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
-        {isLoading && <Spinner size="16" aria-hidden />}
-      </div>
+    <div className="flex flex-col gap-y-3">
+      <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
       <RadioGroup
         value={value}
         onValueChange={handleChange}
         data-testid={dataTestId}
-        disabled={isLoading}
       >
         {items?.map((i) => (
           <div key={i.value} className="flex items-center gap-x-3">

@@ -2,9 +2,7 @@
 
 import * as Slider from "@radix-ui/react-slider"
 import { CurrencyInput, Text } from "@medusajs/ui"
-import { useEffect, useTransition, useState } from "react"
-
-import Spinner from "@modules/common/icons/spinner"
+import { useEffect, useState } from "react"
 
 type FilterPriceRangeProps = {
   priceMin?: number
@@ -28,9 +26,6 @@ const FilterPriceRange = ({
   onChange,
   "data-testid": dataTestId,
 }: FilterPriceRangeProps) => {
-  const [isPending, startTransition] = useTransition()
-
-  console.log("[filter-price-range] isPending", isPending)
   const hasBounds =
     priceBounds != null &&
     Number.isFinite(priceBounds.min) &&
@@ -73,12 +68,10 @@ const FilterPriceRange = ({
   }
 
   const handleInputsBlur = () => {
-    startTransition(() => {
-      onChange(
-        fromDisplayValue(localMinInputValue) ?? undefined,
-        fromDisplayValue(localMaxInputValue) ?? undefined
-      )
-    })
+    onChange(
+      fromDisplayValue(localMinInputValue) ?? undefined,
+      fromDisplayValue(localMaxInputValue) ?? undefined
+    )
   }
 
   const handleSliderChange = (value: number[]) => {
@@ -87,24 +80,15 @@ const FilterPriceRange = ({
 
   const handleSliderCommit = (value: number[]) => {
     const [min, max] = value
-    startTransition(() => {
-      onChange(
-        min > sliderMin ? min : undefined,
-        max < sliderMax ? max : undefined
-      )
-    })
+    onChange(
+      min > sliderMin ? min : undefined,
+      max < sliderMax ? max : undefined
+    )
   }
 
   return (
-    <div
-      className="flex flex-col gap-y-3"
-      data-testid={dataTestId}
-      aria-busy={isPending}
-    >
-      <div className="flex items-center gap-x-2">
-        <Text className="txt-compact-small-plus text-ui-fg-muted">Price</Text>
-        {isPending && <Spinner size="16" aria-hidden />}
-      </div>
+    <div className="flex flex-col gap-y-3" data-testid={dataTestId}>
+      <Text className="txt-compact-small-plus text-ui-fg-muted">Price</Text>
 
       {hasBounds && (
         <Slider.Root
@@ -117,7 +101,6 @@ const FilterPriceRange = ({
           onValueCommit={handleSliderCommit}
           minStepsBetweenThumbs={0}
           aria-label="Price range"
-          disabled={isPending}
         >
           <Slider.Track className="relative h-2 w-full grow rounded-full bg-ui-bg-component">
             <Slider.Range className="absolute h-full rounded-full bg-ui-bg-interactive" />
@@ -138,7 +121,6 @@ const FilterPriceRange = ({
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
           aria-label="Minimum price"
-          disabled={isPending}
         />
         <span className="txt-compact-small text-ui-fg-muted">–</span>
         <CurrencyInput
@@ -151,7 +133,6 @@ const FilterPriceRange = ({
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
           aria-label="Maximum price"
-          disabled={isPending}
         />
       </div>
     </div>

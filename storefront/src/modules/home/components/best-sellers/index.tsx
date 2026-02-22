@@ -40,7 +40,7 @@ export default async function BestSellers({ region }: BestSellersProps) {
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">
         {products.map((product) => (
           <li key={product.id}>
-            <ProductPreview product={product} region={region} />
+            <ProductPreview product={product} isBestSeller />
           </li>
         ))}
       </ul>

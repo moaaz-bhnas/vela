@@ -4,10 +4,7 @@ import { Metadata } from "next"
 import SearchResultsTemplate from "@modules/search/templates/search-results-template"
 
 import { search } from "@modules/search/actions"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getRegion } from "@lib/data/regions"
-import { sdk } from "@lib/config"
-import { PopularityResponse } from "types/global"
 
 export const metadata: Metadata = {
   title: "Search",
@@ -16,15 +13,10 @@ export const metadata: Metadata = {
 
 type Params = {
   params: Promise<{ query: string; countryCode: string }>
-  searchParams: {
-    sortBy?: SortOptions
-    page?: string
-  }
 }
 
-export default async function SearchResults({ params, searchParams }: Params) {
+export default async function SearchResults({ params }: Params) {
   const { query, countryCode } = await params
-  const { sortBy, page } = searchParams
 
   const hits = await search(query).then((data) => data)
 
@@ -44,8 +36,6 @@ export default async function SearchResults({ params, searchParams }: Params) {
     <SearchResultsTemplate
       query={query}
       ids={ids}
-      sortBy={sortBy}
-      page={page}
       countryCode={countryCode}
       region={region}
     />

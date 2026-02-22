@@ -98,6 +98,56 @@ export const getProductsList = cache(async function ({
     })
 })
 
+export type StoreProductsForClient = {
+  products: HttpTypes.StoreProduct[]
+  availableOptions: Record<string, string[]>
+  optionValueCounts: Record<string, Record<string, number>>
+  priceBounds: { min: number; max: number } | undefined
+}
+
+export type GetProductsForClientOptions = {
+  categoryId?: string
+  collectionId?: string
+  /** Product IDs to fetch (e.g. from search). When set, only these products are returned. */
+  ids?: string[]
+}
+
+/**
+ * Fetches the full product list and metadata once (no sort/filter/page).
+ * For use with client-side filtering/sorting via nuqs.
+ * Use categoryId and/or collectionId to scope to a category or collection; omit for the full store.
+ */
+export const getProductsForClient = cache(async function (
+  countryCode: string,
+  options?: GetProductsForClientOptions
+): Promise<StoreProductsForClient> {
+  const queryParams: HttpTypes.FindParams & HttpTypes.StoreProductParams = {
+    limit: 1000,
+    ...(options?.categoryId && { category_id: [options.categoryId] }),
+    ...(options?.collectionId && { collection_id: [options.collectionId] }),
+    ...(options?.ids?.length && { id: options.ids }),
+  }
+
+  const {
+    response: { products },
+  } = await getProductsList({
+    pageParam: 1,
+    queryParams,
+    countryCode,
+  })
+
+  const availableOptions = extractAvailableOptions(products)
+  const optionValueCounts = getOptionValueCounts(products, {})
+  const priceBounds = getPriceBounds(products)
+
+  return {
+    products,
+    availableOptions,
+    optionValueCounts,
+    priceBounds,
+  }
+})
+
 /**
  * Fetches products, then filters, sorts, and paginates. Returns filtered count and option metadata for the refinement UI.
  */

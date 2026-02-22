@@ -1,6 +1,7 @@
 import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Bricolage_Grotesque } from "next/font/google"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import "styles/globals.css"
 import NProgressProvider from "@modules/common/components/progress-bar-provider"
 
@@ -18,7 +19,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" data-mode="light" className={bricolageGrotesque.variable}>
       <body>
         <NProgressProvider>
-          <main className="relative">{props.children}</main>
+          <NuqsAdapter>
+            <main className="relative">{props.children}</main>
+          </NuqsAdapter>
         </NProgressProvider>
       </body>
     </html>
