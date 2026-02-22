@@ -2,6 +2,7 @@
 
 import * as Slider from "@radix-ui/react-slider"
 import { CurrencyInput, Text } from "@medusajs/ui"
+import { useEffect, useState } from "react"
 
 type FilterPriceRangeProps = {
   priceMin?: number
@@ -31,8 +32,34 @@ const FilterPriceRange = ({
     Number.isFinite(priceBounds.max) &&
     priceBounds.min <= priceBounds.max
 
-  const toDisplayValue = (amount: number | undefined): string | undefined =>
-    amount != null ? String(amount) : undefined
+  const sliderMin = hasBounds ? priceBounds.min : 0
+  const sliderMax = hasBounds ? priceBounds.max : 100
+
+  const [localSliderRange, setLocalSliderRange] = useState<[number, number]>([
+    priceMin ?? sliderMin,
+    priceMax ?? sliderMax,
+  ])
+  const [localMinInputValue, setLocalMinInputValue] = useState<string>(
+    String(priceMin ?? sliderMin)
+  )
+  const [localMaxInputValue, setLocalMaxInputValue] = useState<string>(
+    String(priceMax ?? sliderMax)
+  )
+
+  useEffect(
+    function syncSliderFromProps() {
+      setLocalSliderRange([priceMin ?? sliderMin, priceMax ?? sliderMax])
+    },
+    [priceMin, priceMax, sliderMin, sliderMax]
+  )
+
+  useEffect(
+    function syncInputsFromProps() {
+      setLocalMinInputValue(String(priceMin ?? sliderMin))
+      setLocalMaxInputValue(String(priceMax ?? sliderMax))
+    },
+    [priceMin, priceMax, sliderMin, sliderMax]
+  )
 
   const fromDisplayValue = (value: string | undefined): number | undefined => {
     if (value === undefined || value === "") return undefined
@@ -40,22 +67,18 @@ const FilterPriceRange = ({
     return Number.isFinite(num) ? num : undefined
   }
 
-  const handleMinChange = (value: string | undefined) => {
-    onChange(fromDisplayValue(value) ?? undefined, priceMax)
+  const handleInputsBlur = () => {
+    onChange(
+      fromDisplayValue(localMinInputValue) ?? undefined,
+      fromDisplayValue(localMaxInputValue) ?? undefined
+    )
   }
-
-  const handleMaxChange = (value: string | undefined) => {
-    onChange(priceMin, fromDisplayValue(value) ?? undefined)
-  }
-
-  const sliderMin = hasBounds ? priceBounds.min : 0
-  const sliderMax = hasBounds ? priceBounds.max : 100
-  const sliderValue: [number, number] = [
-    priceMin ?? sliderMin,
-    priceMax ?? sliderMax,
-  ]
 
   const handleSliderChange = (value: number[]) => {
+    setLocalSliderRange(value as [number, number])
+  }
+
+  const handleSliderCommit = (value: number[]) => {
     const [min, max] = value
     onChange(
       min > sliderMin ? min : undefined,
@@ -73,13 +96,14 @@ const FilterPriceRange = ({
           min={sliderMin}
           max={sliderMax}
           step={1}
-          value={sliderValue}
+          value={localSliderRange}
           onValueChange={handleSliderChange}
+          onValueCommit={handleSliderCommit}
           minStepsBetweenThumbs={0}
           aria-label="Price range"
         >
           <Slider.Track className="relative h-2 w-full grow rounded-full bg-ui-bg-component">
-            <Slider.Range className="absolute h-full rounded-full bg-ui-fg-base" />
+            <Slider.Range className="absolute h-full rounded-full bg-ui-bg-interactive" />
           </Slider.Track>
           <Slider.Thumb className="block h-4 w-4 rounded-full border border-ui-border-base bg-ui-bg-base shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive" />
           <Slider.Thumb className="block h-4 w-4 rounded-full border border-ui-border-base bg-ui-bg-base shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive" />
@@ -91,8 +115,9 @@ const FilterPriceRange = ({
           symbol={symbol}
           code={currencyCode}
           size="small"
-          value={toDisplayValue(priceMin) ?? ""}
-          onValueChange={handleMinChange}
+          value={localMinInputValue}
+          onValueChange={(value) => setLocalMinInputValue(value ?? "")}
+          onBlur={handleInputsBlur}
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
           aria-label="Minimum price"
@@ -102,8 +127,9 @@ const FilterPriceRange = ({
           symbol={symbol}
           code={currencyCode}
           size="small"
-          value={toDisplayValue(priceMax) ?? ""}
-          onValueChange={handleMaxChange}
+          value={localMaxInputValue}
+          onValueChange={(value) => setLocalMaxInputValue(value ?? "")}
+          onBlur={handleInputsBlur}
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
           aria-label="Maximum price"

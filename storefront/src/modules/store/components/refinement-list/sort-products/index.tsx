@@ -1,5 +1,3 @@
-"use client"
-
 import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 
 export type SortOptions =
@@ -10,7 +8,7 @@ export type SortOptions =
 
 type SortProductsProps = {
   sortBy: SortOptions
-  setQueryParams: (name: string, value: SortOptions) => void
+  onSortChange: (value: SortOptions) => void
   "data-testid"?: string
 }
 
@@ -36,10 +34,10 @@ const sortOptions = [
 const SortProducts = ({
   "data-testid": dataTestId,
   sortBy,
-  setQueryParams,
+  onSortChange,
 }: SortProductsProps) => {
   const handleChange = (value: string) => {
-    setQueryParams("sortBy", value as SortOptions)
+    onSortChange(value as SortOptions)
   }
 
   return (

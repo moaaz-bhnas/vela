@@ -30,8 +30,7 @@ export default function ProductRail({
         {products &&
           products.map((product) => (
             <li key={product.id}>
-              {/* @ts-ignore */}
-              <ProductPreview product={product} region={region} />
+              <ProductPreview product={product} />
             </li>
           ))}
       </ul>

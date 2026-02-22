@@ -1,66 +1,34 @@
+"use client"
+
 import { Badge, Text } from "@medusajs/ui"
+import { HttpTypes } from "@medusajs/types"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { getProductOptionsSummary } from "@lib/util/get-product-options-summary"
 import { isProductNew } from "@lib/util/is-product-new"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import ProductPreviewCarousel from "./product-preview-carousel"
 import PreviewPrice from "./price"
-import { getBestSellers } from "@lib/data/best-sellers"
-import { getProductsById } from "@lib/data/products"
-import { HttpTypes } from "@medusajs/types"
+import ProductPreviewCarousel from "./product-preview-carousel"
 
-export default async function ProductPreview({
+export default function ProductPreview({
   product,
-  region,
+  isBestSeller,
 }: {
   product: HttpTypes.StoreProduct
-  region: HttpTypes.StoreRegion
+  isBestSeller?: boolean
 }) {
-  const [bestSellers, [pricedProduct]] = await Promise.all([
-    getBestSellers({ regionId: region.id, limit: 10 }),
-    getProductsById({ ids: [product.id!], regionId: region.id }),
-  ])
-
-  if (!pricedProduct) {
-    return null
-  }
-
-  const { cheapestPrice } = getProductPrice({
-    product: pricedProduct,
-  })
-
-  const badgeConfig = [
-    {
-      priority: 1,
-      check() {
-        return bestSellers.some((p) => p.id === product.id)
-      },
-      label: "BEST SELLER",
-      color: "green" as const,
-    },
-    {
-      priority: 2,
-      check() {
-        return cheapestPrice?.price_type === "sale"
-      },
-      label: "SALE",
-      color: "red" as const,
-    },
-    {
-      priority: 3,
-      check() {
-        return isProductNew(product)
-      },
-      label: "NEW",
-      color: "blue" as const,
-    },
-  ]
-  const badge = badgeConfig
-    .filter((b) => b.check())
-    .sort((a, b) => a.priority - b.priority)[0]
-
+  const { cheapestPrice } = getProductPrice({ product })
   const optionsSummary = getProductOptionsSummary(product)
+  const isNew = isProductNew(product)
+
+  const showSale = cheapestPrice?.price_type === "sale"
+  const badge = isBestSeller
+    ? { label: "BEST SELLER", color: "green" as const }
+    : showSale
+    ? { label: "SALE", color: "red" as const }
+    : isNew
+    ? { label: "NEW", color: "blue" as const }
+    : null
 
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group">

@@ -6,20 +6,12 @@ import {
   getCollectionsList,
 } from "@lib/data/collections"
 import { listRegions } from "@lib/data/regions"
-import {
-  searchParamsToProductFilters,
-  type StoreSearchParams,
-} from "@lib/util/parse-filter-params"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 type Props = {
   params: { handle: string; countryCode: string }
-  searchParams: StoreSearchParams
 }
-
-export const PRODUCT_LIMIT = 12
 
 export async function generateStaticParams() {
   const { collections } = await getCollectionsList()
@@ -49,7 +41,7 @@ export async function generateStaticParams() {
     )
     .flat()
 
-  return staticParams
+  return staticParams ?? []
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -59,21 +51,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     notFound()
   }
 
-  const metadata = {
+  return {
     title: `${collection.title} | Medusa Store`,
     description: `${collection.title} collection`,
-  } as Metadata
-
-  return metadata
+  }
 }
 
-export default async function CollectionPage({ params, searchParams }: Props) {
-  const { sortBy, page } = searchParams
-  const filters = searchParamsToProductFilters(searchParams)
-
-  const collection = await getCollectionByHandle(params.handle).then(
-    (collection: StoreCollection) => collection
-  )
+export default async function CollectionPage({ params }: Props) {
+  const collection = await getCollectionByHandle(params.handle)
 
   if (!collection) {
     notFound()
@@ -82,10 +67,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   return (
     <CollectionTemplate
       collection={collection}
-      page={page}
-      sortBy={sortBy}
       countryCode={params.countryCode}
-      filters={filters}
     />
   )
 }

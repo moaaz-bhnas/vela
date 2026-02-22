@@ -1,6 +1,5 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback } from "react"
 
 import type { ProductFilters } from "@lib/util/filter-products"
@@ -16,6 +15,11 @@ type RefinementListProps = {
   optionValueCounts?: Record<string, Record<string, number>>
   priceBounds?: { min: number; max: number }
   filters?: ProductFilters
+  /** Currency code for the price range filter (e.g. from region). Defaults to "usd". */
+  currencyCode?: string
+  onSortChange: (value: SortOptions) => void
+  onPriceRangeChange: (min?: number, max?: number) => void
+  onOptionFilterChange: (optionTitle: string, values: string[]) => void
   "data-testid"?: string
 }
 
@@ -25,49 +29,13 @@ const RefinementList = ({
   optionValueCounts = {},
   priceBounds,
   filters,
+  currencyCode = "usd",
+  onSortChange,
+  onPriceRangeChange,
+  onOptionFilterChange,
   "data-testid": dataTestId,
 }: RefinementListProps) => {
   const selectedOptions = filters?.options ?? {}
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  const setQueryParams = (name: string, value: string) => {
-    const params = new URLSearchParams(searchParams)
-    params.set(name, value)
-    router.push(`${pathname}?${params.toString()}`)
-  }
-
-  const updateParams = useCallback(
-    (updates: Record<string, string | undefined>) => {
-      const params = new URLSearchParams(searchParams)
-      for (const [key, val] of Object.entries(updates)) {
-        if (val === undefined || val === "") params.delete(key)
-        else params.set(key, val)
-      }
-      router.push(`${pathname}?${params.toString()}`)
-    },
-    [pathname, router, searchParams]
-  )
-
-  const setPriceRange = useCallback(
-    (min?: number, max?: number) => {
-      updateParams({
-        priceMin: min != null ? String(min) : undefined,
-        priceMax: max != null ? String(max) : undefined,
-        page: "1",
-      })
-    },
-    [updateParams]
-  )
-
-  const setOptionFilter = useCallback(
-    (optionTitle: string, values: string[]) => {
-      const paramValue = values.length > 0 ? values.join(",") : undefined
-      updateParams({ [optionTitle]: paramValue, page: "1" })
-    },
-    [updateParams]
-  )
 
   const handleOptionToggle = useCallback(
     (optionTitle: string, value: string) => {
@@ -75,9 +43,9 @@ const RefinementList = ({
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value]
-      setOptionFilter(optionTitle, next)
+      onOptionFilterChange(optionTitle, next)
     },
-    [selectedOptions, setOptionFilter]
+    [selectedOptions, onOptionFilterChange]
   )
 
   const optionTitles = Object.keys(availableOptions).filter((title) => {
@@ -102,7 +70,7 @@ const RefinementList = ({
     <div className="flex flex-col gap-8">
       <SortProducts
         sortBy={sortBy}
-        setQueryParams={setQueryParams}
+        onSortChange={onSortChange}
         data-testid={dataTestId}
       />
 
@@ -112,7 +80,8 @@ const RefinementList = ({
         priceMin={filters?.priceMin}
         priceMax={filters?.priceMax}
         priceBounds={priceBounds}
-        onChange={setPriceRange}
+        currencyCode={currencyCode}
+        onChange={onPriceRangeChange}
         data-testid="filter-price-range"
       />
       {optionTitles.map((title) => (
