@@ -21,7 +21,7 @@ const ItemsTemplate = ({ items }: ItemsTemplateProps) => {
             <Table.HeaderCell className="!pl-0">Item</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
             <Table.HeaderCell>Quantity</Table.HeaderCell>
-            <Table.HeaderCell className="hidden small:table-cell">
+            <Table.HeaderCell className="hidden lg:table-cell">
               Price
             </Table.HeaderCell>
             <Table.HeaderCell className="!pr-0 text-right">

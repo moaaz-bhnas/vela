@@ -94,8 +94,14 @@ export default function ProductListWithFilters({
 }: ProductListWithFiltersProps) {
   const [queryState, setQueryState] = useQueryStates(productListParsers)
 
-  const { sortBy, page, priceMin, priceMax, options: optionsStr, categories: categoriesStr } =
-    queryState
+  const {
+    sortBy,
+    page,
+    priceMin,
+    priceMax,
+    options: optionsStr,
+    categories: categoriesStr,
+  } = queryState
 
   const categoryIds = useMemo(() => {
     if (!categoriesStr?.trim()) return undefined
@@ -113,8 +119,7 @@ export default function ProductListWithFilters({
         const opts = parseOptionsOptions(optionsStr)
         return Object.keys(opts).length > 0 ? opts : undefined
       })(),
-      categoryIds:
-        categoryIds?.length ? categoryIds : undefined,
+      categoryIds: categoryIds?.length ? categoryIds : undefined,
     }),
     [priceMin, priceMax, optionsStr, categoryIds]
   )
@@ -217,10 +222,10 @@ export default function ProductListWithFilters({
 
   return (
     <Container
-      className="flex flex-col small:flex-row small:items-start gap-section-inner-lg pt-0 small:pt-section-y-lg"
+      className="flex flex-col lg:flex-row lg:items-start gap-section-inner-lg pt-0 lg:pt-section-y-lg"
       data-testid={containerTestId}
     >
-      <div className="hidden small:block small:w-80">
+      <div className="hidden lg:block lg:w-80">
         <RefinementList {...refinementListProps} />
       </div>
       <div className="w-full flex flex-col gap-section-inner sm:gap-section-inner-lg">
@@ -256,7 +261,7 @@ export default function ProductListWithFilters({
           }}
         />
         <ul
-          className="grid grid-cols-2 w-full small:grid-cols-3 gap-section-inner"
+          className="grid grid-cols-2 w-full lg:grid-cols-3 gap-section-inner"
           data-testid="products-list"
         >
           {paginatedProducts.map((p: HttpTypes.StoreProduct) => (

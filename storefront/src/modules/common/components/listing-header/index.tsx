@@ -26,7 +26,7 @@ export default function ListingHeader({
   return (
     <div
       className={clx(
-        "sticky small:static top-16 z-40 -mx-6 px-6 py-4 small:py-0 border-b small:border-b-0 transition",
+        "sticky lg:static top-16 z-40 -mx-6 px-6 py-4 lg:py-0 border-b lg:border-b-0 transition",
         isScrolled
           ? "bg-ui-bg-base border-ui-border-base"
           : "border-transparent",
@@ -52,7 +52,7 @@ export default function ListingHeader({
           )}
         </div>
 
-        <div className="small:hidden">
+        <div className="lg:hidden">
           {filterDrawerContent != null && (
             <FiltersMenu resultCount={count}>{filterDrawerContent}</FiltersMenu>
           )}
