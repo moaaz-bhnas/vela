@@ -26,37 +26,30 @@ function ProductGalleryThumb({
   vertical?: boolean
 }) {
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
       className={clx(
-        "rounded-rounded overflow-hidden border-2 transition-colors shrink-0",
-        vertical ? "w-full h-full" : "flex-[0_0_22%] min-w-0 sm:flex-[0_0_18%]",
+        "relative block w-20 aspect-[11/14] bg-ui-bg-subtle cursor-pointer rounded-rounded overflow-hidden border-2 transition-colors shrink-0",
         selected
           ? "border-ui-border-base ring-2 ring-ui-fg-interactive"
           : "border-transparent opacity-70 hover:opacity-100"
       )}
+      aria-label="View image"
     >
-      <button
-        type="button"
-        onClick={onClick}
-        className={clx(
-          "relative block w-full aspect-[11/14] bg-ui-bg-subtle cursor-pointer"
-        )}
-        aria-label="View image"
-      >
-        {image?.url ? (
-          <Image
-            src={image.url}
-            alt=""
-            fill
-            className="object-cover select-none"
-            sizes="80px"
-            draggable={false}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-ui-bg-subtle" />
-        )}
-      </button>
-    </div>
+      {image?.url ? (
+        <Image
+          src={image.url}
+          alt=""
+          fill
+          className="object-cover select-none"
+          sizes="80px"
+          draggable={false}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-ui-bg-subtle" />
+      )}
+    </button>
   )
 }
 
@@ -85,43 +78,25 @@ function ThumbsCarousel({
 
   return (
     <div
-      className={clx(
-        "embla-thumbs min-h-0",
-        isDesktop ? "flex flex-col h-full" : ""
-      )}
+      className={clx("embla-thumbs__viewport overflow-hidden")}
+      ref={emblaThumbsRef}
     >
       <div
         className={clx(
-          "embla-thumbs__viewport overflow-hidden rounded-rounded",
-          isDesktop ? "h-full min-h-0" : ""
+          "embla-thumbs__container flex gap-2 p-0.5",
+          isDesktop ? "flex-col" : "flex-row"
         )}
-        ref={emblaThumbsRef}
       >
-        <div
-          className={clx(
-            "embla-thumbs__container flex gap-2 p-0.5",
-            isDesktop ? "flex-col" : "flex-row"
-          )}
-        >
-          {slides.map((image, index) => (
-            <div
-              key={image.id || index}
-              className={clx(
-                "embla__slide shrink-0 min-h-0",
-                isDesktop
-                  ? "flex-[0_0_80px]"
-                  : "flex-[0_0_22%] min-w-0 sm:flex-[0_0_18%]"
-              )}
-            >
-              <ProductGalleryThumb
-                image={image}
-                selected={index === selectedIndex}
-                onClick={() => onThumbClick(index)}
-                vertical={isDesktop}
-              />
-            </div>
-          ))}
-        </div>
+        {slides.map((image, index) => (
+          <div key={image.id || index} className={clx("embla__slide")}>
+            <ProductGalleryThumb
+              image={image}
+              selected={index === selectedIndex}
+              onClick={() => onThumbClick(index)}
+              vertical={isDesktop}
+            />
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -179,12 +154,11 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
   return (
     <div
       className={clx(
-        "w-full flex flex-col gap-4 lg:grid lg:gap-2",
-        showThumbnails ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-1"
+        showThumbnails ? "flex gap-4 lg:gap-2 flex-col lg:flex-row" : ""
       )}
     >
       {/* Main carousel – first on mobile, right on desktop */}
-      <Container className="relative p-0 min-w-0 order-1 lg:order-2">
+      <Container className="relative p-0 order-1 lg:order-2">
         <div
           className="embla__viewport overflow-hidden rounded-rounded bg-ui-bg-subtle"
           ref={emblaMainRef}
@@ -193,7 +167,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             {slides.map((image, index) => (
               <div
                 key={image.id || index}
-                className="embla__slide flex-[0_0_100%] min-w-0 relative"
+                className="embla__slide flex-[0_0_100%] relative"
               >
                 <div className="relative aspect-[11/14] w-full overflow-hidden rounded-rounded bg-ui-bg-subtle">
                   {image?.url ? (

@@ -40,7 +40,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <ImageGallery images={product?.images || []} />
         </div>
 
-        <div className="flex flex-col lg:sticky lg:top-24 lg:max-w-sm xl:max-w-xl w-full gap-y-6">
+        <div className="flex flex-col lg:sticky lg:top-24 lg:max-w-sm xl:max-w-md w-full gap-y-6">
           <ProductInfo product={product} />
           <ProductOnboardingCta />
           <Suspense
