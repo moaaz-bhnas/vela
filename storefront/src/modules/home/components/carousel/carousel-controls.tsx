@@ -1,6 +1,7 @@
 import { clx, IconButton } from '@medusajs/ui'
-import { ChevronLeft, ChevronRight, PauseSolid, PlaySolid } from '@medusajs/icons'
+import { PauseSolid, PlaySolid } from '@medusajs/icons'
 import React, { forwardRef } from 'react'
+import CarouselPager from '@modules/common/components/carousel-pager'
 
 
 
@@ -21,15 +22,14 @@ const CarouselControls = forwardRef<HTMLDivElement, CarouselControlsProps>(({ cu
     return (
         <div className="flex gap-2 sm:gap-4 h-9">
             {/* Previous and Next Buttons */}
-            <div className="rounded-full flex divide-x bg-ui-bg-base h-full overflow-hidden shadow border border-ui-border-base">
-                <IconButton type='button' variant='transparent' size='base' className='rounded-none h-full w-9' onClick={onPrev} disabled={isPrevDisabled}>
-                    <ChevronLeft className='text-ui-fg-muted' />
-                </IconButton>
-                <span className="w-10 flex items-center justify-center text-small-semi text-ui-fg-muted">{currentIndex + 1}/{totalSlides}</span>
-                <IconButton type='button' variant='transparent' size='base' className='rounded-none h-full w-9' onClick={onNext} disabled={isNextDisabled}>
-                    <ChevronRight className='text-ui-fg-muted' />
-                </IconButton>
-            </div>
+            <CarouselPager
+                currentIndex={currentIndex}
+                totalSlides={totalSlides}
+                onPrev={onPrev}
+                onNext={onNext}
+                isPrevDisabled={isPrevDisabled}
+                isNextDisabled={isNextDisabled}
+            />
 
             {/* Autoplay Button */}
             <IconButton
