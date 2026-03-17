@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from "@medusajs/icons"
 import { IconButton } from "@medusajs/ui"
 import { usePrevNextButtons } from "@lib/hooks/use-carousel"
 import { useMediaQuery } from "@uidotdev/usehooks"
+import FullscreenLightbox from "./fullscreen-lightbox"
 
 type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
@@ -104,6 +105,7 @@ function ThumbsCarousel({
 
 export default function ImageGallery({ images }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 1024px)") ?? false
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel({
     loop: false,
@@ -169,12 +171,17 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                 key={image.id || index}
                 className="embla__slide flex-[0_0_100%] relative"
               >
-                <div className="relative aspect-[11/14] w-full overflow-hidden rounded-rounded bg-ui-bg-subtle">
+                <button
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="relative aspect-[11/14] w-full overflow-hidden rounded-rounded bg-ui-bg-subtle block cursor-zoom-in group"
+                  aria-label={`View image ${index + 1} fullscreen`}
+                >
                   {image?.url ? (
                     <Image
                       src={image.url}
                       priority={index <= 2}
-                      className="absolute inset-0 rounded-rounded object-cover"
+                      className="absolute inset-0 rounded-rounded object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       alt={`Product image ${index + 1}`}
                       fill
                       sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
@@ -183,7 +190,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                   ) : (
                     <div className="absolute inset-0 bg-ui-bg-subtle" />
                   )}
-                </div>
+                </button>
               </div>
             ))}
           </div>
@@ -231,6 +238,14 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             isDesktop={isDesktop}
           />
         </div>
+      )}
+
+      {lightboxOpen && (
+        <FullscreenLightbox
+          images={slides}
+          startIndex={selectedIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
     </div>
   )
