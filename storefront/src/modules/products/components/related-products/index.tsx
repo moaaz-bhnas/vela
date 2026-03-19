@@ -1,7 +1,8 @@
-import Product from "../product-preview"
 import { getRegion } from "@lib/data/regions"
 import { getProductsList } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
+import { Heading, Text } from "@medusajs/ui"
+import ProductPreview from "../product-preview"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
@@ -9,6 +10,7 @@ type RelatedProductsProps = {
 }
 
 type StoreProductParamsWithTags = HttpTypes.StoreProductParams & {
+  collection_id?: string[]
   tags?: string[]
 }
 
@@ -22,10 +24,6 @@ export default async function RelatedProducts({
 }: RelatedProductsProps) {
   const region = await getRegion(countryCode)
 
-  if (!region) {
-    const queryParams: StoreProductParamsWithTags = {}
-  }
-
   // edit this function to define your related products logic
   const queryParams: StoreProductParamsWithTags = {}
   if (region?.id) {
@@ -34,13 +32,11 @@ export default async function RelatedProducts({
   if (product.collection_id) {
     queryParams.collection_id = [product.collection_id]
   }
-  const productWithTags = product as StoreProductWithTags
-  if (productWithTags.tags) {
-    queryParams.tags = productWithTags.tags
+  if (product.tags) {
+    queryParams.tags = product.tags
       .map((t) => t.value)
       .filter(Boolean) as string[]
   }
-  queryParams.is_giftcard = false
 
   const products = await getProductsList({
     queryParams,
@@ -56,20 +52,23 @@ export default async function RelatedProducts({
   }
 
   return (
-    <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
+    <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
+      <div className="flex flex-col gap-block-gap">
+        <Heading
+          level="h2"
+          className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
+        >
           Related products
-        </span>
-        <p className="text-2xl-regular text-ui-fg-base max-w-lg">
+        </Heading>
+        <Text className="text-ui-fg-muted">
           You might also want to check out these products.
-        </p>
+        </Text>
       </div>
 
-      <ul className="grid grid-cols-2 lg:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
+      <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">
         {products.map((product) => (
           <li key={product.id}>
-            {region && <Product region={region} product={product} />}
+            <ProductPreview product={product} />
           </li>
         ))}
       </ul>
