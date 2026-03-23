@@ -8,6 +8,7 @@ import {
 import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
+import { getBrandingSeo } from "@lib/util/metadata"
 
 type Props = {
   params: { handle: string; countryCode: string }
@@ -45,6 +46,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const seo = await getBrandingSeo()
   const collection = await getCollectionByHandle(params.handle)
 
   if (!collection) {
@@ -52,8 +54,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${collection.title} | Medusa Store`,
-    description: `${collection.title} collection`,
+    title: collection.title,
+    description: collection.metadata?.description?.toString() || `${collection.title} collection`,
+    alternates: {
+      canonical: `/${params.countryCode}/collections/${collection.handle}`,
+    },
+    openGraph: {
+      title: collection.title,
+      description:
+        collection.metadata?.description?.toString() ||
+        `${collection.title} collection`,
+      images: seo.defaultOgImage ? [seo.defaultOgImage] : [],
+    },
   }
 }
 

@@ -2,12 +2,15 @@ import Container from "@modules/common/components/container-section"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ChevronDown from "@modules/common/icons/chevron-down"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
+import { getBrandingSeo } from "@lib/util/metadata"
 
-export default function CheckoutLayout({
+export default async function CheckoutLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const seo = await getBrandingSeo()
+
   return (
     <div className="w-full bg-white relative lg:min-h-screen">
       <div className="h-16 bg-white border-b ">
@@ -34,7 +37,7 @@ export default function CheckoutLayout({
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
               data-testid="store-link"
             >
-              Medusa Store
+              {seo.siteTitle}
             </LocalizedClientLink>
             <div className="flex-1 basis-0" />
           </Container>

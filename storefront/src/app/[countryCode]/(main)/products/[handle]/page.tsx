@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import ProductTemplate from "@modules/products/templates"
 import { getRegion, listRegions } from "@lib/data/regions"
 import { getProductByHandle, getProductsList } from "@lib/data/products"
+import { getBrandingSeo } from "@lib/util/metadata"
 
 type Props = {
   params: { countryCode: string; handle: string }
@@ -45,6 +46,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = params
   const region = await getRegion(params.countryCode)
+  const seo = await getBrandingSeo()
 
   if (!region) {
     notFound()
@@ -57,12 +59,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${product.title} | Medusa Store`,
-    description: `${product.title}`,
+    title: product.title,
+    description: product.description || seo.defaultDescription,
+    alternates: {
+      canonical: `/${params.countryCode}/products/${product.handle}`,
+    },
     openGraph: {
-      title: `${product.title} | Medusa Store`,
-      description: `${product.title}`,
+      title: product.title,
+      description: product.description || seo.defaultDescription,
       images: product.thumbnail ? [product.thumbnail] : [],
+      type: "website",
     },
   }
 }

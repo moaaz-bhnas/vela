@@ -31,9 +31,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   return (
     <>
       <TrackProductVisit product={product} />
+
       <Container
         noPadding
-        className="flex flex-col lg:flex-row lg:items-start py-6 relative gap-section-inner-lg"
+        className="flex flex-col lg:flex-row lg:items-start py-8 relative gap-section-inner-lg"
         data-testid="product-container"
       >
         <div className="block w-full relative">
@@ -57,11 +58,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <ProductTabs product={product} />
         </div>
       </Container>
-      <Container
-        noPadding
-        className="my-16 lg:my-32"
-        data-testid="related-products-container"
-      >
+
+      <Container data-testid="related-products-container">
         <Suspense fallback={<SkeletonRelatedProducts />}>
           <RelatedProducts product={product} countryCode={countryCode} />
         </Suspense>
