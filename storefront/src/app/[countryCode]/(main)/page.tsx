@@ -8,11 +8,20 @@ import { getRegion } from "@lib/data/regions"
 import { getBrandingConfig } from "@lib/data/branding"
 import { getPersonalizationCategoryIds } from "@lib/data/cookies"
 import Container from "@modules/common/components/container-section"
+import { getBrandingSeo } from "@lib/util/metadata"
 
-export const metadata: Metadata = {
-  title: "Medusa Next.js Starter Template",
-  description:
-    "A performant frontend ecommerce starter template with Next.js 14 and Medusa.",
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getBrandingSeo()
+
+  return {
+    title: "Home",
+    description: seo.siteTagline || seo.defaultDescription,
+    openGraph: {
+      title: seo.siteTitle,
+      description: seo.siteTagline || seo.defaultDescription,
+      images: seo.defaultOgImage ? [seo.defaultOgImage] : [],
+    },
+  }
 }
 
 export default async function Home({

@@ -5,6 +5,7 @@ import { getCategoryByHandle, listCategories } from "@lib/data/categories"
 import { listRegions } from "@lib/data/regions"
 import { StoreProductCategory, StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
+import { getBrandingSeo } from "@lib/util/metadata"
 
 type Props = {
   params: { category: string[]; countryCode: string }
@@ -37,6 +38,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    const seo = await getBrandingSeo()
     const { product_categories } = await getCategoryByHandle(params.category)
 
     const title = product_categories
@@ -48,10 +50,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${title} category.`
 
     return {
-      title: `${title} | Medusa Store`,
-      description,
+      title,
+      description: description || seo.defaultDescription,
       alternates: {
-        canonical: `${params.category.join("/")}`,
+        canonical: `/${params.countryCode}/categories/${params.category.join("/")}`,
       },
     }
   } catch {
