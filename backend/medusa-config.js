@@ -104,7 +104,7 @@ const medusaConfig = {
           resolve: "@medusajs/workflow-engine-redis",
           options: {
             redis: {
-              url: REDIS_URL,
+              redisUrl: REDIS_URL,
             },
           },
         },

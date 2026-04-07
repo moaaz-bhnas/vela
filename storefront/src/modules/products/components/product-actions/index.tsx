@@ -1,11 +1,11 @@
 "use client"
 
 import { Button } from "@medusajs/ui"
-import { isEqual } from "lodash"
 import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import { useIntersection } from "@lib/hooks/use-in-view"
+import { useProductOptions } from "@lib/hooks/use-product-options"
 import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 
@@ -20,50 +20,36 @@ type ProductActionsProps = {
   disabled?: boolean
 }
 
-const optionsAsKeymap = (variantOptions: any) => {
-  return variantOptions?.reduce((acc: Record<string, string | undefined>, varopt: any) => {
-    if (varopt.option && varopt.value !== null && varopt.value !== undefined) {
-      acc[varopt.option.title] = varopt.value
-    }
-    return acc
-  }, {})
-}
-
 export default function ProductActions({
   product,
   region,
   disabled,
 }: ProductActionsProps) {
-  const [options, setOptions] = useState<Record<string, string | undefined>>({})
+  const { options, setOptionValue, selectedVariant } =
+    useProductOptions(product)
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
 
-  // If there is only 1 variant, preselect the options
-  useEffect(() => {
-    if (product.variants?.length === 1) {
-      const variantOptions = optionsAsKeymap(product.variants[0].options)
-      setOptions(variantOptions ?? {})
-    }
-  }, [product.variants])
-
-  const selectedVariant = useMemo(() => {
-    if (!product.variants || product.variants.length === 0) {
-      return
-    }
-
-    return product.variants.find((v) => {
-      const variantOptions = optionsAsKeymap(v.options)
-      return isEqual(variantOptions, options)
-    })
-  }, [product.variants, options])
-
-  // update the options when a variant is selected
-  const setOptionValue = (title: string, value: string) => {
-    setOptions((prev) => ({
-      ...prev,
-      [title]: value,
-    }))
-  }
+  // If there is only 1 variant, preselect all its options via URL on mount
+  useEffect(
+    () =>
+      function preselectOptions() {
+        if (
+          product.variants?.length === 1 &&
+          Object.values(options).every((v) => v == null)
+        ) {
+          const singleVariant = product.variants[0]
+          ;(singleVariant.options ?? []).forEach((opt) => {
+            const title = opt.option?.title
+            const value = opt.value
+            if (title && value) setOptionValue(title, value)
+          })
+        }
+        // Only run once on mount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      },
+    []
+  )
 
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
@@ -119,7 +105,9 @@ export default function ProductActions({
                   <div key={option.id}>
                     <OptionSelect
                       option={option}
-                      current={options[option.title ?? ""]}
+                      current={
+                        options[(option.title ?? "").toLowerCase()] ?? undefined
+                      }
                       updateOption={setOptionValue}
                       title={option.title ?? ""}
                       data-testid="product-options"

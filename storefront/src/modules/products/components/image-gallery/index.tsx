@@ -8,11 +8,21 @@ import { clx, Container } from "@medusajs/ui"
 import { ChevronLeft, ChevronRight } from "@medusajs/icons"
 import { IconButton } from "@medusajs/ui"
 import { usePrevNextButtons } from "@lib/hooks/use-carousel"
+import { useProductOptions } from "@lib/hooks/use-product-options"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import FullscreenLightbox from "./fullscreen-lightbox"
 
 type ImageGalleryProps = {
-  images: HttpTypes.StoreProductImage[]
+  product: HttpTypes.StoreProduct
+}
+
+function getVariantImages(
+  variant: HttpTypes.StoreProductVariant | undefined,
+  fallback: HttpTypes.StoreProductImage[]
+): HttpTypes.StoreProductImage[] {
+  const images = variant?.images
+  if (images && images.length > 0) return images
+  return fallback
 }
 
 function ProductGalleryThumb({
@@ -103,7 +113,8 @@ function ThumbsCarousel({
   )
 }
 
-export default function ImageGallery({ images }: ImageGalleryProps) {
+export default function ImageGallery({ product }: ImageGalleryProps) {
+  const { selectedVariant } = useProductOptions(product)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 1024px)") ?? false
@@ -142,7 +153,18 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
     emblaMainApi.on("select", onSelect).on("reInit", onSelect)
   }, [emblaMainApi, onSelect])
 
-  const slides = images?.length ? images : []
+  // Reset to first slide when variant changes
+  useEffect(
+    () =>
+      function resetToFirstSlide() {
+        if (!emblaMainApi) return
+        emblaMainApi.scrollTo(0)
+        setSelectedIndex(0)
+      },
+    [emblaMainApi, selectedVariant?.id]
+  )
+
+  const slides = getVariantImages(selectedVariant, product.images ?? [])
   const hasSlides = slides.length > 0
   const showThumbnails = slides.length > 1
   const showControls = slides.length > 1
