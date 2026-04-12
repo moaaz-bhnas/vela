@@ -6,19 +6,101 @@ import Refresh from "@modules/common/icons/refresh"
 
 import Accordion from "./accordion"
 import { HttpTypes } from "@medusajs/types"
+import { useTranslations } from "next-intl"
 
 type ProductTabsProps = {
   product: HttpTypes.StoreProduct
 }
 
+const ProductInfoTab = ({ product }: ProductTabsProps) => {
+  const t = useTranslations("Product")
+
+  return (
+    <div className="text-small-regular py-8">
+      <div className="grid grid-cols-2 gap-x-8">
+        <div className="flex flex-col gap-y-4">
+          <div>
+            <span className="font-semibold">{t("material")}</span>
+            <p>{product.material ? product.material : "-"}</p>
+          </div>
+          <div>
+            <span className="font-semibold">{t("countryOfOrigin")}</span>
+            <p>{product.origin_country ? product.origin_country : "-"}</p>
+          </div>
+          <div>
+            <span className="font-semibold">{t("type")}</span>
+            <p>{product.type ? product.type.value : "-"}</p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-4">
+          <div>
+            <span className="font-semibold">{t("weight")}</span>
+            <p>
+              {product.weight
+                ? t("weightGrams", { weight: String(product.weight) })
+                : "-"}
+            </p>
+          </div>
+          <div>
+            <span className="font-semibold">{t("dimensions")}</span>
+            <p>
+              {product.length && product.width && product.height
+                ? t("dimensionsLWH", {
+                    length: String(product.length),
+                    width: String(product.width),
+                    height: String(product.height),
+                  })
+                : "-"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ShippingInfoTab = () => {
+  const t = useTranslations("Product")
+
+  return (
+    <div className="text-small-regular py-8">
+      <div className="grid grid-cols-1 gap-y-8">
+        <div className="flex items-start gap-x-2">
+          <FastDelivery />
+          <div>
+            <span className="font-semibold">{t("fastDelivery")}</span>
+            <p className="max-w-sm">{t("fastDeliveryDescription")}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-x-2">
+          <Refresh />
+          <div>
+            <span className="font-semibold">{t("simpleExchanges")}</span>
+            <p className="max-w-sm">{t("simpleExchangesDescription")}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-x-2">
+          <Back />
+          <div>
+            <span className="font-semibold">{t("easyReturns")}</span>
+            <p className="max-w-sm">{t("easyReturnsDescription")}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ProductTabs = ({ product }: ProductTabsProps) => {
+  const t = useTranslations("Product")
+
   const tabs = [
     {
-      label: "Product Information",
+      label: t("tabProductInformation"),
       component: <ProductInfoTab product={product} />,
     },
     {
-      label: "Shipping & Returns",
+      label: t("tabShippingReturns"),
       component: <ShippingInfoTab />,
     },
   ]
@@ -37,83 +119,6 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
           </Accordion.Item>
         ))}
       </Accordion>
-    </div>
-  )
-}
-
-const ProductInfoTab = ({ product }: ProductTabsProps) => {
-  return (
-    <div className="text-small-regular py-8">
-      <div className="grid grid-cols-2 gap-x-8">
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <span className="font-semibold">Material</span>
-            <p>{product.material ? product.material : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">Country of origin</span>
-            <p>{product.origin_country ? product.origin_country : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">Type</span>
-            <p>{product.type ? product.type.value : "-"}</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <span className="font-semibold">Weight</span>
-            <p>{product.weight ? `${product.weight} g` : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">Dimensions</span>
-            <p>
-              {product.length && product.width && product.height
-                ? `${product.length}L x ${product.width}W x ${product.height}H`
-                : "-"}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const ShippingInfoTab = () => {
-  return (
-    <div className="text-small-regular py-8">
-      <div className="grid grid-cols-1 gap-y-8">
-        <div className="flex items-start gap-x-2">
-          <FastDelivery />
-          <div>
-            <span className="font-semibold">Fast delivery</span>
-            <p className="max-w-sm">
-              Your package will arrive in 3-5 business days at your pick up
-              location or in the comfort of your home.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-start gap-x-2">
-          <Refresh />
-          <div>
-            <span className="font-semibold">Simple exchanges</span>
-            <p className="max-w-sm">
-              Is the fit not quite right? No worries - we&apos;ll exchange your
-              product for a new one.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-start gap-x-2">
-          <Back />
-          <div>
-            <span className="font-semibold">Easy returns</span>
-            <p className="max-w-sm">
-              Just return your product and we&apos;ll refund your money. No
-              questions asked – we&apos;ll do our best to make sure your return
-              is hassle-free.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

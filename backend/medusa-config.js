@@ -49,6 +49,9 @@ const medusaConfig = {
     backendUrl: BACKEND_URL,
     disable: SHOULD_DISABLE_ADMIN,
   },
+  featureFlags: {
+    translation: true,
+  },
   modules: [
     {
       resolve: "./src/modules/branding",
@@ -58,6 +61,9 @@ const medusaConfig = {
     },
     {
       resolve: "./src/modules/product-search-popularity",
+    },
+    {
+      resolve: "@medusajs/medusa/translation",
     },
     {
       key: Modules.FILE,

@@ -18,6 +18,7 @@ import SearchBox from "@modules/search/components/search-box"
 import ShowAll from "@modules/search/components/show-all"
 import { useEffect, useRef } from "react"
 import { HttpTypes } from "@medusajs/types"
+import { useTranslations } from "next-intl"
 
 type SearchModalProps = {
   popularProducts: HttpTypes.StoreProduct[]
@@ -31,6 +32,7 @@ function SearchModalContent({
   searchHistoryHits: ProductHit[]
   popularHits: ProductHit[]
 }) {
+  const t = useTranslations("Search")
   const { query } = useSearchBox()
   const { hits } = useHits()
 
@@ -66,13 +68,13 @@ function SearchModalContent({
           className="text-center"
           data-testid="no-search-results-container"
         >
-          <Text>No results for {query}.</Text>
+          <Text>{t("noResults", { query })}</Text>
         </Container>
       )}
       {(isEmptyQuery || !hasSearchHits) && hasSearchHistoryHits && (
         <Hits
           hits={searchHistoryHits}
-          title="Search history"
+          title={t("searchHistory")}
           hitComponent={Hit}
           onHitClick={handleHitClick}
           titleTestId="search-history-title"
@@ -82,7 +84,7 @@ function SearchModalContent({
       {(isEmptyQuery || !hasSearchHits) && hasPopularHits && (
         <Hits
           hits={popularHits}
-          title="Popular searches"
+          title={t("popularSearches")}
           hitComponent={Hit}
           onHitClick={handleHitClick}
           titleTestId="search-popular-title"

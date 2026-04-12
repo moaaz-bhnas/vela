@@ -2,6 +2,7 @@ import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
 import { getBestSellers } from "@lib/data/best-sellers"
+import { getTranslations } from "next-intl/server"
 import {
   getPersonalizationCategoryIds,
   getPersonalizationCollectionId,
@@ -14,6 +15,7 @@ type BestSellersProps = {
 export default async function BestSellers({ region }: BestSellersProps) {
   if (!region) return null
 
+  const t = await getTranslations("Home")
   const categoryIds = await getPersonalizationCategoryIds()
   const collectionId = await getPersonalizationCollectionId()
 
@@ -31,10 +33,10 @@ export default async function BestSellers({ region }: BestSellersProps) {
           level="h2"
           className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
         >
-          Best Sellers
+          {t("bestSellers")}
         </Heading>
         <Text className="text-ui-fg-muted">
-          Discover our most popular products
+          {t("bestSellersSubtitle")}
         </Text>
       </div>
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">

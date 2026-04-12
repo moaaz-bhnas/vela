@@ -10,6 +10,7 @@ import NavSearchInput from "../nav-search-input"
 import SideMenuCategories from "../side-menu-categories"
 import CountrySelect from "../country-select"
 import { HttpTypes } from "@medusajs/types"
+import { useTranslations } from "next-intl"
 
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
@@ -17,6 +18,8 @@ type SideMenuProps = {
 }
 
 const SideMenu = ({ regions, categories }: SideMenuProps) => {
+  const t = useTranslations("Nav")
+  const tFooter = useTranslations("Footer")
   const toggleState = useToggleState()
   const [open, setOpen] = useState(false)
 
@@ -31,7 +34,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
           variant="transparent"
           size="base"
           data-testid="nav-menu-button"
-          aria-label="Open menu"
+          aria-label={t("openMenu")}
           onClick={() => setOpen(true)}
           className="!overflow-auto"
         >
@@ -84,7 +87,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                             type="button"
                             variant="transparent"
                             data-testid="close-menu-button"
-                            aria-label="Close menu"
+                            aria-label={t("closeMenu")}
                             onClick={() => setOpen(false)}
                           >
                             <XMark />
@@ -121,8 +124,9 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                           />
                         </div>
                         <Text className="txt-compact-small text-ui-fg-muted px-4 py-3">
-                          © {new Date().getFullYear()} Medusa Store. All rights
-                          reserved.
+                          {tFooter("copyright", {
+                            year: new Date().getFullYear(),
+                          })}
                         </Text>
                       </div>
 
@@ -134,7 +138,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                             onClick={() => setOpen(false)}
                             data-testid="nav-menu-shop-all-link"
                           >
-                            Shop all
+                            {t("shopAllShort")}
                           </LocalizedClientLink>
                         </Button>
                       </div>

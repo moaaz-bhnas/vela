@@ -6,7 +6,7 @@ import SignInPrompt from "../components/sign-in-prompt"
 import Divider from "@modules/common/components/divider"
 import { HttpTypes } from "@medusajs/types"
 
-const CartTemplate = ({
+const CartTemplate = async ({
   cart,
   customer,
 }: {

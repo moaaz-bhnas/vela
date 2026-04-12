@@ -2,10 +2,12 @@ import { sdk } from "@lib/config"
 import { cache } from "react"
 import { getProductsList } from "./products"
 import { HttpTypes } from "@medusajs/types"
+import { getMedusaLocaleHeaders } from "@lib/util/medusa-locale-headers"
 
 export const retrieveCollection = cache(async function (id: string) {
+  const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.collection
-    .retrieve(id, {}, { next: { tags: ["collections"] } })
+    .retrieve(id, {}, { next: { tags: ["collections"] }, ...localeHeaders })
     .then(({ collection }) => collection)
 })
 
@@ -13,16 +15,21 @@ export const getCollectionsList = cache(async function (
   offset: number = 0,
   limit: number = 100
 ): Promise<{ collections: HttpTypes.StoreCollection[]; count: number }> {
+  const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.collection
-    .list({ limit, offset: 0 }, { next: { tags: ["collections"] } })
+    .list(
+      { limit, offset: 0 },
+      { next: { tags: ["collections"] }, ...localeHeaders }
+    )
     .then(({ collections }) => ({ collections, count: collections.length }))
 })
 
 export const getCollectionByHandle = cache(async function (
   handle: string
 ): Promise<HttpTypes.StoreCollection> {
+  const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.collection
-    .list({ handle }, { next: { tags: ["collections"] } })
+    .list({ handle }, { next: { tags: ["collections"] }, ...localeHeaders })
     .then(({ collections }) => collections[0])
 })
 

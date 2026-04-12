@@ -1,8 +1,10 @@
 import { Heading, Text } from "@medusajs/ui"
 import ShopByCategoryCard from "@modules/home/components/shop-by-category/shop-by-category-card"
 import { getCategoriesList } from "@lib/data/categories"
+import { getTranslations } from "next-intl/server"
 
 export default async function ShopByCategorySection() {
+  const t = await getTranslations("Home")
   const { product_categories } = await getCategoriesList(0, 12)
   const topLevelCategories =
     product_categories?.filter((c) => c.parent_category_id === null) ?? []
@@ -18,10 +20,10 @@ export default async function ShopByCategorySection() {
           level="h2"
           className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
         >
-          Shop by Category
+          {t("shopByCategory")}
         </Heading>
         <Text className="text-ui-fg-muted">
-          Browse our curated collection of categories
+          {t("shopByCategorySubtitle")}
         </Text>
       </div>
       <div className="grid grid-cols-2 gap-section-inner md:grid-cols-3 lg:grid-cols-4">

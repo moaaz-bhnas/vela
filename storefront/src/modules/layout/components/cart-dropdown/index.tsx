@@ -13,12 +13,15 @@ import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
+import { useTranslations } from "next-intl"
 
 const CartDropdown = ({
   cart: cartState,
 }: {
   cart?: HttpTypes.StoreCart | null
 }) => {
+  const t = useTranslations("CartDropdown")
+  const tNav = useTranslations("Nav")
   const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
     undefined
   )
@@ -87,13 +90,13 @@ const CartDropdown = ({
             "h-8 w-8 p-1.5"
           )}
           data-testid="nav-cart-link"
-          aria-label={`Cart (${totalItems} items)`}
+          aria-label={tNav("cartAria", { count: totalItems })}
         >
           <ShoppingBag />
           {totalItems > 0 && (
             <span
               aria-live="polite"
-              aria-label={`${totalItems} items in cart`}
+              aria-label={tNav("cartItemsCountAria", { count: totalItems })}
               className="absolute -top-1 -right-1 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-ui-bg-base"
             >
               {totalItems}
@@ -117,7 +120,7 @@ const CartDropdown = ({
           >
             <div className="p-4 flex items-center justify-center">
               <Heading level="h3" className="text-large-semi">
-                Cart
+                {t("title")}
               </Heading>
             </div>
             {cartState && cartState.items?.length ? (
@@ -171,7 +174,7 @@ const CartDropdown = ({
                                   data-testid="cart-item-quantity"
                                   data-value={item.quantity}
                                 >
-                                  Quantity: {item.quantity}
+                                  {t("quantity", { count: item.quantity })}
                                 </Text>
                               </div>
                               <div className="flex justify-end">
@@ -184,7 +187,7 @@ const CartDropdown = ({
                             className="mt-1"
                             data-testid="cart-item-remove-button"
                           >
-                            Remove
+                            {t("remove")}
                           </DeleteButton>
                         </div>
                       </div>
@@ -196,9 +199,9 @@ const CartDropdown = ({
                       size="small"
                       className="text-ui-fg-base font-semibold"
                     >
-                      Subtotal{" "}
+                      {t("subtotal")}{" "}
                       <Text size="small" className="font-normal" asChild>
-                        <span>(excl. taxes)</span>
+                        <span>{t("exclTaxes")}</span>
                       </Text>
                     </Text>
                     <Text
@@ -219,7 +222,7 @@ const CartDropdown = ({
                       size="large"
                       data-testid="go-to-cart-button"
                     >
-                      Go to cart
+                      {t("goToCart")}
                     </Button>
                   </LocalizedClientLink>
                 </div>
@@ -231,13 +234,13 @@ const CartDropdown = ({
                     <Text size="small">0</Text>
                   </div>
                   <Text size="small" className="text-ui-fg-base">
-                    Your shopping bag is empty.
+                    {t("bagEmpty")}
                   </Text>
                   <div>
                     <LocalizedClientLink href="/store">
                       <>
-                        <span className="sr-only">Go to all products page</span>
-                        <Button onClick={close}>Explore products</Button>
+                        <span className="sr-only">{t("goToAllProductsSr")}</span>
+                        <Button onClick={close}>{t("exploreProducts")}</Button>
                       </>
                     </LocalizedClientLink>
                   </div>

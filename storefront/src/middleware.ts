@@ -1,6 +1,10 @@
 import { HttpTypes } from "@medusajs/types"
+import createIntlMiddleware from "next-intl/middleware"
 import { notFound } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
+import { countryLocaleMap, defaultLocale, routing } from "./i18n/routing"
+
+const intlMiddleware = createIntlMiddleware(routing)
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
@@ -47,45 +51,71 @@ async function getRegionMap() {
 }
 
 /**
- * Fetches regions from Medusa and sets the region cookie.
- * @param request
- * @param response
+ * Extracts the ISO-2 country code from a BCP 47 locale string.
+ * e.g. "ar-EG" → "eg"
  */
-async function getCountryCode(
+function getCountryFromLocale(locale: string): string {
+  return locale.split("-")[1]?.toLowerCase() ?? locale.toLowerCase()
+}
+
+/**
+ * Resolves the best locale for the request.
+ * - If the URL path starts with a valid locale (e.g. /ar-EG/...), use it.
+ * - Otherwise fall back to Vercel geo-IP → DEFAULT_REGION → first region.
+ */
+async function getLocale(
   request: NextRequest,
   regionMap: Map<string, HttpTypes.StoreRegion | number>
-) {
+): Promise<string | undefined> {
   try {
-    let countryCode
+    const pathSegment = request.nextUrl.pathname.split("/")[1]?.toLowerCase()
+
+    // Check if the path segment is already a valid locale (e.g. ar-EG, en-DK)
+    if (pathSegment && pathSegment.includes("-")) {
+      const countryCode = getCountryFromLocale(pathSegment)
+      if (regionMap.has(countryCode)) {
+        // Return with original casing from URL to preserve locale exactly
+        return request.nextUrl.pathname.split("/")[1]
+      }
+    }
+
+    // Resolve via geo-IP or default
+    let countryCode: string | undefined
 
     const vercelCountryCode = request.headers
       .get("x-vercel-ip-country")
       ?.toLowerCase()
 
-    const urlCountryCode = request.nextUrl.pathname.split("/")[1]?.toLowerCase()
-
-    if (urlCountryCode && regionMap.has(urlCountryCode)) {
-      countryCode = urlCountryCode
-    } else if (vercelCountryCode && regionMap.has(vercelCountryCode)) {
+    if (vercelCountryCode && regionMap.has(vercelCountryCode)) {
       countryCode = vercelCountryCode
     } else if (regionMap.has(DEFAULT_REGION)) {
       countryCode = DEFAULT_REGION
     } else if (regionMap.keys().next().value) {
-      countryCode = regionMap.keys().next().value
+      countryCode = regionMap.keys().next().value as string
     }
 
-    return countryCode
+    if (!countryCode) return undefined
+
+    // Map country code to its BCP 47 locale, falling back to defaultLocale
+    return countryLocaleMap[countryCode] ?? defaultLocale
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error(
-        "Middleware.ts: Error getting the country code. Did you set up regions in your Medusa Admin and define a NEXT_PUBLIC_MEDUSA_BACKEND_URL environment variable?"
+        "Middleware.ts: Error resolving locale. Did you set up regions in your Medusa Admin and define a NEXT_PUBLIC_MEDUSA_BACKEND_URL environment variable?"
       )
     }
   }
 }
 
 /**
- * Middleware to handle region selection and onboarding status.
+ * Middleware to handle locale selection (BCP 47) and cart/onboarding state.
+ *
+ * Strategy:
+ * 1. Resolve the best locale for the request (from URL, geo-IP, or default).
+ * 2. If the URL already has the correct locale, let next-intl middleware run
+ *    so it sets the `x-next-intl-locale` header that `getRequestConfig` reads.
+ * 3. Otherwise redirect to the locale-prefixed URL (our custom logic).
+ * 4. Set our Medusa cookies on every response.
  */
 export async function middleware(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -97,18 +127,35 @@ export async function middleware(request: NextRequest) {
 
   const regionMap = await getRegionMap()
 
-  const countryCode = regionMap && (await getCountryCode(request, regionMap))
+  const locale = regionMap && (await getLocale(request, regionMap))
 
-  const urlHasCountryCode =
-    countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
+  const pathSegment = request.nextUrl.pathname.split("/")[1]
+  const urlHasLocale =
+    locale &&
+    pathSegment?.toLowerCase() === locale.toLowerCase()
 
-  // check if one of the country codes is in the url
+  // Helper: copy our Medusa cookies onto any response object
+  function applyMedusaCookies(
+    response: NextResponse,
+    effectiveLocale: string | undefined | false
+  ) {
+    if (effectiveLocale) {
+      response.cookies.set("_medusa_locale", effectiveLocale, {
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    }
+    return response
+  }
+
+  // If the URL already has the correct locale and no pending redirects,
+  // delegate to next-intl middleware so it sets x-next-intl-locale.
   if (
-    urlHasCountryCode &&
+    urlHasLocale &&
     (!isOnboarding || onboardingCookie) &&
     (!cartId || cartIdCookie)
   ) {
-    return NextResponse.next()
+    const response = intlMiddleware(request)
+    return applyMedusaCookies(response, locale)
   }
 
   const redirectPath =
@@ -117,30 +164,31 @@ export async function middleware(request: NextRequest) {
   const queryString = request.nextUrl.search ? request.nextUrl.search : ""
 
   let redirectUrl = request.nextUrl.href
-
   let response = NextResponse.redirect(redirectUrl, 307)
 
-  // If no country code is set, we redirect to the relevant region.
-  if (!urlHasCountryCode && countryCode) {
-    redirectUrl = `${request.nextUrl.origin}/${countryCode}${redirectPath}${queryString}`
+  // If no locale in the URL, redirect to the correct locale prefix
+  if (!urlHasLocale && locale) {
+    redirectUrl = `${request.nextUrl.origin}/${locale}${redirectPath}${queryString}`
     response = NextResponse.redirect(`${redirectUrl}`, 307)
   }
 
-  // If a cart_id is in the params, we set it as a cookie and redirect to the address step.
+  // If a cart_id is in the params, set it as a cookie and redirect to address step
   if (cartId && !checkoutStep) {
     redirectUrl = `${redirectUrl}&step=address`
     response = NextResponse.redirect(`${redirectUrl}`, 307)
     response.cookies.set("_medusa_cart_id", cartId, { maxAge: 60 * 60 * 24 })
   }
 
-  // Set a cookie to indicate that we're onboarding. This is used to show the onboarding flow.
+  // Set onboarding cookie
   if (isOnboarding) {
     response.cookies.set("_medusa_onboarding", "true", { maxAge: 60 * 60 * 24 })
   }
 
-  return response
+  return applyMedusaCookies(response, locale)
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|favicon.ico|.*\\.png|.*\\.jpg|.*\\.gif|.*\\.svg).*)"], // prevents redirecting on static files
+  matcher: [
+    "/((?!api|_next/static|favicon.ico|.*\\.png|.*\\.jpg|.*\\.gif|.*\\.svg).*)",
+  ], // prevents redirecting on static files
 }

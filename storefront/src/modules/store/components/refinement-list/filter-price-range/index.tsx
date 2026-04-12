@@ -2,6 +2,7 @@
 
 import * as Slider from "@radix-ui/react-slider"
 import { CurrencyInput, Text } from "@medusajs/ui"
+import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 
 type FilterPriceRangeProps = {
@@ -26,6 +27,7 @@ const FilterPriceRange = ({
   onChange,
   "data-testid": dataTestId,
 }: FilterPriceRangeProps) => {
+  const t = useTranslations("Store")
   const hasBounds =
     priceBounds != null &&
     Number.isFinite(priceBounds.min) &&
@@ -88,7 +90,9 @@ const FilterPriceRange = ({
 
   return (
     <div className="flex flex-col gap-y-3" data-testid={dataTestId}>
-      <Text className="txt-compact-small-plus text-ui-fg-muted">Price</Text>
+      <Text className="txt-compact-small-plus text-ui-fg-muted">
+        {t("price")}
+      </Text>
 
       {hasBounds && (
         <Slider.Root
@@ -100,7 +104,7 @@ const FilterPriceRange = ({
           onValueChange={handleSliderChange}
           onValueCommit={handleSliderCommit}
           minStepsBetweenThumbs={0}
-          aria-label="Price range"
+          aria-label={t("priceRange")}
         >
           <Slider.Track className="relative h-2 w-full grow rounded-full bg-ui-bg-component">
             <Slider.Range className="absolute h-full rounded-full bg-ui-bg-interactive" />
@@ -120,7 +124,7 @@ const FilterPriceRange = ({
           onBlur={handleInputsBlur}
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
-          aria-label="Minimum price"
+          aria-label={t("minPrice")}
         />
         <span className="txt-compact-small text-ui-fg-muted">–</span>
         <CurrencyInput
@@ -132,7 +136,7 @@ const FilterPriceRange = ({
           onBlur={handleInputsBlur}
           min={hasBounds ? sliderMin : undefined}
           max={hasBounds ? sliderMax : undefined}
-          aria-label="Maximum price"
+          aria-label={t("maxPrice")}
         />
       </div>
     </div>

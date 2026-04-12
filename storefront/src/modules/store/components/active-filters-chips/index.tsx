@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { XMarkMini } from "@medusajs/icons"
 import { Badge, IconButton, clx } from "@medusajs/ui"
@@ -30,6 +31,8 @@ export default function ActiveFiltersChips({
   onClearOption,
   onClearCategory,
 }: ActiveFiltersChipsProps) {
+  const t = useTranslations("Store")
+
   const optionChips = useMemo(() => {
     const opts = filters.options ?? {}
     return Object.entries(opts).flatMap(([optionTitle, values]) =>
@@ -61,11 +64,12 @@ export default function ActiveFiltersChips({
             currency_code: currencyCode,
           })
         : null
-    if (min != null && max != null) return `Price: ${min} – ${max}`
-    if (min != null) return `Price: ${min} –`
-    if (max != null) return `Price: – ${max}`
+    if (min != null && max != null)
+      return t("priceChipRange", { min, max })
+    if (min != null) return t("priceChipMinOnly", { min })
+    if (max != null) return t("priceChipMaxOnly", { max })
     return ""
-  }, [filters.priceMin, filters.priceMax, currencyCode])
+  }, [filters.priceMin, filters.priceMax, currencyCode, t])
 
   const hasPriceFilter = priceChipLabel.length > 0
   const hasActiveFilters =
@@ -94,7 +98,7 @@ export default function ActiveFiltersChips({
             size="small"
             className="rounded-full text-ui-fg-muted hover:text-ui-fg-base"
             onClick={onClearPrice}
-            aria-label="Clear price filter"
+            aria-label={t("clearPriceFilter")}
           >
             <XMarkMini />
           </IconButton>
@@ -109,14 +113,16 @@ export default function ActiveFiltersChips({
             "bg-ui-bg-component border border-ui-border-base"
           )}
         >
-          <span className="txt-compact-small-plus">Category: {name}</span>
+          <span className="txt-compact-small-plus">
+            {t("categoryChipLabel", { name })}
+          </span>
           <IconButton
             type="button"
             variant="transparent"
             size="small"
             className="rounded-full text-ui-fg-muted hover:text-ui-fg-base"
             onClick={() => onClearCategory(id)}
-            aria-label={`Clear category ${name} filter`}
+            aria-label={t("clearCategoryFilter", { name })}
           >
             <XMarkMini />
           </IconButton>
@@ -139,7 +145,10 @@ export default function ActiveFiltersChips({
             size="small"
             className="rounded-full text-ui-fg-muted hover:text-ui-fg-base"
             onClick={() => onClearOption(optionTitle, value)}
-            aria-label={`Clear ${optionTitle} ${value} filter`}
+            aria-label={t("clearOptionFilterSr", {
+              option: optionTitle,
+              value,
+            })}
           >
             <XMarkMini />
           </IconButton>
