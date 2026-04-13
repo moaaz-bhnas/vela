@@ -14,6 +14,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
@@ -48,6 +49,7 @@ const EditCarouselSchema = z.object({
 type EditCarouselFormValues = z.infer<typeof EditCarouselSchema>;
 
 export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [uploadedFiles, setUploadedFiles] = useState<Map<number, FileType>>(new Map());
@@ -143,11 +145,11 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("Carousel slides updated successfully");
+      toast.success(t("branding.toasts.carouselUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update carousel slides");
+      toast.error(error.message || t("branding.toasts.carouselUpdateFailed"));
     },
   });
 
@@ -233,7 +235,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit Carousel Slides</Heading>
+          <Heading>{t("branding.drawers.editCarousel")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -251,7 +253,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                 {fields.length === 0 ? (
                   <div className="text-ui-fg-subtle flex flex-col items-center justify-center py-8">
                     <Text size="small" leading="compact" className="mb-4">
-                      No carousel slides configured
+                      {t("branding.sections.carousel.empty")}
                     </Text>
                     <Button
                       type="button"
@@ -260,7 +262,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                       onClick={handleAddSlide}
                     >
                       <Plus />
-                      Add Slide
+                      {t("branding.sections.carousel.addSlide")}
                     </Button>
                   </div>
                 ) : (
@@ -272,7 +274,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                       >
                         <div className="mb-4 flex items-center justify-between">
                           <Text size="small" leading="compact" weight="plus" className="text-ui-fg-subtle">
-                            Slide {index + 1}
+                            {t("branding.sections.carousel.slide", { number: index + 1 })}
                           </Text>
                           <div className="flex items-center gap-x-1">
                             <IconButton
@@ -309,13 +311,13 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                             name={`carousel_slides.${index}.image_url`}
                             render={({ field }) => (
                               <Form.Item>
-                                <Form.Label optional>Image URL</Form.Label>
+                                <Form.Label optional>{t("branding.fields.imageUrl")}</Form.Label>
                                 {uploadedFiles.has(index) ? (
                                   <div className="space-y-2">
                                     <div className="flex items-center gap-x-2 p-3 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
                                       <img
                                         src={uploadedFiles.get(index)!.url}
-                                        alt="Preview"
+                                        alt={t("branding.fields.image")}
                                         className="w-16 h-16 object-cover rounded"
                                       />
                                       <div className="flex-1 min-w-0">
@@ -332,20 +334,20 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                                         size="small"
                                         onClick={handleFileRemove(index)}
                                       >
-                                        Remove
+                                        {t("common.actions.remove")}
                                       </Button>
                                     </div>
-                                    <Form.Hint>Uploaded file will replace URL input</Form.Hint>
+                                    <Form.Hint>{t("common.fileUpload.uploadedFileReplacesUrl")}</Form.Hint>
                                   </div>
                                 ) : (
                                   <>
                                     <Form.Control>
                                       <Input
-                                        placeholder="https://example.com/slide.jpg"
+                                        placeholder={t("branding.placeholders.slideImageUrl")}
                                         {...field}
                                       />
                                     </Form.Control>
-                                    <Form.Hint>Or upload a file below</Form.Hint>
+                                    <Form.Hint>{t("common.fileUpload.orUploadBelow")}</Form.Hint>
                                   </>
                                 )}
                                 <Form.ErrorMessage />
@@ -354,8 +356,8 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                           />
                           {!uploadedFiles.has(index) && (
                             <FileUpload
-                              label="Upload Image"
-                              hint="Drag and drop an image here or click to upload"
+                              label={t("common.actions.uploadImage")}
+                              hint={t("common.fileUpload.defaultHint")}
                               formats={SUPPORTED_IMAGE_FORMATS}
                               multiple={false}
                               maxFileSize={10 * 1024 * 1024}
@@ -393,9 +395,9 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                             name={`carousel_slides.${index}.title`}
                             render={({ field }) => (
                               <Form.Item>
-                                <Form.Label optional>Title</Form.Label>
+                                <Form.Label optional>{t("branding.fields.title")}</Form.Label>
                                 <Form.Control>
-                                  <Input placeholder="Slide title" {...field} />
+                                  <Input placeholder={t("branding.placeholders.slideTitle")} {...field} />
                                 </Form.Control>
                                 <Form.ErrorMessage />
                               </Form.Item>
@@ -406,9 +408,9 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                             name={`carousel_slides.${index}.description`}
                             render={({ field }) => (
                               <Form.Item>
-                                <Form.Label optional>Description</Form.Label>
+                                <Form.Label optional>{t("branding.fields.description")}</Form.Label>
                                 <Form.Control>
-                                  <Textarea placeholder="Slide description" rows={2} {...field} />
+                                  <Textarea placeholder={t("branding.placeholders.slideDescription")} rows={2} {...field} />
                                 </Form.Control>
                                 <Form.ErrorMessage />
                               </Form.Item>
@@ -420,9 +422,9 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                               name={`carousel_slides.${index}.link_url`}
                               render={({ field }) => (
                                 <Form.Item>
-                                  <Form.Label optional>Link URL</Form.Label>
+                                  <Form.Label optional>{t("branding.fields.linkUrl")}</Form.Label>
                                   <Form.Control>
-                                    <Input placeholder="https://example.com/page" {...field} />
+                                    <Input placeholder={t("branding.placeholders.slideLinkUrl")} {...field} />
                                   </Form.Control>
                                   <Form.ErrorMessage />
                                 </Form.Item>
@@ -433,9 +435,9 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                               name={`carousel_slides.${index}.link_text`}
                               render={({ field }) => (
                                 <Form.Item>
-                                  <Form.Label optional>Link Text</Form.Label>
+                                  <Form.Label optional>{t("branding.fields.linkText")}</Form.Label>
                                   <Form.Control>
-                                    <Input placeholder="Shop Now" {...field} />
+                                    <Input placeholder={t("branding.placeholders.slideLinkText")} {...field} />
                                   </Form.Control>
                                   <Form.ErrorMessage />
                                 </Form.Item>
@@ -453,7 +455,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                       className="self-start shrink-0"
                     >
                       <Plus />
-                      Add Slide
+                      {t("branding.sections.carousel.addSlide")}
                     </Button>
                   </>
                 )}
@@ -462,11 +464,11 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

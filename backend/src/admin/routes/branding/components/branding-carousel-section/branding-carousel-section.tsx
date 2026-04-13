@@ -1,5 +1,6 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Container, Heading, Text } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { ActionMenu } from "../../common/action-menu";
 import { BrandingConfig } from "../../../../lib/types";
 
@@ -10,15 +11,16 @@ type BrandingCarouselSectionProps = {
 export const BrandingCarouselSection = ({
   branding,
 }: BrandingCarouselSectionProps) => {
+  const { t } = useTranslation();
   const carouselSlides = branding?.carousel_slides ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading level="h2">Carousel Slides</Heading>
+          <Heading level="h2">{t("branding.sections.carousel.title")}</Heading>
           <Text className="text-ui-fg-subtle" size="small">
-            Manage homepage carousel slides
+            {t("branding.sections.carousel.description")}
           </Text>
         </div>
         <ActionMenu
@@ -27,7 +29,7 @@ export const BrandingCarouselSection = ({
               actions: [
                 {
                   icon: <PencilSquare />,
-                  label: "Edit",
+                  label: t("common.actions.edit"),
                   to: "?edit=carousel",
                 },
               ],
@@ -49,14 +51,14 @@ export const BrandingCarouselSection = ({
                     <div className="aspect-video w-full overflow-hidden">
                       <img
                         src={slide.image_url}
-                        alt={slide.title || `Slide ${index + 1}`}
+                        alt={slide.title || t("branding.sections.carousel.slide", { number: index + 1 })}
                         className="h-full w-full object-cover"
                       />
                     </div>
                   ) : (
                     <div className="bg-ui-bg-component aspect-video flex items-center justify-center">
                       <Text size="small" className="text-ui-fg-muted">
-                        No image
+                        {t("common.states.noImage")}
                       </Text>
                     </div>
                   )}
@@ -66,7 +68,7 @@ export const BrandingCarouselSection = ({
                         #{slide.order || index + 1}
                       </Text>
                       <Text size="small" weight="plus" className="truncate">
-                        {slide.title || "-"}
+                        {slide.title || t("common.states.none")}
                       </Text>
                     </div>
                     {slide.description && (
@@ -91,7 +93,7 @@ export const BrandingCarouselSection = ({
           </div>
         ) : (
           <Text size="small" leading="compact" className="text-ui-fg-subtle">
-            No carousel slides configured
+            {t("branding.sections.carousel.empty")}
           </Text>
         )}
       </div>

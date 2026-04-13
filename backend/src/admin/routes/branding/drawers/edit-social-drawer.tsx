@@ -14,6 +14,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
@@ -53,6 +54,7 @@ const EditSocialSchema = z.object({
 type EditSocialFormValues = z.infer<typeof EditSocialSchema>;
 
 export const EditSocialDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -104,11 +106,11 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("Social links updated successfully");
+      toast.success(t("branding.toasts.socialUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update social links");
+      toast.error(error.message || t("branding.toasts.socialUpdateFailed"));
     },
   });
 
@@ -139,7 +141,7 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit Social Links</Heading>
+          <Heading>{t("branding.drawers.editSocial")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -157,7 +159,7 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                 {fields.length === 0 ? (
                   <div className="text-ui-fg-subtle flex flex-col items-center justify-center py-8">
                     <Text size="small" leading="compact" className="mb-4">
-                      No social links configured
+                      {t("branding.sections.social.empty")}
                     </Text>
                     <Button
                       type="button"
@@ -166,7 +168,7 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                       onClick={handleAddLink}
                     >
                       <Plus />
-                      Add Social Link
+                      {t("branding.sections.social.addLink")}
                     </Button>
                   </div>
                 ) : (
@@ -186,7 +188,7 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                         >
                           <div className="mb-4 flex items-center justify-between">
                             <Text size="small" leading="compact" weight="plus" className="text-ui-fg-subtle">
-                              Link {index + 1}
+                              {t("branding.sections.social.link", { number: index + 1 })}
                             </Text>
                             <IconButton
                               type="button"
@@ -203,19 +205,19 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                               name={`social_links.${index}.platform`}
                               render={({ field }) => (
                                 <Form.Item>
-                                  <Form.Label>Platform</Form.Label>
+                                  <Form.Label>{t("branding.fields.platform")}</Form.Label>
                                   <Form.Control>
                                     <Select
                                       value={field.value}
                                       onValueChange={field.onChange}
                                     >
                                       <Select.Trigger>
-                                        <Select.Value placeholder="Select platform" />
+                                        <Select.Value placeholder={t("branding.sections.social.platformPlaceholder")} />
                                       </Select.Trigger>
                                       <Select.Content>
                                         {availablePlatforms.length === 0 ? (
                                           <Select.Item value="" disabled>
-                                            No platforms available
+                                            {t("branding.sections.social.noPlatformsAvailable")}
                                           </Select.Item>
                                         ) : (
                                           availablePlatforms.map((platform) => (
@@ -239,10 +241,10 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                               name={`social_links.${index}.url`}
                               render={({ field }) => (
                                 <Form.Item>
-                                  <Form.Label>URL</Form.Label>
+                                  <Form.Label>{t("branding.fields.url")}</Form.Label>
                                   <Form.Control>
                                     <Input
-                                      placeholder="https://facebook.com/yourpage"
+                                      placeholder={t("branding.placeholders.socialUrl")}
                                       {...field}
                                     />
                                   </Form.Control>
@@ -262,7 +264,7 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                       className="self-start shrink-0"
                     >
                       <Plus />
-                      Add Social Link
+                      {t("branding.sections.social.addLink")}
                     </Button>
                   </>
                 )}
@@ -271,11 +273,11 @@ export const EditSocialDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

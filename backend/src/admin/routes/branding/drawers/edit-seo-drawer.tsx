@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
@@ -40,6 +41,7 @@ const EditSeoSchema = z.object({
 type EditSeoFormValues = z.infer<typeof EditSeoSchema>;
 
 export const EditSeoDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [uploadedFile, setUploadedFile] = useState<FileType | null>(null);
@@ -116,11 +118,11 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("SEO defaults updated successfully");
+      toast.success(t("branding.toasts.seoUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update SEO defaults");
+      toast.error(error.message || t("branding.toasts.seoUpdateFailed"));
     },
   });
 
@@ -149,7 +151,7 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit SEO Defaults</Heading>
+          <Heading>{t("branding.drawers.editSeo")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -169,14 +171,14 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                   name="site_tagline"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Site Tagline</Form.Label>
+                      <Form.Label optional>{t("branding.fields.siteTagline")}</Form.Label>
                       <Form.Control>
                         <Input
-                          placeholder="Your trusted online store"
+                          placeholder={t("branding.placeholders.siteTagline")}
                           {...field}
                         />
                       </Form.Control>
-                      <Form.Hint>A short tagline describing your store</Form.Hint>
+                      <Form.Hint>{t("branding.hints.siteTagline")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -186,17 +188,16 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                   name="meta_description_template"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Meta Description Template</Form.Label>
+                      <Form.Label optional>{t("branding.fields.metaDescriptionTemplate")}</Form.Label>
                       <Form.Control>
                         <Textarea
-                          placeholder="{{product}} - Buy {{title}} at My Store. Free shipping on orders over $50."
+                          placeholder={t("branding.placeholders.metaDescriptionTemplate")}
                           rows={4}
                           {...field}
                         />
                       </Form.Control>
                       <Form.Hint>
-                        Template for generating meta descriptions. Use{" "}
-                        {"{{product}}"}, {"{{title}}"} as placeholders.
+                        {t("branding.hints.metaDescriptionTemplate")}
                       </Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
@@ -207,13 +208,13 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                   name="default_og_image_url"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Default OG Image URL</Form.Label>
+                      <Form.Label optional>{t("branding.fields.defaultOgImageUrl")}</Form.Label>
                       {uploadedFile ? (
                         <div className="space-y-2">
                           <div className="flex items-center gap-x-2 p-3 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
                             <img
                               src={uploadedFile.url}
-                              alt="Preview"
+                              alt={t("branding.fields.image")}
                               className="w-16 h-16 object-cover rounded"
                             />
                             <div className="flex-1 min-w-0">
@@ -230,21 +231,21 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                               size="small"
                               onClick={handleFileRemove}
                             >
-                              Remove
+                              {t("common.actions.remove")}
                             </Button>
                           </div>
-                          <Form.Hint>Uploaded file will replace URL input</Form.Hint>
+                          <Form.Hint>{t("common.fileUpload.uploadedFileReplacesUrl")}</Form.Hint>
                         </div>
                       ) : (
                         <>
                           <Form.Control>
                             <Input
-                              placeholder="https://example.com/og-image.jpg"
+                              placeholder={t("branding.placeholders.ogImageUrl")}
                               {...field}
                             />
                           </Form.Control>
                           <Form.Hint>
-                            Default image used when sharing on social media. Or upload a file below.
+                            {t("branding.hints.ogImage")}
                           </Form.Hint>
                         </>
                       )}
@@ -254,8 +255,8 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                 />
                 {!uploadedFile && (
                   <FileUpload
-                    label="Upload OG Image"
-                    hint="Drag and drop an image here or click to upload"
+                    label={t("branding.fields.defaultOgImageUrl")}
+                    hint={t("common.fileUpload.defaultHint")}
                     formats={SUPPORTED_IMAGE_FORMATS}
                     multiple={false}
                     maxFileSize={5 * 1024 * 1024}
@@ -293,11 +294,11 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

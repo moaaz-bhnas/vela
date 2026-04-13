@@ -1,5 +1,6 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Badge, Container, Heading, Text } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { ActionMenu } from "../../common/action-menu";
 import { BrandingConfig } from "../../../../lib/types";
 
@@ -10,15 +11,16 @@ type BrandingSocialSectionProps = {
 export const BrandingSocialSection = ({
   branding,
 }: BrandingSocialSectionProps) => {
+  const { t } = useTranslation();
   const socialLinks = branding?.social_links ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading level="h2">Social Links</Heading>
+          <Heading level="h2">{t("branding.sections.social.title")}</Heading>
           <Text className="text-ui-fg-subtle" size="small">
-            Manage your social media links
+            {t("branding.sections.social.description")}
           </Text>
         </div>
         <ActionMenu
@@ -27,7 +29,7 @@ export const BrandingSocialSection = ({
               actions: [
                 {
                   icon: <PencilSquare />,
-                  label: "Edit",
+                  label: t("common.actions.edit"),
                   to: "?edit=social",
                 },
               ],
@@ -51,7 +53,7 @@ export const BrandingSocialSection = ({
           </div>
         ) : (
           <Text size="small" leading="compact" className="text-ui-fg-subtle">
-            No social links configured
+            {t("branding.sections.social.empty")}
           </Text>
         )}
       </div>

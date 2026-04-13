@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "remove": "Entfernen",
+      "uploadImage": "Bild hochladen"
+    },
+    "optional": "(optional)",
+    "states": {
+      "none": "-",
+      "noImage": "Kein Bild"
+    },
+    "fileUpload": {
+      "defaultHint": "Bild hierher ziehen oder klicken zum Hochladen",
+      "uploadedFileReplacesUrl": "Die hochgeladene Datei ersetzt die URL-Eingabe",
+      "orUploadBelow": "Oder Datei unten hochladen",
+      "fileTooLarge": "Die Datei \"{{name}}\" ist zu groß ({{size}} MB). Die maximale Dateigröße beträgt {{max}} MB.",
+      "unsupportedFormat": "Die Datei \"{{name}}\" ist kein unterstütztes Bildformat."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "Branding"
+    },
+    "sections": {
+      "general": {
+        "title": "Allgemeine Einstellungen",
+        "description": "Verwalten Sie die grundlegenden Markeninformationen Ihrer Website"
+      },
+      "logos": {
+        "title": "Logos",
+        "description": "Verwalten Sie die Logos Ihrer Website",
+        "main": "Hauptlogo",
+        "footer": "Footer-Logo",
+        "favicon": "Favicon",
+        "recommendedRatioMain": "Empfohlenes Seitenverhältnis: 4:1 oder 3:1 (horizontales Logo)",
+        "recommendedRatioFooter": "Empfohlenes Seitenverhältnis: 4:1 oder 3:1 (horizontales Logo)",
+        "recommendedRatioFavicon": "Empfohlen: 1:1 (quadratisch), idealerweise 32×32 px oder 64×64 px"
+      },
+      "contact": {
+        "title": "Kontaktinformationen",
+        "description": "Verwalten Sie die auf Ihrer Website angezeigten Kontaktdaten"
+      },
+      "social": {
+        "title": "Social Links",
+        "description": "Verwalten Sie Ihre Social-Media-Links",
+        "empty": "Keine Social-Links konfiguriert",
+        "addLink": "Social-Link hinzufügen",
+        "link": "Link {{number}}",
+        "platformPlaceholder": "Plattform auswählen",
+        "noPlatformsAvailable": "Keine Plattformen verfügbar"
+      },
+      "seo": {
+        "title": "SEO-Standards",
+        "description": "Konfigurieren Sie die Standard-SEO-Einstellungen Ihrer Website",
+        "defaultOgImage": "Standard-OG-Bild"
+      },
+      "carousel": {
+        "title": "Karussell-Folien",
+        "description": "Verwalten Sie die Karussell-Folien der Startseite",
+        "empty": "Keine Karussell-Folien konfiguriert",
+        "addSlide": "Folie hinzufügen",
+        "slide": "Folie {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "Website-Titel",
+      "copyrightText": "Urheberrechtshinweis",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "address": "Adresse",
+      "image": "Bild",
+      "imageUrl": "Bild-URL",
+      "altText": "Alternativtext",
+      "url": "URL",
+      "platform": "Plattform",
+      "siteTagline": "Website-Slogan",
+      "metaDescriptionTemplate": "Meta-Beschreibungsvorlage",
+      "defaultOgImageUrl": "Standard-OG-Bild-URL",
+      "title": "Titel",
+      "description": "Beschreibung",
+      "linkUrl": "Link-URL",
+      "linkText": "Linktext"
+    },
+    "placeholders": {
+      "siteTitle": "Mein Shop",
+      "copyrightText": "Copyright 2024 Mein Shop. Alle Rechte vorbehalten.",
+      "email": "kontakt@beispiel.de",
+      "phone": "+49-555-123456",
+      "address": "Musterstraße 123, Berlin, 10115",
+      "logoUrl": "https://beispiel.de/logo.png",
+      "logoAlt": "Logo-Beschreibung",
+      "siteTagline": "Ihr vertrauenswürdiger Online-Shop",
+      "metaDescriptionTemplate": "{{product}} – {{title}} bei Mein Shop kaufen. Kostenloser Versand ab 50 €.",
+      "ogImageUrl": "https://beispiel.de/og-bild.jpg",
+      "socialUrl": "https://facebook.com/ihrepage",
+      "slideImageUrl": "https://beispiel.de/folie.jpg",
+      "slideTitle": "Folientitel",
+      "slideDescription": "Folienbeschreibung",
+      "slideLinkUrl": "https://beispiel.de/seite",
+      "slideLinkText": "Jetzt kaufen"
+    },
+    "hints": {
+      "siteTitle": "Der Name Ihres Shops, der auf der gesamten Website angezeigt wird",
+      "copyrightText": "Urheberrechtshinweis im Footer",
+      "email": "Kontakt-E-Mail-Adresse auf Ihrer Website",
+      "phone": "Kontakttelefonnummer",
+      "address": "Physische Adresse oder Standort",
+      "metaDescriptionTemplate": "Vorlage zur Generierung von Meta-Beschreibungen. Verwenden Sie {{product}}, {{title}} als Platzhalter.",
+      "ogImage": "Standardbild beim Teilen in sozialen Medien. Oder Datei unten hochladen."
+    },
+    "drawers": {
+      "editGeneral": "Allgemeine Einstellungen bearbeiten",
+      "editLogos": "Logos bearbeiten",
+      "editContact": "Kontaktinformationen bearbeiten",
+      "editSocial": "Social Links bearbeiten",
+      "editSeo": "SEO-Standards bearbeiten",
+      "editCarousel": "Karussell-Folien bearbeiten"
+    },
+    "validation": {
+      "phoneInvalid": "Bitte geben Sie eine gültige internationale Telefonnummer ein (z. B. +49-555-123456)",
+      "platformRequired": "Plattform ist erforderlich",
+      "urlInvalid": "Muss eine gültige URL sein"
+    },
+    "toasts": {
+      "generalUpdated": "Allgemeine Einstellungen erfolgreich aktualisiert",
+      "generalUpdateFailed": "Fehler beim Aktualisieren der allgemeinen Einstellungen",
+      "logosUpdated": "Logos erfolgreich aktualisiert",
+      "logosUpdateFailed": "Fehler beim Aktualisieren der Logos",
+      "contactUpdated": "Kontaktinformationen erfolgreich aktualisiert",
+      "contactUpdateFailed": "Fehler beim Aktualisieren der Kontaktinformationen",
+      "socialUpdated": "Social Links erfolgreich aktualisiert",
+      "socialUpdateFailed": "Fehler beim Aktualisieren der Social Links",
+      "seoUpdated": "SEO-Standards erfolgreich aktualisiert",
+      "seoUpdateFailed": "Fehler beim Aktualisieren der SEO-Standards",
+      "carouselUpdated": "Karussell-Folien erfolgreich aktualisiert",
+      "carouselUpdateFailed": "Fehler beim Aktualisieren der Karussell-Folien"
+    }
+  },
+  "categoryImage": {
+    "title": "Kategoriebild",
+    "description": "Lade ein Bild für diese Kategorie hoch",
+    "fields": {
+      "image": "Bild"
+    },
+    "drawers": {
+      "edit": "Kategoriebild bearbeiten",
+      "uploadNew": "Neues Bild hochladen"
+    },
+    "toasts": {
+      "updated": "Kategoriebild erfolgreich aktualisiert",
+      "updateFailed": "Fehler beim Aktualisieren des Kategoriebilds",
+      "removed": "Kategoriebild erfolgreich entfernt",
+      "removeFailed": "Fehler beim Entfernen des Bilds"
+    }
+  }
+}

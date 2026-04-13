@@ -5,6 +5,7 @@ import { useForm, Control } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
@@ -80,6 +81,7 @@ const getImageDimensions = (
 const LogoFields = ({
   prefix,
   label,
+  t,
   control,
   uploadedFile,
   onFileUpload,
@@ -87,6 +89,7 @@ const LogoFields = ({
 }: {
   prefix: "main" | "footer" | "favicon";
   label: string;
+  t: (key: string, options?: Record<string, unknown>) => string;
   control: Control<EditLogosFormValues>;
   uploadedFile: FileType | null;
   onFileUpload: (file: FileType) => void;
@@ -103,13 +106,13 @@ const LogoFields = ({
           name={`${prefix}.url`}
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>Image URL</Form.Label>
+              <Form.Label optional>{t("branding.fields.imageUrl")}</Form.Label>
               {uploadedFile ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-x-2 p-3 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
                     <img
                       src={uploadedFile.url}
-                      alt="Preview"
+                      alt={t("branding.fields.image")}
                       className="w-12 h-12 object-cover rounded"
                     />
                     <div className="flex-1 min-w-0">
@@ -126,20 +129,20 @@ const LogoFields = ({
                       size="small"
                       onClick={onFileRemove}
                     >
-                      Remove
+                      {t("common.actions.remove")}
                     </Button>
                   </div>
-                  <Form.Hint>Uploaded file will replace URL input</Form.Hint>
+                  <Form.Hint>{t("common.fileUpload.uploadedFileReplacesUrl")}</Form.Hint>
                 </div>
               ) : (
                 <>
                   <Form.Control>
                     <Input
-                      placeholder="https://example.com/logo.png"
+                      placeholder={t("branding.placeholders.logoUrl")}
                       {...field}
                     />
                   </Form.Control>
-                  <Form.Hint>Or upload a file below</Form.Hint>
+                  <Form.Hint>{t("common.fileUpload.orUploadBelow")}</Form.Hint>
                 </>
               )}
               <Form.ErrorMessage />
@@ -150,8 +153,8 @@ const LogoFields = ({
       {!uploadedFile && (
         <div className="space-y-2">
           <FileUpload
-            label="Upload Image"
-            hint="Drag and drop an image here or click to upload"
+            label={t("common.actions.uploadImage")}
+            hint={t("common.fileUpload.defaultHint")}
             formats={SUPPORTED_IMAGE_FORMATS}
             multiple={false}
             maxFileSize={5 * 1024 * 1024}
@@ -183,7 +186,7 @@ const LogoFields = ({
               }
             }}
           />
-          <Text size="xsmall" className="text-ui-fg-muted">
+                  <Text size="xsmall" className="text-ui-fg-muted">
             {getRatioRecommendation(prefix)}
           </Text>
         </div>
@@ -194,9 +197,9 @@ const LogoFields = ({
           name={`${prefix}.alt`}
           render={({ field }) => (
             <Form.Item>
-              <Form.Label optional>Alt Text</Form.Label>
+              <Form.Label optional>{t("branding.fields.altText")}</Form.Label>
               <Form.Control>
-                <Input placeholder="Logo description" {...field} />
+                <Input placeholder={t("branding.placeholders.logoAlt")} {...field} />
               </Form.Control>
               <Form.ErrorMessage />
             </Form.Item>
@@ -208,6 +211,7 @@ const LogoFields = ({
 );
 
 export const EditLogosDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
@@ -327,11 +331,11 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("Logos updated successfully");
+      toast.success(t("branding.toasts.logosUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update logos");
+      toast.error(error.message || t("branding.toasts.logosUpdateFailed"));
     },
   });
 
@@ -371,7 +375,7 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit Logos</Heading>
+          <Heading>{t("branding.drawers.editLogos")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -388,7 +392,8 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
               <Drawer.Body className="flex flex-col gap-y-8 overflow-y-auto">
                 <LogoFields
                   prefix="main"
-                  label="Main Logo"
+                  label={t("branding.sections.logos.main")}
+                  t={t}
                   control={form.control}
                   uploadedFile={uploadedFiles.main}
                   onFileUpload={handleFileUpload("main")}
@@ -397,7 +402,8 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
                 <div className="border-ui-border-base -mx-6 border-t" />
                 <LogoFields
                   prefix="footer"
-                  label="Footer Logo"
+                  label={t("branding.sections.logos.footer")}
+                  t={t}
                   control={form.control}
                   uploadedFile={uploadedFiles.footer}
                   onFileUpload={handleFileUpload("footer")}
@@ -406,7 +412,8 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
                 <div className="border-ui-border-base -mx-6 border-t" />
                 <LogoFields
                   prefix="favicon"
-                  label="Favicon"
+                  label={t("branding.sections.logos.favicon")}
+                  t={t}
                   control={form.control}
                   uploadedFile={uploadedFiles.favicon}
                   onFileUpload={handleFileUpload("favicon")}
@@ -417,11 +424,11 @@ export const EditLogosDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

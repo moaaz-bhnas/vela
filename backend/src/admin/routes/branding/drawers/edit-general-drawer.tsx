@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
@@ -19,6 +20,7 @@ const EditGeneralSchema = z.object({
 type EditGeneralFormValues = z.infer<typeof EditGeneralSchema>;
 
 export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -57,11 +59,11 @@ export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("General settings updated successfully");
+      toast.success(t("branding.toasts.generalUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update general settings");
+      toast.error(error.message || t("branding.toasts.generalUpdateFailed"));
     },
   });
 
@@ -79,7 +81,7 @@ export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit General Settings</Heading>
+          <Heading>{t("branding.drawers.editGeneral")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -96,11 +98,11 @@ export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
                   name="site_title"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Site Title</Form.Label>
+                      <Form.Label optional>{t("branding.fields.siteTitle")}</Form.Label>
                       <Form.Control>
-                        <Input placeholder="My Store" {...field} />
+                        <Input placeholder={t("branding.placeholders.siteTitle")} {...field} />
                       </Form.Control>
-                      <Form.Hint>The name of your store displayed across the site</Form.Hint>
+                      <Form.Hint>{t("branding.hints.siteTitle")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -110,14 +112,14 @@ export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
                   name="copyright_text"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Copyright Text</Form.Label>
+                      <Form.Label optional>{t("branding.fields.copyrightText")}</Form.Label>
                       <Form.Control>
                         <Textarea
-                          placeholder="© 2024 My Store. All rights reserved."
+                          placeholder={t("branding.placeholders.copyrightText")}
                           {...field}
                         />
                       </Form.Control>
-                      <Form.Hint>Copyright notice displayed in the footer</Form.Hint>
+                      <Form.Hint>{t("branding.hints.copyrightText")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -127,11 +129,11 @@ export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

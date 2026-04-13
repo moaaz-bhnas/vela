@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { sdk } from "../lib/sdk";
 import { categoryFetcher } from "../lib/queries";
@@ -50,6 +51,7 @@ export const EditCategoryImageDrawer = ({
     categoryId: string;
     open: boolean;
 }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
@@ -97,15 +99,17 @@ export const EditCategoryImageDrawer = ({
             if (sizeRejected.length > 0) {
                 const file = sizeRejected[0];
                 const fileSizeMB = (file.file.size / (1024 * 1024)).toFixed(2);
-                toast.error(
-                    `File "${file.file.name}" is too large (${fileSizeMB} MB). Maximum file size is 5 MB.`
-                );
+                toast.error(t("common.fileUpload.fileTooLarge", {
+                    name: file.file.name,
+                    size: fileSizeMB,
+                    max: 5,
+                }));
             }
             if (formatRejected.length > 0) {
                 const file = formatRejected[0];
-                toast.error(
-                    `File "${file.file.name}" is not a supported image format.`
-                );
+                toast.error(t("common.fileUpload.unsupportedFormat", {
+                    name: file.file.name,
+                }));
             }
             return;
         }
@@ -148,12 +152,12 @@ export const EditCategoryImageDrawer = ({
         onSuccess: (result) => {
             if (result !== null) {
                 queryClient.invalidateQueries({ queryKey: ["category", categoryId] });
-                toast.success("Category image updated successfully");
+                toast.success(t("categoryImage.toasts.updated"));
             }
             closeDrawer();
         },
         onError: (error: any) => {
-            toast.error(error.message || "Failed to update category image");
+            toast.error(error.message || t("categoryImage.toasts.updateFailed"));
         },
     });
 
@@ -167,11 +171,11 @@ export const EditCategoryImageDrawer = ({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["category", categoryId] });
-            toast.success("Category image removed successfully");
+            toast.success(t("categoryImage.toasts.removed"));
             closeDrawer();
         },
         onError: (error: any) => {
-            toast.error(error.message || "Failed to remove image");
+            toast.error(error.message || t("categoryImage.toasts.removeFailed"));
         },
     });
 
@@ -195,7 +199,7 @@ export const EditCategoryImageDrawer = ({
         <Drawer open={open} onOpenChange={handleOpenChange}>
             <Drawer.Content>
                 <Drawer.Header>
-                    <Heading>Edit Category Image</Heading>
+                    <Heading>{t("categoryImage.drawers.edit")}</Heading>
                 </Drawer.Header>
                 {isLoading ? (
                     <Drawer.Body>
@@ -216,7 +220,7 @@ export const EditCategoryImageDrawer = ({
                                             <div className="bg-ui-bg-component flex h-24 w-24 items-center justify-center overflow-hidden rounded-md border">
                                                 <img
                                                     src={imageData.url}
-                                                    alt={imageData.alt || "Category image"}
+                                                    alt={imageData.alt || t("categoryImage.title")}
                                                     className="h-full w-full object-cover"
                                                 />
                                             </div>
@@ -225,7 +229,7 @@ export const EditCategoryImageDrawer = ({
                                                     {imageData.width}x{imageData.height}px
                                                 </Text>
                                                 <Text size="xsmall" className="text-ui-fg-muted">
-                                                    {imageData.alt || "-"}
+                                                    {imageData.alt || t("common.states.none")}
                                                 </Text>
                                             </div>
                                             <IconButton
@@ -241,10 +245,10 @@ export const EditCategoryImageDrawer = ({
                                 )}
 
                                 <div className="space-y-4">
-                                    <Heading level="h3">Upload New Image</Heading>
+                                    <Heading level="h3">{t("categoryImage.drawers.uploadNew")}</Heading>
                                     <FileUpload
-                                        label="Upload Image"
-                                        hint="Drag and drop an image here or click to upload"
+                                        label={t("common.actions.uploadImage")}
+                                        hint={t("common.fileUpload.defaultHint")}
                                         formats={SUPPORTED_IMAGE_FORMATS}
                                         multiple={false}
                                         maxFileSize={20 * 1024 * 1024}
@@ -254,7 +258,7 @@ export const EditCategoryImageDrawer = ({
                                         <div className="flex items-center gap-x-2 p-3 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
                                             <img
                                                 src={uploadedFile.url}
-                                                alt="Preview"
+                                                alt={t("categoryImage.title")}
                                                 className="w-12 h-12 object-cover rounded"
                                             />
                                             <div className="flex-1 min-w-0">
@@ -272,7 +276,7 @@ export const EditCategoryImageDrawer = ({
                                                 onClick={handleRemovePreview}
                                                 disabled={isBusy}
                                             >
-                                                Remove
+                                                {t("common.actions.remove")}
                                             </Button>
                                         </div>
                                     )}
@@ -282,7 +286,7 @@ export const EditCategoryImageDrawer = ({
                                 <div className="flex items-center justify-end gap-x-2">
                                     <Drawer.Close asChild>
                                         <Button size="small" variant="secondary" disabled={isBusy}>
-                                            Cancel
+                                            {t("common.actions.cancel")}
                                         </Button>
                                     </Drawer.Close>
                                     <Button
@@ -291,7 +295,7 @@ export const EditCategoryImageDrawer = ({
                                         isLoading={saveMutation.isPending}
                                         disabled={isBusy}
                                     >
-                                        Save
+                                        {t("common.actions.save")}
                                     </Button>
                                 </div>
                             </Drawer.Footer>
