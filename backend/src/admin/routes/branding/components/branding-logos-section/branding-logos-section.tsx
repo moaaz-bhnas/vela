@@ -1,7 +1,7 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Container, Heading, Text } from "@medusajs/ui";
 import { ActionMenu } from "../../common/action-menu";
-import { BrandingConfig, Logos } from "../../../../lib/types";
+import { BrandingConfig } from "../../../../lib/types";
 
 type BrandingLogosSectionProps = {
   branding?: BrandingConfig;
@@ -47,13 +47,13 @@ const LogoDisplay = ({
 export const BrandingLogosSection = ({
   branding,
 }: BrandingLogosSectionProps) => {
-  const logos = branding?.logos as Logos | undefined;
+  const logos = branding?.logos ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading>Logos</Heading>
+          <Heading level="h2">Logos</Heading>
           <Text className="text-ui-fg-subtle" size="small">
             Manage your site logos
           </Text>

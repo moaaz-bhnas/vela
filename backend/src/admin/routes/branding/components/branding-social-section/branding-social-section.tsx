@@ -1,7 +1,7 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Badge, Container, Heading, Text } from "@medusajs/ui";
 import { ActionMenu } from "../../common/action-menu";
-import { BrandingConfig, SocialLink } from "../../../../lib/types";
+import { BrandingConfig } from "../../../../lib/types";
 
 type BrandingSocialSectionProps = {
   branding?: BrandingConfig;
@@ -10,13 +10,13 @@ type BrandingSocialSectionProps = {
 export const BrandingSocialSection = ({
   branding,
 }: BrandingSocialSectionProps) => {
-  const socialLinks = branding?.social_links as SocialLink[] | undefined;
+  const socialLinks = branding?.social_links ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading>Social Links</Heading>
+          <Heading level="h2">Social Links</Heading>
           <Text className="text-ui-fg-subtle" size="small">
             Manage your social media links
           </Text>

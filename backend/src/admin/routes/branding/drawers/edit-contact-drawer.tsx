@@ -1,14 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Heading, Input, Textarea, toast, Drawer } from "@medusajs/ui";
+import { Spinner } from "@medusajs/icons";
 import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { phone } from "phone";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
-import { BrandingResponse, ContactInfo } from "../../../lib/types";
+import { BrandingResponse } from "../../../lib/types";
 import { Form } from "../common/form";
 
 const EditContactSchema = z.object({
@@ -18,9 +19,7 @@ const EditContactSchema = z.object({
     .optional()
     .refine(
       (val) => {
-        // If empty or undefined, validation passes (field is optional)
         if (!val || val.trim() === "") return true;
-        // Validate phone number using the phone package
         const validation = phone(val);
         return validation.isValid;
       },
@@ -33,14 +32,16 @@ const EditContactSchema = z.object({
 
 type EditContactFormValues = z.infer<typeof EditContactSchema>;
 
-export const EditContactDrawer = () => {
+export const EditContactDrawer = ({ open }: { open: boolean }) => {
   const navigate = useNavigate();
-  const { mutate } = useSWRConfig();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useSWR<BrandingResponse>("branding", brandingFetcher);
-  const contactInfo = data?.branding?.contact_info as ContactInfo | undefined;
+  const { data, isLoading } = useQuery<BrandingResponse>({
+    queryKey: ["branding"],
+    queryFn: brandingFetcher,
+    staleTime: 30_000,
+  });
+  const contactInfo = data?.branding?.contact_info ?? undefined;
 
   const form = useForm<EditContactFormValues>({
     defaultValues: {
@@ -51,51 +52,57 @@ export const EditContactDrawer = () => {
     resolver: zodResolver(EditContactSchema),
   });
 
-  useEffect(function openDrawer() {
-    setOpen(true);
-  }, []);
-
-  useEffect(function updateFormData() {
-    if (contactInfo && !form.formState.isDirty) {
-      form.reset({
+  const { reset } = form;
+  const wasOpenRef = useRef(false);
+  useEffect(function syncFormOnOpen() {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (!justOpened) return;
+    if (contactInfo) {
+      reset({
         email: contactInfo.email || "",
         phone: contactInfo.phone || "",
         address: contactInfo.address || "",
       });
+    } else {
+      reset({ email: "", phone: "", address: "" });
     }
-  }, [contactInfo, form]);
+  }, [open, contactInfo, reset]);
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      navigate("/branding", { replace: true });
-    }
-    setOpen(open);
-  };
-
-  const handleSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
+  const submitMutation = useMutation({
+    mutationFn: (values: EditContactFormValues) => {
       const hasContent = values.email || values.phone || values.address;
-      await sdk.client.fetch<BrandingResponse>("/admin/branding", {
+      return sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
         body: {
           contact_info: hasContent
             ? {
-              email: values.email || undefined,
-              phone: values.phone || undefined,
-              address: values.address || undefined,
-            }
+                email: values.email || undefined,
+                phone: values.phone || undefined,
+                address: values.address || undefined,
+              }
             : null,
         },
       });
-      await mutate("branding");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
       toast.success("Contact information updated successfully");
       navigate("/branding", { replace: true });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update contact information");
-    } finally {
-      setIsSubmitting(false);
+    },
+  });
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitMutation.isPending) {
+      navigate("/branding", { replace: true });
     }
+  };
+
+  const handleSubmit = form.handleSubmit((values) => {
+    submitMutation.mutate(values);
   });
 
   return (
@@ -107,7 +114,7 @@ export const EditContactDrawer = () => {
         {isLoading ? (
           <Drawer.Body>
             <div className="flex items-center justify-center py-8">
-              <div className="text-ui-fg-subtle">Loading...</div>
+              <Spinner />
             </div>
           </Drawer.Body>
         ) : (
@@ -160,11 +167,11 @@ export const EditContactDrawer = () => {
               <Drawer.Footer>
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
-                    <Button size="small" variant="secondary">
+                    <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
                       Cancel
                     </Button>
                   </Drawer.Close>
-                  <Button size="small" type="submit" isLoading={isSubmitting}>
+                  <Button size="small" type="submit" isLoading={submitMutation.isPending}>
                     Save
                   </Button>
                 </div>
@@ -176,4 +183,3 @@ export const EditContactDrawer = () => {
     </Drawer>
   );
 };
-

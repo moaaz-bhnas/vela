@@ -1,11 +1,12 @@
 import { Button, Heading, toast, Drawer, Text, IconButton } from "@medusajs/ui";
-import { Trash } from "@medusajs/icons";
+import { Trash, Spinner } from "@medusajs/icons";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { sdk } from "../lib/sdk";
+import { categoryFetcher } from "../lib/queries";
 import { FileUpload, FileType, RejectedFile } from "../components/common/file-upload";
 import { Form } from "../routes/branding/common/form";
 
@@ -42,28 +43,23 @@ const getImageDimensions = (
     });
 };
 
-const categoryFetcher = async (categoryId: string) => {
-    return await sdk.admin.productCategory.retrieve(categoryId, {
-        fields: "+metadata",
-    });
-};
-
 export const EditCategoryImageDrawer = ({
     categoryId,
+    open,
 }: {
     categoryId: string;
+    open: boolean;
 }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const { mutate } = useSWRConfig();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [open, setOpen] = useState(false);
+    const queryClient = useQueryClient();
     const [uploadedFile, setUploadedFile] = useState<FileType | null>(null);
 
-    const { data, isLoading } = useSWR(
-        [`category`, categoryId],
-        () => categoryFetcher(categoryId)
-    );
+    const { data, isLoading } = useQuery({
+        queryKey: ["category", categoryId],
+        queryFn: () => categoryFetcher(categoryId),
+        staleTime: 30_000,
+    });
 
     const categoryData = data?.product_category as {
         id: string;
@@ -71,25 +67,23 @@ export const EditCategoryImageDrawer = ({
     } | undefined;
     const imageData = categoryData?.metadata?.image;
 
-    useEffect(function openDrawer() {
-        if (searchParams.get("edit") === "category-image") {
-            setOpen(true);
-        }
-    }, [searchParams]);
-
-    const handleOpenChange = (open: boolean) => {
+    // Clear staged file when drawer closes
+    useEffect(function clearFileOnClose() {
         if (!open) {
-            const newSearchParams = new URLSearchParams(searchParams);
-            newSearchParams.delete("edit");
-            navigate(
-                { search: newSearchParams.toString() },
-                { replace: true }
-            );
+            setUploadedFile((prev) => {
+                if (prev?.url) URL.revokeObjectURL(prev.url);
+                return null;
+            });
         }
-        setOpen(open);
+    }, [open]);
+
+    const closeDrawer = () => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete("edit");
+        navigate({ search: newSearchParams.toString() }, { replace: true });
     };
 
-    const handleFileUpload = async (
+    const handleFileUpload = (
         files: FileType[],
         rejectedFiles?: RejectedFile[]
     ) => {
@@ -100,7 +94,6 @@ export const EditCategoryImageDrawer = ({
             const formatRejected = rejectedFiles.filter(
                 (f: RejectedFile) => f.reason === "format"
             );
-
             if (sizeRejected.length > 0) {
                 const file = sizeRejected[0];
                 const fileSizeMB = (file.file.size / (1024 * 1024)).toFixed(2);
@@ -108,23 +101,20 @@ export const EditCategoryImageDrawer = ({
                     `File "${file.file.name}" is too large (${fileSizeMB} MB). Maximum file size is 5 MB.`
                 );
             }
-
             if (formatRejected.length > 0) {
                 const file = formatRejected[0];
                 toast.error(
                     `File "${file.file.name}" is not a supported image format.`
                 );
             }
-
             return;
         }
-
         if (files.length > 0) {
             setUploadedFile(files[0]);
         }
     };
 
-    const handleRemove = () => {
+    const handleRemovePreview = () => {
         if (uploadedFile?.url) {
             URL.revokeObjectURL(uploadedFile.url);
         }
@@ -133,76 +123,73 @@ export const EditCategoryImageDrawer = ({
 
     const form = useForm();
 
-    const handleSubmit = form.handleSubmit(async () => {
-        // Only save if there's a new file to upload
-        if (!uploadedFile) {
-            // No changes, just close the drawer
-            handleOpenChange(false);
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
+    const saveMutation = useMutation({
+        mutationFn: async () => {
+            if (!uploadedFile) return null;
             const currentMetadata = categoryData?.metadata || {};
-
-            // Upload file first
             const { files } = await sdk.admin.upload.create({
                 files: [uploadedFile.file],
             });
-
-            if (files.length > 0) {
-                // Get image dimensions
-                const { width, height } = await getImageDimensions(uploadedFile.file);
-
-                // Extract alt text from image filename (remove extension)
-                const altText = uploadedFile.file.name
-                    .replace(/\.[^/.]+$/, "")
-                    .replace(/[-_]/g, " ");
-
-                const image: CategoryImage = {
-                    url: files[0].url,
-                    alt: altText,
-                    width: width || 0,
-                    height: height || 0,
-                };
-
-                await sdk.admin.productCategory.update(categoryId, {
-                    metadata: {
-                        ...currentMetadata,
-                        image,
-                    },
-                });
-
-                mutate([`category`, categoryId]);
+            if (files.length === 0) return null;
+            const { width, height } = await getImageDimensions(uploadedFile.file);
+            const altText = uploadedFile.file.name
+                .replace(/\.[^/.]+$/, "")
+                .replace(/[-_]/g, " ");
+            const image: CategoryImage = {
+                url: files[0].url,
+                alt: altText,
+                width: width || 0,
+                height: height || 0,
+            };
+            return sdk.admin.productCategory.update(categoryId, {
+                metadata: { ...currentMetadata, image },
+            });
+        },
+        onSuccess: (result) => {
+            if (result !== null) {
+                queryClient.invalidateQueries({ queryKey: ["category", categoryId] });
                 toast.success("Category image updated successfully");
-                handleOpenChange(false);
             }
-        } catch (error: any) {
+            closeDrawer();
+        },
+        onError: (error: any) => {
             toast.error(error.message || "Failed to update category image");
-        } finally {
-            setIsSubmitting(false);
-        }
+        },
     });
 
-    const handleRemoveImage = async () => {
-        setIsSubmitting(true);
-        try {
+    const removeMutation = useMutation({
+        mutationFn: async () => {
             const currentMetadata = categoryData?.metadata || {};
-            const { image, ...restMetadata } = currentMetadata;
-
-            await sdk.admin.productCategory.update(categoryId, {
+            const { image: _image, ...restMetadata } = currentMetadata;
+            return sdk.admin.productCategory.update(categoryId, {
                 metadata: restMetadata,
             });
-
-            mutate([`category`, categoryId]);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["category", categoryId] });
             toast.success("Category image removed successfully");
-            handleOpenChange(false);
-        } catch (error: any) {
+            closeDrawer();
+        },
+        onError: (error: any) => {
             toast.error(error.message || "Failed to remove image");
-        } finally {
-            setIsSubmitting(false);
+        },
+    });
+
+    const isBusy = saveMutation.isPending || removeMutation.isPending;
+
+    const handleOpenChange = (isOpen: boolean) => {
+        if (!isOpen && !isBusy) {
+            closeDrawer();
         }
     };
+
+    const handleSubmit = form.handleSubmit(() => {
+        if (!uploadedFile) {
+            closeDrawer();
+            return;
+        }
+        saveMutation.mutate();
+    });
 
     return (
         <Drawer open={open} onOpenChange={handleOpenChange}>
@@ -213,7 +200,7 @@ export const EditCategoryImageDrawer = ({
                 {isLoading ? (
                     <Drawer.Body>
                         <div className="flex items-center justify-center py-8">
-                            <div className="text-ui-fg-subtle">Loading...</div>
+                            <Spinner />
                         </div>
                     </Drawer.Body>
                 ) : (
@@ -244,8 +231,8 @@ export const EditCategoryImageDrawer = ({
                                             <IconButton
                                                 size="small"
                                                 variant="transparent"
-                                                onClick={handleRemoveImage}
-                                                disabled={isSubmitting}
+                                                onClick={() => removeMutation.mutate()}
+                                                disabled={isBusy}
                                             >
                                                 <Trash />
                                             </IconButton>
@@ -260,7 +247,7 @@ export const EditCategoryImageDrawer = ({
                                         hint="Drag and drop an image here or click to upload"
                                         formats={SUPPORTED_IMAGE_FORMATS}
                                         multiple={false}
-                                        maxFileSize={20 * 1024 * 1024} // 20MB
+                                        maxFileSize={20 * 1024 * 1024}
                                         onUploaded={handleFileUpload}
                                     />
                                     {uploadedFile && (
@@ -282,8 +269,8 @@ export const EditCategoryImageDrawer = ({
                                                 type="button"
                                                 variant="transparent"
                                                 size="small"
-                                                onClick={handleRemove}
-                                                disabled={isSubmitting}
+                                                onClick={handleRemovePreview}
+                                                disabled={isBusy}
                                             >
                                                 Remove
                                             </Button>
@@ -294,14 +281,15 @@ export const EditCategoryImageDrawer = ({
                             <Drawer.Footer>
                                 <div className="flex items-center justify-end gap-x-2">
                                     <Drawer.Close asChild>
-                                        <Button size="small" variant="secondary">
+                                        <Button size="small" variant="secondary" disabled={isBusy}>
                                             Cancel
                                         </Button>
                                     </Drawer.Close>
                                     <Button
                                         size="small"
                                         type="submit"
-                                        isLoading={isSubmitting}
+                                        isLoading={saveMutation.isPending}
+                                        disabled={isBusy}
                                     >
                                         Save
                                     </Button>
@@ -314,4 +302,3 @@ export const EditCategoryImageDrawer = ({
         </Drawer>
     );
 };
-

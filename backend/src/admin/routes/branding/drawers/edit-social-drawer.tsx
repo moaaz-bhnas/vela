@@ -7,16 +7,17 @@ import {
   toast,
   Drawer,
   Select,
+  Text,
 } from "@medusajs/ui";
-import { Plus, Trash } from "@medusajs/icons";
+import { Plus, Trash, Spinner } from "@medusajs/icons";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
-import { BrandingResponse, SocialLink } from "../../../lib/types";
+import { BrandingResponse } from "../../../lib/types";
 import { Form } from "../common/form";
 
 const SOCIAL_PLATFORMS = [
@@ -51,17 +52,16 @@ const EditSocialSchema = z.object({
 
 type EditSocialFormValues = z.infer<typeof EditSocialSchema>;
 
-export const EditSocialDrawer = () => {
+export const EditSocialDrawer = ({ open }: { open: boolean }) => {
   const navigate = useNavigate();
-  const { mutate } = useSWRConfig();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useSWR<BrandingResponse>(
-    "branding",
-    brandingFetcher
-  );
-  const socialLinks = data?.branding?.social_links as SocialLink[] | undefined;
+  const { data, isLoading } = useQuery<BrandingResponse>({
+    queryKey: ["branding"],
+    queryFn: brandingFetcher,
+    staleTime: 30_000,
+  });
+  const socialLinks = data?.branding?.social_links ?? undefined;
 
   const form = useForm<EditSocialFormValues>({
     defaultValues: {
@@ -75,70 +75,60 @@ export const EditSocialDrawer = () => {
     name: "social_links",
   });
 
-  useEffect(function openDrawer() {
-    setOpen(true);
-  }, []);
-
-  useEffect(
-    function loadSocialLinks() {
-      if (
-        socialLinks &&
-        socialLinks.length > 0 &&
-        fields.length === 0 &&
-        !form.formState.isDirty
-      ) {
-        // Filter and cast to valid platforms only
-        const validLinks = socialLinks
-          .filter((link) => SOCIAL_PLATFORMS.includes(link.platform as any))
-          .map((link) => ({
-            platform: link.platform as (typeof SOCIAL_PLATFORMS)[number],
-            url: link.url,
-          }));
-        if (validLinks.length > 0) {
-          form.reset({ social_links: validLinks });
-        }
-      }
-    },
-    [socialLinks, fields.length, form]
-  );
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      navigate("/branding", { replace: true });
+  const { reset } = form;
+  const wasOpenRef = useRef(false);
+  useEffect(function syncFormOnOpen() {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (!justOpened) return;
+    if (socialLinks && socialLinks.length > 0) {
+      const validLinks = socialLinks
+        .filter((link) => SOCIAL_PLATFORMS.includes(link.platform as any))
+        .map((link) => ({
+          platform: link.platform as (typeof SOCIAL_PLATFORMS)[number],
+          url: link.url,
+        }));
+      reset({ social_links: validLinks.length > 0 ? validLinks : [] });
+    } else {
+      reset({ social_links: [] });
     }
-    setOpen(open);
-  };
+  }, [open, socialLinks, reset]);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
-      await sdk.client.fetch<BrandingResponse>("/admin/branding", {
+  const submitMutation = useMutation({
+    mutationFn: (values: EditSocialFormValues) =>
+      sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
         body: {
-          social_links:
-            values.social_links.length > 0 ? values.social_links : null,
+          social_links: values.social_links.length > 0 ? values.social_links : null,
         },
-      });
-      await mutate("branding");
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
       toast.success("Social links updated successfully");
       navigate("/branding", { replace: true });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update social links");
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitMutation.isPending) {
+      navigate("/branding", { replace: true });
+    }
+  };
+
+  const handleSubmit = form.handleSubmit((values) => {
+    submitMutation.mutate(values);
+  });
+
+  const watchedSocialLinks = form.watch("social_links");
+
   const handleAddLink = () => {
-    // Get all currently selected platforms
-    const allSelectedPlatforms = form
-      .watch("social_links")
-      .map((link) => link?.platform);
-    // Find the first available platform
+    const allSelectedPlatforms = watchedSocialLinks.map((link) => link?.platform);
     const availablePlatform = SOCIAL_PLATFORMS.find(
       (platform) => !allSelectedPlatforms.includes(platform)
     );
-    // Use the first available platform, or the first platform if all are taken
     append({
       platform: availablePlatform || SOCIAL_PLATFORMS[0],
       url: "",
@@ -154,7 +144,7 @@ export const EditSocialDrawer = () => {
         {isLoading ? (
           <Drawer.Body>
             <div className="flex items-center justify-center py-8">
-              <div className="text-ui-fg-subtle">Loading...</div>
+              <Spinner />
             </div>
           </Drawer.Body>
         ) : (
@@ -166,7 +156,9 @@ export const EditSocialDrawer = () => {
               <Drawer.Body className="flex flex-col gap-y-6 overflow-y-auto">
                 {fields.length === 0 ? (
                   <div className="text-ui-fg-subtle flex flex-col items-center justify-center py-8">
-                    <p className="mb-4">No social links configured</p>
+                    <Text size="small" leading="compact" className="mb-4">
+                      No social links configured
+                    </Text>
                     <Button
                       type="button"
                       variant="secondary"
@@ -180,11 +172,7 @@ export const EditSocialDrawer = () => {
                 ) : (
                   <>
                     {fields.map((field, index) => {
-                      // Get all currently selected platforms
-                      const allSelectedPlatforms = form
-                        .watch("social_links")
-                        .map((link) => link?.platform);
-                      // Get available platforms (exclude already selected ones, except current)
+                      const allSelectedPlatforms = watchedSocialLinks.map((link) => link?.platform);
                       const availablePlatforms = SOCIAL_PLATFORMS.filter(
                         (platform) =>
                           !allSelectedPlatforms.includes(platform) ||
@@ -197,9 +185,9 @@ export const EditSocialDrawer = () => {
                           className="bg-ui-bg-subtle rounded-lg border p-4"
                         >
                           <div className="mb-4 flex items-center justify-between">
-                            <span className="text-ui-fg-subtle text-sm font-medium">
+                            <Text size="small" leading="compact" weight="plus" className="text-ui-fg-subtle">
                               Link {index + 1}
-                            </span>
+                            </Text>
                             <IconButton
                               type="button"
                               variant="transparent"
@@ -235,10 +223,7 @@ export const EditSocialDrawer = () => {
                                               key={platform}
                                               value={platform}
                                             >
-                                              {platform
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                                platform.slice(1)}
+                                              {platform.charAt(0).toUpperCase() + platform.slice(1)}
                                             </Select.Item>
                                           ))
                                         )}
@@ -285,11 +270,11 @@ export const EditSocialDrawer = () => {
               <Drawer.Footer>
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
-                    <Button size="small" variant="secondary">
+                    <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
                       Cancel
                     </Button>
                   </Drawer.Close>
-                  <Button size="small" type="submit" isLoading={isSubmitting}>
+                  <Button size="small" type="submit" isLoading={submitMutation.isPending}>
                     Save
                   </Button>
                 </div>

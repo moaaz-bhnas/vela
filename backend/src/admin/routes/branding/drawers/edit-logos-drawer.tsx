@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Heading, Input, toast, Drawer, Text } from "@medusajs/ui";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { Spinner } from "@medusajs/icons";
+import { useForm, Control } from "react-hook-form";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
-import { BrandingResponse, Logos } from "../../../lib/types";
+import { BrandingResponse } from "../../../lib/types";
 import { Form } from "../common/form";
 import {
   FileUpload,
@@ -38,6 +39,12 @@ const EditLogosSchema = z.object({
 
 type EditLogosFormValues = z.infer<typeof EditLogosSchema>;
 
+type UploadedFiles = {
+  main: FileType | null;
+  footer: FileType | null;
+  favicon: FileType | null;
+};
+
 const getRatioRecommendation = (
   prefix: "main" | "footer" | "favicon"
 ): string => {
@@ -64,7 +71,6 @@ const getImageDimensions = (
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      // Default to 0 if image can't be loaded
       resolve({ width: 0, height: 0 });
     };
     img.src = url;
@@ -81,7 +87,7 @@ const LogoFields = ({
 }: {
   prefix: "main" | "footer" | "favicon";
   label: string;
-  control: any;
+  control: Control<EditLogosFormValues>;
   uploadedFile: FileType | null;
   onFileUpload: (file: FileType) => void;
   onFileRemove: () => void;
@@ -148,9 +154,8 @@ const LogoFields = ({
             hint="Drag and drop an image here or click to upload"
             formats={SUPPORTED_IMAGE_FORMATS}
             multiple={false}
-            maxFileSize={5 * 1024 * 1024} // 5MB
+            maxFileSize={5 * 1024 * 1024}
             onUploaded={(files, rejectedFiles) => {
-              // Handle rejected files first
               if (rejectedFiles && rejectedFiles.length > 0) {
                 const sizeRejected = rejectedFiles.filter(
                   (f: RejectedFile) => f.reason === "size"
@@ -158,28 +163,21 @@ const LogoFields = ({
                 const formatRejected = rejectedFiles.filter(
                   (f: RejectedFile) => f.reason === "format"
                 );
-
                 if (sizeRejected.length > 0) {
                   const file = sizeRejected[0];
-                  const fileSizeMB = (file.file.size / (1024 * 1024)).toFixed(
-                    2
-                  );
+                  const fileSizeMB = (file.file.size / (1024 * 1024)).toFixed(2);
                   toast.error(
                     `File "${file.file.name}" is too large (${fileSizeMB} MB). Maximum file size is 5 MB.`
                   );
                 }
-
                 if (formatRejected.length > 0) {
                   const file = formatRejected[0];
                   toast.error(
                     `File "${file.file.name}" is not a supported image format.`
                   );
                 }
-
-                return; // Don't process files if there are rejections
+                return;
               }
-
-              // Process valid files
               if (files.length > 0) {
                 onFileUpload(files[0]);
               }
@@ -209,26 +207,21 @@ const LogoFields = ({
   </div>
 );
 
-export const EditLogosDrawer = () => {
+export const EditLogosDrawer = ({ open }: { open: boolean }) => {
   const navigate = useNavigate();
-  const { mutate } = useSWRConfig();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<{
-    main: FileType | null;
-    footer: FileType | null;
-    favicon: FileType | null;
-  }>({
+  const queryClient = useQueryClient();
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
     main: null,
     footer: null,
     favicon: null,
   });
 
-  const { data, isLoading } = useSWR<BrandingResponse>(
-    "branding",
-    brandingFetcher
-  );
-  const logos = data?.branding?.logos as Logos | undefined;
+  const { data, isLoading } = useQuery<BrandingResponse>({
+    queryKey: ["branding"],
+    queryFn: brandingFetcher,
+    staleTime: 30_000,
+  });
+  const logos = data?.branding?.logos ?? undefined;
 
   const form = useForm<EditLogosFormValues>({
     defaultValues: {
@@ -239,67 +232,72 @@ export const EditLogosDrawer = () => {
     resolver: zodResolver(EditLogosSchema),
   });
 
-  useEffect(function openDrawer() {
-    setOpen(true);
-  }, []);
-
-  useEffect(
-    function updateFormData() {
-      if (logos && !form.formState.isDirty) {
-        form.reset({
-          main: {
-            url: logos?.main?.url || "",
-            alt: logos?.main?.alt || "",
-            width: (logos?.main?.width?.toString() || "") as any,
-            height: (logos?.main?.height?.toString() || "") as any,
-          },
-          footer: {
-            url: logos?.footer?.url || "",
-            alt: logos?.footer?.alt || "",
-            width: (logos?.footer?.width?.toString() || "") as any,
-            height: (logos?.footer?.height?.toString() || "") as any,
-          },
-          favicon: {
-            url: logos?.favicon?.url || "",
-            alt: logos?.favicon?.alt || "",
-            width: (logos?.favicon?.width?.toString() || "") as any,
-            height: (logos?.favicon?.height?.toString() || "") as any,
-          },
-        });
-      }
-    },
-    [logos, form]
-  );
-
-  const handleOpenChange = (open: boolean) => {
+  // Clear staged files when the drawer closes to prevent state leaking into the next open
+  useEffect(function clearFilesOnClose() {
     if (!open) {
-      navigate("/branding", { replace: true });
+      setUploadedFiles((prev) => {
+        if (prev.main?.url) URL.revokeObjectURL(prev.main.url);
+        if (prev.footer?.url) URL.revokeObjectURL(prev.footer.url);
+        if (prev.favicon?.url) URL.revokeObjectURL(prev.favicon.url);
+        return { main: null, footer: null, favicon: null };
+      });
     }
-    setOpen(open);
-  };
+  }, [open]);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
-      // Upload files first if any are provided
+  const { reset } = form;
+  const wasOpenRef = useRef(false);
+  useEffect(function syncFormOnOpen() {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (justOpened && logos) {
+      reset({
+        main: {
+          url: logos?.main?.url || "",
+          alt: logos?.main?.alt || "",
+          width: (logos?.main?.width?.toString() || "") as any,
+          height: (logos?.main?.height?.toString() || "") as any,
+        },
+        footer: {
+          url: logos?.footer?.url || "",
+          alt: logos?.footer?.alt || "",
+          width: (logos?.footer?.width?.toString() || "") as any,
+          height: (logos?.footer?.height?.toString() || "") as any,
+        },
+        favicon: {
+          url: logos?.favicon?.url || "",
+          alt: logos?.favicon?.alt || "",
+          width: (logos?.favicon?.width?.toString() || "") as any,
+          height: (logos?.favicon?.height?.toString() || "") as any,
+        },
+      });
+    }
+  }, [open, logos, reset]);
+
+  const submitMutation = useMutation({
+    mutationFn: async ({
+      values,
+      files,
+    }: {
+      values: EditLogosFormValues;
+      files: UploadedFiles;
+    }) => {
       const filesToUpload = [
-        uploadedFiles.main?.file,
-        uploadedFiles.footer?.file,
-        uploadedFiles.favicon?.file,
+        files.main?.file,
+        files.footer?.file,
+        files.favicon?.file,
       ].filter((f): f is File => !!f);
 
       let uploadedUrls: string[] = [];
       if (filesToUpload.length > 0) {
-        const { files } = await sdk.admin.upload.create({
+        const { files: uploaded } = await sdk.admin.upload.create({
           files: filesToUpload,
         });
-        uploadedUrls = files.map((f) => f.url);
+        uploadedUrls = uploaded.map((f) => f.url);
       }
 
-      // Build URLs array in order: main, footer, favicon
       let urlIndex = 0;
       const getLogoUrl = (prefix: "main" | "footer" | "favicon") => {
-        if (uploadedFiles[prefix]?.file) {
+        if (files[prefix]?.file) {
           return uploadedUrls[urlIndex++];
         }
         return values[prefix]?.url || "";
@@ -315,38 +313,46 @@ export const EditLogosDrawer = () => {
         };
       };
 
-      const logos = {
+      const updatedLogos = {
         main: cleanLogo(values.main, getLogoUrl("main")),
         footer: cleanLogo(values.footer, getLogoUrl("footer")),
         favicon: cleanLogo(values.favicon, getLogoUrl("favicon")),
       };
+      const hasLogos = updatedLogos.main || updatedLogos.footer || updatedLogos.favicon;
 
-      const hasLogos = logos.main || logos.footer || logos.favicon;
-
-      await sdk.client.fetch<BrandingResponse>("/admin/branding", {
+      return sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
-        body: { logos: hasLogos ? logos : null },
+        body: { logos: hasLogos ? updatedLogos : null },
       });
-      await mutate("branding");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
       toast.success("Logos updated successfully");
       navigate("/branding", { replace: true });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update logos");
-    } finally {
-      setIsSubmitting(false);
+    },
+  });
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitMutation.isPending) {
+      navigate("/branding", { replace: true });
     }
+  };
+
+  const handleSubmit = form.handleSubmit((values) => {
+    submitMutation.mutate({ values, files: uploadedFiles });
   });
 
   const handleFileUpload =
     (prefix: "main" | "footer" | "favicon") => async (file: FileType) => {
       setUploadedFiles((prev) => ({ ...prev, [prefix]: file }));
-
-      // Auto-detect and set dimensions from uploaded image
       try {
         const { width, height } = await getImageDimensions(file.file);
         form.setValue(`${prefix}.width`, width.toString() as any);
         form.setValue(`${prefix}.height`, height.toString() as any);
-      } catch (error) {
+      } catch {
         // Fail silently, dimensions will remain 0
       }
     };
@@ -357,7 +363,6 @@ export const EditLogosDrawer = () => {
       URL.revokeObjectURL(file.url);
     }
     setUploadedFiles((prev) => ({ ...prev, [prefix]: null }));
-    // Reset dimensions when file is removed
     form.setValue(`${prefix}.width`, "" as any);
     form.setValue(`${prefix}.height`, "" as any);
   };
@@ -371,7 +376,7 @@ export const EditLogosDrawer = () => {
         {isLoading ? (
           <Drawer.Body>
             <div className="flex items-center justify-center py-8">
-              <div className="text-ui-fg-subtle">Loading...</div>
+              <Spinner />
             </div>
           </Drawer.Body>
         ) : (
@@ -411,11 +416,11 @@ export const EditLogosDrawer = () => {
               <Drawer.Footer>
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
-                    <Button size="small" variant="secondary">
+                    <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
                       Cancel
                     </Button>
                   </Drawer.Close>
-                  <Button size="small" type="submit" isLoading={isSubmitting}>
+                  <Button size="small" type="submit" isLoading={submitMutation.isPending}>
                     Save
                   </Button>
                 </div>

@@ -1,4 +1,4 @@
-import { DropdownMenu, IconButton, clx } from "@medusajs/ui";
+import { DropdownMenu, IconButton, Text, clx } from "@medusajs/ui";
 import { EllipsisHorizontal } from "@medusajs/icons";
 import { PropsWithChildren, ReactNode } from "react";
 import { Link } from "react-router-dom";
@@ -69,7 +69,7 @@ export const ActionMenu = ({
                       )}
                     >
                       {action.icon}
-                      <span>{action.label}</span>
+                      <Text size="small" leading="compact">{action.label}</Text>
                     </DropdownMenu.Item>
                   );
                 }
@@ -88,7 +88,7 @@ export const ActionMenu = ({
                   >
                     <Link to={action.to} onClick={(e) => e.stopPropagation()}>
                       {action.icon}
-                      <span>{action.label}</span>
+                      <Text size="small" leading="compact">{action.label}</Text>
                     </Link>
                   </DropdownMenu.Item>
                 );

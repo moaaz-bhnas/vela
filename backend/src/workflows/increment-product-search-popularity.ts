@@ -138,7 +138,7 @@ type WorkflowInput = {
 
 export const incrementProductSearchPopularityWorkflow = createWorkflow(
   "increment-product-search-popularity",
-  (input: WorkflowInput) => {
+  function incrementProductSearchPopularity(input: WorkflowInput) {
     const result = incrementProductSearchPopularityStep(input);
     return new WorkflowResponse(result);
   }

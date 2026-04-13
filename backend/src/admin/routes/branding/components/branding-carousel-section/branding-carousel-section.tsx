@@ -1,7 +1,7 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Container, Heading, Text } from "@medusajs/ui";
 import { ActionMenu } from "../../common/action-menu";
-import { BrandingConfig, CarouselSlide } from "../../../../lib/types";
+import { BrandingConfig } from "../../../../lib/types";
 
 type BrandingCarouselSectionProps = {
   branding?: BrandingConfig;
@@ -10,13 +10,13 @@ type BrandingCarouselSectionProps = {
 export const BrandingCarouselSection = ({
   branding,
 }: BrandingCarouselSectionProps) => {
-  const carouselSlides = branding?.carousel_slides as CarouselSlide[] | undefined;
+  const carouselSlides = branding?.carousel_slides ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading>Carousel Slides</Heading>
+          <Heading level="h2">Carousel Slides</Heading>
           <Text className="text-ui-fg-subtle" size="small">
             Manage homepage carousel slides
           </Text>
@@ -98,5 +98,3 @@ export const BrandingCarouselSection = ({
     </Container>
   );
 };
-
-

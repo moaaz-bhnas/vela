@@ -2,9 +2,10 @@ import {
   createWorkflow,
   createStep,
   StepResponse,
+  WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk";
 import { useQueryGraphStep } from "@medusajs/medusa/core-flows";
-import { MedusaError, Modules } from "@medusajs/framework/utils";
+import { Modules } from "@medusajs/framework/utils";
 import { PRODUCT_SALES_MODULE } from "../modules/product-sales";
 import ProductSalesModuleService from "../modules/product-sales/service";
 import {
@@ -17,7 +18,7 @@ import {
 import { Link } from "@medusajs/framework/modules-sdk";
 
 type StepInput = {
-  order: OrderDTO;
+  order: OrderDTO | undefined;
 };
 
 const updateProductSalesStep = createStep(
@@ -26,6 +27,12 @@ const updateProductSalesStep = createStep(
     { order }: StepInput,
     { container },
   ) {
+    if (!order) {
+      const logger: Logger = container.resolve("logger");
+      logger.warn("[WARN] updateProductSalesStep: order not found, skipping");
+      return new StepResponse(null);
+    }
+
     const logger: Logger = container.resolve("logger");
     const orderModuleService: IOrderModuleService =
       container.resolve(Modules.ORDER);
@@ -91,7 +98,7 @@ type WorkflowInput = {
 
 export const updateProductSalesWorkflow = createWorkflow(
   "update-product-sales-workflow",
-  ({ order_id }: WorkflowInput) => {
+  function updateProductSales({ order_id }: WorkflowInput) {
     const { data: orders } = useQueryGraphStep({
       entity: "order",
       fields: ["id", "metadata", "items.*"],
@@ -100,16 +107,11 @@ export const updateProductSalesWorkflow = createWorkflow(
       },
     });
 
-    if (!orders[0]) {
-      throw new MedusaError(
-        MedusaError.Types.NOT_FOUND,
-        `Order ${order_id} not found`,
-      );
-    }
-
-    updateProductSalesStep({
+    const result = updateProductSalesStep({
       order: orders[0],
     } as StepInput);
+
+    return new WorkflowResponse(result);
   },
 );
 
