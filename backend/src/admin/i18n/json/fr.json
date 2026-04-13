@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "remove": "Supprimer",
+      "uploadImage": "Téléverser une image"
+    },
+    "optional": "(optionnel)",
+    "states": {
+      "none": "-",
+      "noImage": "Aucune image"
+    },
+    "fileUpload": {
+      "defaultHint": "Faites glisser une image ici ou cliquez pour téléverser",
+      "uploadedFileReplacesUrl": "Le fichier téléversé remplacera l'URL saisie",
+      "orUploadBelow": "Ou téléversez un fichier ci-dessous",
+      "fileTooLarge": "Le fichier \"{{name}}\" est trop volumineux ({{size}} Mo). La taille maximale est de {{max}} Mo.",
+      "unsupportedFormat": "Le fichier \"{{name}}\" n'est pas un format d'image pris en charge."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "Image de marque"
+    },
+    "sections": {
+      "general": {
+        "title": "Paramètres généraux",
+        "description": "Gérez les informations de base de votre marque"
+      },
+      "logos": {
+        "title": "Logos",
+        "description": "Gérez les logos de votre site",
+        "main": "Logo principal",
+        "footer": "Logo du pied de page",
+        "favicon": "Favicon",
+        "recommendedRatioMain": "Format recommandé : 4:1 ou 3:1 (logo horizontal)",
+        "recommendedRatioFooter": "Format recommandé : 4:1 ou 3:1 (logo horizontal)",
+        "recommendedRatioFavicon": "Recommandé : 1:1 (carré), idéalement 32×32 px ou 64×64 px"
+      },
+      "contact": {
+        "title": "Coordonnées",
+        "description": "Gérez les coordonnées affichées sur votre site"
+      },
+      "social": {
+        "title": "Liens sociaux",
+        "description": "Gérez vos liens vers les réseaux sociaux",
+        "empty": "Aucun lien social configuré",
+        "addLink": "Ajouter un lien social",
+        "link": "Lien {{number}}",
+        "platformPlaceholder": "Sélectionner une plateforme",
+        "noPlatformsAvailable": "Aucune plateforme disponible"
+      },
+      "seo": {
+        "title": "SEO par défaut",
+        "description": "Configurez les paramètres SEO par défaut de votre site",
+        "defaultOgImage": "Image OG par défaut"
+      },
+      "carousel": {
+        "title": "Diapositives du carrousel",
+        "description": "Gérez les diapositives du carrousel de la page d'accueil",
+        "empty": "Aucune diapositive configurée",
+        "addSlide": "Ajouter une diapositive",
+        "slide": "Diapositive {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "Titre du site",
+      "copyrightText": "Mention de droits d'auteur",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "image": "Image",
+      "imageUrl": "URL de l'image",
+      "altText": "Texte alternatif",
+      "url": "URL",
+      "platform": "Plateforme",
+      "siteTagline": "Slogan du site",
+      "metaDescriptionTemplate": "Modèle de méta-description",
+      "defaultOgImageUrl": "URL de l'image OG par défaut",
+      "title": "Titre",
+      "description": "Description",
+      "linkUrl": "URL du lien",
+      "linkText": "Texte du lien"
+    },
+    "placeholders": {
+      "siteTitle": "Ma boutique",
+      "copyrightText": "Copyright 2024 Ma boutique. Tous droits réservés.",
+      "email": "contact@exemple.fr",
+      "phone": "+33-1-23-45-67-89",
+      "address": "123 Rue de la Paix, Paris, 75001",
+      "logoUrl": "https://exemple.fr/logo.png",
+      "logoAlt": "Description du logo",
+      "siteTagline": "Votre boutique en ligne de confiance",
+      "metaDescriptionTemplate": "{{product}} - Achetez {{title}} sur Ma boutique. Livraison gratuite dès 50 €.",
+      "ogImageUrl": "https://exemple.fr/og-image.jpg",
+      "socialUrl": "https://facebook.com/votrepageexemple",
+      "slideImageUrl": "https://exemple.fr/diapositive.jpg",
+      "slideTitle": "Titre de la diapositive",
+      "slideDescription": "Description de la diapositive",
+      "slideLinkUrl": "https://exemple.fr/page",
+      "slideLinkText": "Acheter maintenant"
+    },
+    "hints": {
+      "siteTitle": "Le nom de votre boutique affiché sur l'ensemble du site",
+      "copyrightText": "Mention de droits d'auteur affichée dans le pied de page",
+      "email": "Adresse e-mail de contact affichée sur votre site",
+      "phone": "Numéro de téléphone de contact",
+      "address": "Adresse physique ou localisation",
+      "metaDescriptionTemplate": "Modèle pour générer les méta-descriptions. Utilisez {{product}}, {{title}} comme variables.",
+      "ogImage": "Image par défaut lors du partage sur les réseaux sociaux. Ou téléversez un fichier ci-dessous."
+    },
+    "drawers": {
+      "editGeneral": "Modifier les paramètres généraux",
+      "editLogos": "Modifier les logos",
+      "editContact": "Modifier les coordonnées",
+      "editSocial": "Modifier les liens sociaux",
+      "editSeo": "Modifier le SEO par défaut",
+      "editCarousel": "Modifier les diapositives du carrousel"
+    },
+    "validation": {
+      "phoneInvalid": "Veuillez saisir un numéro de téléphone international valide (ex. : +33-1-23-45-67-89)",
+      "platformRequired": "La plateforme est obligatoire",
+      "urlInvalid": "Doit être une URL valide"
+    },
+    "toasts": {
+      "generalUpdated": "Paramètres généraux mis à jour avec succès",
+      "generalUpdateFailed": "Échec de la mise à jour des paramètres généraux",
+      "logosUpdated": "Logos mis à jour avec succès",
+      "logosUpdateFailed": "Échec de la mise à jour des logos",
+      "contactUpdated": "Coordonnées mises à jour avec succès",
+      "contactUpdateFailed": "Échec de la mise à jour des coordonnées",
+      "socialUpdated": "Liens sociaux mis à jour avec succès",
+      "socialUpdateFailed": "Échec de la mise à jour des liens sociaux",
+      "seoUpdated": "SEO par défaut mis à jour avec succès",
+      "seoUpdateFailed": "Échec de la mise à jour du SEO par défaut",
+      "carouselUpdated": "Diapositives du carrousel mises à jour avec succès",
+      "carouselUpdateFailed": "Échec de la mise à jour des diapositives du carrousel"
+    }
+  },
+  "categoryImage": {
+    "title": "Image de catégorie",
+    "description": "Téléversez une image pour cette catégorie",
+    "fields": {
+      "image": "Image"
+    },
+    "drawers": {
+      "edit": "Modifier l'image de catégorie",
+      "uploadNew": "Téléverser une nouvelle image"
+    },
+    "toasts": {
+      "updated": "Image de catégorie mise à jour avec succès",
+      "updateFailed": "Échec de la mise à jour de l'image de catégorie",
+      "removed": "Image de catégorie supprimée avec succès",
+      "removeFailed": "Échec de la suppression de l'image"
+    }
+  }
+}

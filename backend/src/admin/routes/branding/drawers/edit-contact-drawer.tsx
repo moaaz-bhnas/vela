@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { phone } from "phone";
 
@@ -33,6 +34,7 @@ const EditContactSchema = z.object({
 type EditContactFormValues = z.infer<typeof EditContactSchema>;
 
 export const EditContactDrawer = ({ open }: { open: boolean }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -87,11 +89,11 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["branding"] });
-      toast.success("Contact information updated successfully");
+      toast.success(t("branding.toasts.contactUpdated"));
       navigate("/branding", { replace: true });
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update contact information");
+      toast.error(error.message || t("branding.toasts.contactUpdateFailed"));
     },
   });
 
@@ -109,7 +111,7 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
     <Drawer open={open} onOpenChange={handleOpenChange}>
       <Drawer.Content>
         <Drawer.Header>
-          <Heading>Edit Contact Information</Heading>
+          <Heading>{t("branding.drawers.editContact")}</Heading>
         </Drawer.Header>
         {isLoading ? (
           <Drawer.Body>
@@ -126,11 +128,11 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
                   name="email"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Email</Form.Label>
+                      <Form.Label optional>{t("branding.fields.email")}</Form.Label>
                       <Form.Control>
-                        <Input type="email" placeholder="contact@example.com" {...field} />
+                        <Input type="email" placeholder={t("branding.placeholders.email")} {...field} />
                       </Form.Control>
-                      <Form.Hint>Contact email displayed on your site</Form.Hint>
+                      <Form.Hint>{t("branding.hints.email")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -140,11 +142,11 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
                   name="phone"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Phone</Form.Label>
+                      <Form.Label optional>{t("branding.fields.phone")}</Form.Label>
                       <Form.Control>
-                        <Input placeholder="+1-555-123-4567" {...field} />
+                        <Input placeholder={t("branding.placeholders.phone")} {...field} />
                       </Form.Control>
-                      <Form.Hint>Contact phone number</Form.Hint>
+                      <Form.Hint>{t("branding.hints.phone")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -154,11 +156,11 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
                   name="address"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>Address</Form.Label>
+                      <Form.Label optional>{t("branding.fields.address")}</Form.Label>
                       <Form.Control>
-                        <Textarea placeholder="123 Main St, City, State 12345" {...field} />
+                        <Textarea placeholder={t("branding.placeholders.address")} {...field} />
                       </Form.Control>
-                      <Form.Hint>Physical address or location</Form.Hint>
+                      <Form.Hint>{t("branding.hints.address")}</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -168,11 +170,11 @@ export const EditContactDrawer = ({ open }: { open: boolean }) => {
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
                     <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
-                      Cancel
+                      {t("common.actions.cancel")}
                     </Button>
                   </Drawer.Close>
                   <Button size="small" type="submit" isLoading={submitMutation.isPending}>
-                    Save
+                    {t("common.actions.save")}
                   </Button>
                 </div>
               </Drawer.Footer>

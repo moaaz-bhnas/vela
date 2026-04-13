@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "Editar",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "remove": "Remover",
+      "uploadImage": "Enviar imagem"
+    },
+    "optional": "(opcional)",
+    "states": {
+      "none": "-",
+      "noImage": "Sem imagem"
+    },
+    "fileUpload": {
+      "defaultHint": "Arraste e solte uma imagem aqui ou clique para enviar",
+      "uploadedFileReplacesUrl": "O arquivo enviado substituirá a URL inserida",
+      "orUploadBelow": "Ou envie um arquivo abaixo",
+      "fileTooLarge": "O arquivo \"{{name}}\" é muito grande ({{size}} MB). O tamanho máximo é {{max}} MB.",
+      "unsupportedFormat": "O arquivo \"{{name}}\" não é um formato de imagem suportado."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "Branding"
+    },
+    "sections": {
+      "general": {
+        "title": "Configurações gerais",
+        "description": "Gerencie as informações básicas de marca do seu site"
+      },
+      "logos": {
+        "title": "Logotipos",
+        "description": "Gerencie os logotipos do seu site",
+        "main": "Logotipo principal",
+        "footer": "Logotipo do rodapé",
+        "favicon": "Favicon",
+        "recommendedRatioMain": "Proporção recomendada: 4:1 ou 3:1 (logotipo horizontal)",
+        "recommendedRatioFooter": "Proporção recomendada: 4:1 ou 3:1 (logotipo horizontal)",
+        "recommendedRatioFavicon": "Recomendado: 1:1 (quadrado), idealmente 32×32 px ou 64×64 px"
+      },
+      "contact": {
+        "title": "Informações de contato",
+        "description": "Gerencie os dados de contato exibidos no seu site"
+      },
+      "social": {
+        "title": "Links sociais",
+        "description": "Gerencie seus links de redes sociais",
+        "empty": "Nenhum link social configurado",
+        "addLink": "Adicionar link social",
+        "link": "Link {{number}}",
+        "platformPlaceholder": "Selecionar plataforma",
+        "noPlatformsAvailable": "Nenhuma plataforma disponível"
+      },
+      "seo": {
+        "title": "SEO padrão",
+        "description": "Configure as configurações de SEO padrão do seu site",
+        "defaultOgImage": "Imagem OG padrão"
+      },
+      "carousel": {
+        "title": "Slides do carrossel",
+        "description": "Gerencie os slides do carrossel da página inicial",
+        "empty": "Nenhum slide configurado",
+        "addSlide": "Adicionar slide",
+        "slide": "Slide {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "Título do site",
+      "copyrightText": "Texto de direitos autorais",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "address": "Endereço",
+      "image": "Imagem",
+      "imageUrl": "URL da imagem",
+      "altText": "Texto alternativo",
+      "url": "URL",
+      "platform": "Plataforma",
+      "siteTagline": "Slogan do site",
+      "metaDescriptionTemplate": "Modelo de meta descrição",
+      "defaultOgImageUrl": "URL da imagem OG padrão",
+      "title": "Título",
+      "description": "Descrição",
+      "linkUrl": "URL do link",
+      "linkText": "Texto do link"
+    },
+    "placeholders": {
+      "siteTitle": "Minha loja",
+      "copyrightText": "Copyright 2024 Minha loja. Todos os direitos reservados.",
+      "email": "contato@exemplo.com.br",
+      "phone": "+55-11-1234-5678",
+      "address": "Rua Principal 123, São Paulo, SP 01310-100",
+      "logoUrl": "https://exemplo.com.br/logo.png",
+      "logoAlt": "Descrição do logotipo",
+      "siteTagline": "Sua loja online de confiança",
+      "metaDescriptionTemplate": "{{product}} - Compre {{title}} na Minha loja. Frete grátis em pedidos acima de R$ 250.",
+      "ogImageUrl": "https://exemplo.com.br/og-imagem.jpg",
+      "socialUrl": "https://facebook.com/suapagina",
+      "slideImageUrl": "https://exemplo.com.br/slide.jpg",
+      "slideTitle": "Título do slide",
+      "slideDescription": "Descrição do slide",
+      "slideLinkUrl": "https://exemplo.com.br/pagina",
+      "slideLinkText": "Comprar agora"
+    },
+    "hints": {
+      "siteTitle": "O nome da sua loja exibido em todo o site",
+      "copyrightText": "Aviso de direitos autorais exibido no rodapé",
+      "email": "E-mail de contato exibido no seu site",
+      "phone": "Número de telefone de contato",
+      "address": "Endereço físico ou localização",
+      "metaDescriptionTemplate": "Modelo para gerar meta descrições. Use {{product}}, {{title}} como marcadores.",
+      "ogImage": "Imagem padrão ao compartilhar nas redes sociais. Ou envie um arquivo abaixo."
+    },
+    "drawers": {
+      "editGeneral": "Editar configurações gerais",
+      "editLogos": "Editar logotipos",
+      "editContact": "Editar informações de contato",
+      "editSocial": "Editar links sociais",
+      "editSeo": "Editar SEO padrão",
+      "editCarousel": "Editar slides do carrossel"
+    },
+    "validation": {
+      "phoneInvalid": "Insira um número de telefone internacional válido (ex.: +55-11-1234-5678)",
+      "platformRequired": "A plataforma é obrigatória",
+      "urlInvalid": "Deve ser uma URL válida"
+    },
+    "toasts": {
+      "generalUpdated": "Configurações gerais atualizadas com sucesso",
+      "generalUpdateFailed": "Falha ao atualizar as configurações gerais",
+      "logosUpdated": "Logotipos atualizados com sucesso",
+      "logosUpdateFailed": "Falha ao atualizar os logotipos",
+      "contactUpdated": "Informações de contato atualizadas com sucesso",
+      "contactUpdateFailed": "Falha ao atualizar as informações de contato",
+      "socialUpdated": "Links sociais atualizados com sucesso",
+      "socialUpdateFailed": "Falha ao atualizar os links sociais",
+      "seoUpdated": "SEO padrão atualizado com sucesso",
+      "seoUpdateFailed": "Falha ao atualizar o SEO padrão",
+      "carouselUpdated": "Slides do carrossel atualizados com sucesso",
+      "carouselUpdateFailed": "Falha ao atualizar os slides do carrossel"
+    }
+  },
+  "categoryImage": {
+    "title": "Imagem da categoria",
+    "description": "Envie uma imagem para esta categoria",
+    "fields": {
+      "image": "Imagem"
+    },
+    "drawers": {
+      "edit": "Editar imagem da categoria",
+      "uploadNew": "Enviar nova imagem"
+    },
+    "toasts": {
+      "updated": "Imagem da categoria atualizada com sucesso",
+      "updateFailed": "Falha ao atualizar a imagem da categoria",
+      "removed": "Imagem da categoria removida com sucesso",
+      "removeFailed": "Falha ao remover a imagem"
+    }
+  }
+}

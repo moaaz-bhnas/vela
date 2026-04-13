@@ -1,5 +1,6 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Container, Heading, Text } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { ActionMenu } from "../../common/action-menu";
 import { BrandingConfig } from "../../../../lib/types";
 
@@ -10,15 +11,16 @@ type BrandingSeoSectionProps = {
 export const BrandingSeoSection = ({
   branding,
 }: BrandingSeoSectionProps) => {
+  const { t } = useTranslation();
   const seoDefaults = branding?.seo_defaults ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading level="h2">SEO Defaults</Heading>
+          <Heading level="h2">{t("branding.sections.seo.title")}</Heading>
           <Text className="text-ui-fg-subtle" size="small">
-            Configure default SEO settings for your site
+            {t("branding.sections.seo.description")}
           </Text>
         </div>
         <ActionMenu
@@ -27,7 +29,7 @@ export const BrandingSeoSection = ({
               actions: [
                 {
                   icon: <PencilSquare />,
-                  label: "Edit",
+                  label: t("common.actions.edit"),
                   to: "?edit=seo",
                 },
               ],
@@ -37,30 +39,30 @@ export const BrandingSeoSection = ({
       </div>
       <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
-          Site Tagline
+          {t("branding.fields.siteTagline")}
         </Text>
         <Text size="small" leading="compact">
-          {seoDefaults?.site_tagline || "-"}
+          {seoDefaults?.site_tagline || t("common.states.none")}
         </Text>
       </div>
       <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
-          Meta Description Template
+          {t("branding.fields.metaDescriptionTemplate")}
         </Text>
         <Text size="small" leading="compact" className="whitespace-pre-line">
-          {seoDefaults?.meta_description_template || "-"}
+          {seoDefaults?.meta_description_template || t("common.states.none")}
         </Text>
       </div>
       <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
-          Default OG Image
+          {t("branding.sections.seo.defaultOgImage")}
         </Text>
         {seoDefaults?.default_og_image_url ? (
           <div className="flex items-center gap-x-3">
             <div className="bg-ui-bg-component flex h-10 w-16 items-center justify-center overflow-hidden rounded-md border">
               <img
                 src={seoDefaults.default_og_image_url}
-                alt="Default OG Image"
+                alt={t("branding.sections.seo.defaultOgImage")}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -70,7 +72,7 @@ export const BrandingSeoSection = ({
           </div>
         ) : (
           <Text size="small" leading="compact">
-            -
+            {t("common.states.none")}
           </Text>
         )}
       </div>

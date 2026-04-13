@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "Modifica",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "remove": "Rimuovi",
+      "uploadImage": "Carica immagine"
+    },
+    "optional": "(opzionale)",
+    "states": {
+      "none": "-",
+      "noImage": "Nessuna immagine"
+    },
+    "fileUpload": {
+      "defaultHint": "Trascina un'immagine qui o clicca per caricarla",
+      "uploadedFileReplacesUrl": "Il file caricato sostituirà l'URL inserito",
+      "orUploadBelow": "Oppure carica un file qui sotto",
+      "fileTooLarge": "Il file \"{{name}}\" è troppo grande ({{size}} MB). La dimensione massima è {{max}} MB.",
+      "unsupportedFormat": "Il file \"{{name}}\" non è un formato immagine supportato."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "Branding"
+    },
+    "sections": {
+      "general": {
+        "title": "Impostazioni generali",
+        "description": "Gestisci le informazioni di base del tuo brand"
+      },
+      "logos": {
+        "title": "Loghi",
+        "description": "Gestisci i loghi del tuo sito",
+        "main": "Logo principale",
+        "footer": "Logo del footer",
+        "favicon": "Favicon",
+        "recommendedRatioMain": "Proporzioni consigliate: 4:1 o 3:1 (logo orizzontale)",
+        "recommendedRatioFooter": "Proporzioni consigliate: 4:1 o 3:1 (logo orizzontale)",
+        "recommendedRatioFavicon": "Consigliato: 1:1 (quadrato), idealmente 32×32 px o 64×64 px"
+      },
+      "contact": {
+        "title": "Informazioni di contatto",
+        "description": "Gestisci i dati di contatto visualizzati sul tuo sito"
+      },
+      "social": {
+        "title": "Link social",
+        "description": "Gestisci i tuoi link ai social media",
+        "empty": "Nessun link social configurato",
+        "addLink": "Aggiungi link social",
+        "link": "Link {{number}}",
+        "platformPlaceholder": "Seleziona piattaforma",
+        "noPlatformsAvailable": "Nessuna piattaforma disponibile"
+      },
+      "seo": {
+        "title": "SEO predefinito",
+        "description": "Configura le impostazioni SEO predefinite del tuo sito",
+        "defaultOgImage": "Immagine OG predefinita"
+      },
+      "carousel": {
+        "title": "Slide del carosello",
+        "description": "Gestisci le slide del carosello della homepage",
+        "empty": "Nessuna slide configurata",
+        "addSlide": "Aggiungi slide",
+        "slide": "Slide {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "Titolo del sito",
+      "copyrightText": "Testo copyright",
+      "email": "E-mail",
+      "phone": "Telefono",
+      "address": "Indirizzo",
+      "image": "Immagine",
+      "imageUrl": "URL immagine",
+      "altText": "Testo alternativo",
+      "url": "URL",
+      "platform": "Piattaforma",
+      "siteTagline": "Slogan del sito",
+      "metaDescriptionTemplate": "Modello meta descrizione",
+      "defaultOgImageUrl": "URL immagine OG predefinita",
+      "title": "Titolo",
+      "description": "Descrizione",
+      "linkUrl": "URL del link",
+      "linkText": "Testo del link"
+    },
+    "placeholders": {
+      "siteTitle": "Il mio negozio",
+      "copyrightText": "Copyright 2024 Il mio negozio. Tutti i diritti riservati.",
+      "email": "contatto@esempio.it",
+      "phone": "+39-02-1234-5678",
+      "address": "Via Roma 123, Milano, 20100",
+      "logoUrl": "https://esempio.it/logo.png",
+      "logoAlt": "Descrizione del logo",
+      "siteTagline": "Il tuo negozio online di fiducia",
+      "metaDescriptionTemplate": "{{product}} - Acquista {{title}} su Il mio negozio. Spedizione gratuita sopra i 50 €.",
+      "ogImageUrl": "https://esempio.it/og-immagine.jpg",
+      "socialUrl": "https://facebook.com/tuapagina",
+      "slideImageUrl": "https://esempio.it/slide.jpg",
+      "slideTitle": "Titolo della slide",
+      "slideDescription": "Descrizione della slide",
+      "slideLinkUrl": "https://esempio.it/pagina",
+      "slideLinkText": "Acquista ora"
+    },
+    "hints": {
+      "siteTitle": "Il nome del tuo negozio visualizzato su tutto il sito",
+      "copyrightText": "Avviso copyright visualizzato nel footer",
+      "email": "E-mail di contatto visualizzata sul tuo sito",
+      "phone": "Numero di telefono di contatto",
+      "address": "Indirizzo fisico o posizione",
+      "metaDescriptionTemplate": "Modello per generare le meta descrizioni. Usa {{product}}, {{title}} come segnaposto.",
+      "ogImage": "Immagine predefinita quando condividi sui social media. Oppure carica un file qui sotto."
+    },
+    "drawers": {
+      "editGeneral": "Modifica impostazioni generali",
+      "editLogos": "Modifica loghi",
+      "editContact": "Modifica informazioni di contatto",
+      "editSocial": "Modifica link social",
+      "editSeo": "Modifica SEO predefinito",
+      "editCarousel": "Modifica slide del carosello"
+    },
+    "validation": {
+      "phoneInvalid": "Inserisci un numero di telefono internazionale valido (es. +39-02-1234-5678)",
+      "platformRequired": "La piattaforma è obbligatoria",
+      "urlInvalid": "Deve essere un URL valido"
+    },
+    "toasts": {
+      "generalUpdated": "Impostazioni generali aggiornate con successo",
+      "generalUpdateFailed": "Errore durante l'aggiornamento delle impostazioni generali",
+      "logosUpdated": "Loghi aggiornati con successo",
+      "logosUpdateFailed": "Errore durante l'aggiornamento dei loghi",
+      "contactUpdated": "Informazioni di contatto aggiornate con successo",
+      "contactUpdateFailed": "Errore durante l'aggiornamento delle informazioni di contatto",
+      "socialUpdated": "Link social aggiornati con successo",
+      "socialUpdateFailed": "Errore durante l'aggiornamento dei link social",
+      "seoUpdated": "SEO predefinito aggiornato con successo",
+      "seoUpdateFailed": "Errore durante l'aggiornamento del SEO predefinito",
+      "carouselUpdated": "Slide del carosello aggiornate con successo",
+      "carouselUpdateFailed": "Errore durante l'aggiornamento delle slide del carosello"
+    }
+  },
+  "categoryImage": {
+    "title": "Immagine categoria",
+    "description": "Carica un'immagine per questa categoria",
+    "fields": {
+      "image": "Immagine"
+    },
+    "drawers": {
+      "edit": "Modifica immagine categoria",
+      "uploadNew": "Carica nuova immagine"
+    },
+    "toasts": {
+      "updated": "Immagine categoria aggiornata con successo",
+      "updateFailed": "Errore durante l'aggiornamento dell'immagine categoria",
+      "removed": "Immagine categoria rimossa con successo",
+      "removeFailed": "Errore durante la rimozione dell'immagine"
+    }
+  }
+}

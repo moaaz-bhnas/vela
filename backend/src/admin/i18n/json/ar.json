@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "تعديل",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "remove": "إزالة",
+      "uploadImage": "رفع صورة"
+    },
+    "optional": "(اختياري)",
+    "states": {
+      "none": "-",
+      "noImage": "لا توجد صورة"
+    },
+    "fileUpload": {
+      "defaultHint": "اسحب صورة وأفلتها هنا أو انقر للرفع",
+      "uploadedFileReplacesUrl": "سيحل الملف المرفوع محل رابط URL المُدخل",
+      "orUploadBelow": "أو ارفع ملفاً أدناه",
+      "fileTooLarge": "الملف \"{{name}}\" كبير جداً ({{size}} ميغابايت). الحد الأقصى للحجم هو {{max}} ميغابايت.",
+      "unsupportedFormat": "الملف \"{{name}}\" ليس بتنسيق صورة مدعوم."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "الهوية البصرية"
+    },
+    "sections": {
+      "general": {
+        "title": "الإعدادات العامة",
+        "description": "إدارة المعلومات الأساسية لعلامتك التجارية"
+      },
+      "logos": {
+        "title": "الشعارات",
+        "description": "إدارة شعارات موقعك",
+        "main": "الشعار الرئيسي",
+        "footer": "شعار التذييل",
+        "favicon": "الأيقونة المفضلة",
+        "recommendedRatioMain": "نسبة العرض إلى الارتفاع الموصى بها: 4:1 أو 3:1 (شعار أفقي)",
+        "recommendedRatioFooter": "نسبة العرض إلى الارتفاع الموصى بها: 4:1 أو 3:1 (شعار أفقي)",
+        "recommendedRatioFavicon": "يُنصح بـ 1:1 (مربع)، ويفضل 32×32 بكسل أو 64×64 بكسل"
+      },
+      "contact": {
+        "title": "معلومات التواصل",
+        "description": "إدارة بيانات التواصل المعروضة على موقعك"
+      },
+      "social": {
+        "title": "روابط التواصل الاجتماعي",
+        "description": "إدارة روابط منصات التواصل الاجتماعي",
+        "empty": "لا توجد روابط تواصل اجتماعي مُضافة",
+        "addLink": "إضافة رابط تواصل",
+        "link": "رابط {{number}}",
+        "platformPlaceholder": "اختر المنصة",
+        "noPlatformsAvailable": "لا توجد منصات متاحة"
+      },
+      "seo": {
+        "title": "إعدادات SEO الافتراضية",
+        "description": "ضبط إعدادات تحسين محركات البحث الافتراضية لموقعك",
+        "defaultOgImage": "صورة OG الافتراضية"
+      },
+      "carousel": {
+        "title": "شرائح الكاروسيل",
+        "description": "إدارة شرائح الكاروسيل في الصفحة الرئيسية",
+        "empty": "لا توجد شرائح مُضافة",
+        "addSlide": "إضافة شريحة",
+        "slide": "شريحة {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "عنوان الموقع",
+      "copyrightText": "نص حقوق النشر",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "image": "الصورة",
+      "imageUrl": "رابط الصورة",
+      "altText": "النص البديل",
+      "url": "الرابط",
+      "platform": "المنصة",
+      "siteTagline": "شعار الموقع",
+      "metaDescriptionTemplate": "قالب الوصف التعريفي",
+      "defaultOgImageUrl": "رابط صورة OG الافتراضية",
+      "title": "العنوان",
+      "description": "الوصف",
+      "linkUrl": "رابط الوصلة",
+      "linkText": "نص الوصلة"
+    },
+    "placeholders": {
+      "siteTitle": "متجري",
+      "copyrightText": "حقوق النشر 2024 متجري. جميع الحقوق محفوظة.",
+      "email": "info@example.com",
+      "phone": "+966-55-123-4567",
+      "address": "شارع الملك فهد 123، الرياض 11564",
+      "logoUrl": "https://example.com/logo.png",
+      "logoAlt": "وصف الشعار",
+      "siteTagline": "متجرك الإلكتروني الموثوق",
+      "metaDescriptionTemplate": "{{product}} - اشترِ {{title}} من متجري. شحن مجاني على الطلبات التي تتجاوز 200 ريال.",
+      "ogImageUrl": "https://example.com/og-image.jpg",
+      "socialUrl": "https://facebook.com/yourpage",
+      "slideImageUrl": "https://example.com/slide.jpg",
+      "slideTitle": "عنوان الشريحة",
+      "slideDescription": "وصف الشريحة",
+      "slideLinkUrl": "https://example.com/page",
+      "slideLinkText": "تسوق الآن"
+    },
+    "hints": {
+      "siteTitle": "اسم متجرك الذي يظهر في جميع أنحاء الموقع",
+      "copyrightText": "إشعار حقوق النشر المعروض في تذييل الصفحة",
+      "email": "بريد التواصل المعروض على موقعك",
+      "phone": "رقم هاتف التواصل",
+      "address": "العنوان الفعلي أو الموقع الجغرافي",
+      "metaDescriptionTemplate": "قالب لإنشاء الأوصاف التعريفية. استخدم {{product}} و{{title}} كمتغيرات.",
+      "ogImage": "الصورة الافتراضية عند المشاركة على منصات التواصل الاجتماعي. أو ارفع ملفاً أدناه."
+    },
+    "drawers": {
+      "editGeneral": "تعديل الإعدادات العامة",
+      "editLogos": "تعديل الشعارات",
+      "editContact": "تعديل معلومات التواصل",
+      "editSocial": "تعديل روابط التواصل الاجتماعي",
+      "editSeo": "تعديل إعدادات SEO الافتراضية",
+      "editCarousel": "تعديل شرائح الكاروسيل"
+    },
+    "validation": {
+      "phoneInvalid": "يرجى إدخال رقم هاتف دولي صحيح (مثال: +966-55-123-4567)",
+      "platformRequired": "المنصة مطلوبة",
+      "urlInvalid": "يجب أن يكون رابطاً صحيحاً"
+    },
+    "toasts": {
+      "generalUpdated": "تم تحديث الإعدادات العامة بنجاح",
+      "generalUpdateFailed": "فشل تحديث الإعدادات العامة",
+      "logosUpdated": "تم تحديث الشعارات بنجاح",
+      "logosUpdateFailed": "فشل تحديث الشعارات",
+      "contactUpdated": "تم تحديث معلومات التواصل بنجاح",
+      "contactUpdateFailed": "فشل تحديث معلومات التواصل",
+      "socialUpdated": "تم تحديث روابط التواصل الاجتماعي بنجاح",
+      "socialUpdateFailed": "فشل تحديث روابط التواصل الاجتماعي",
+      "seoUpdated": "تم تحديث إعدادات SEO الافتراضية بنجاح",
+      "seoUpdateFailed": "فشل تحديث إعدادات SEO الافتراضية",
+      "carouselUpdated": "تم تحديث شرائح الكاروسيل بنجاح",
+      "carouselUpdateFailed": "فشل تحديث شرائح الكاروسيل"
+    }
+  },
+  "categoryImage": {
+    "title": "صورة الفئة",
+    "description": "ارفع صورة لهذه الفئة",
+    "fields": {
+      "image": "الصورة"
+    },
+    "drawers": {
+      "edit": "تعديل صورة الفئة",
+      "uploadNew": "رفع صورة جديدة"
+    },
+    "toasts": {
+      "updated": "تم تحديث صورة الفئة بنجاح",
+      "updateFailed": "فشل تحديث صورة الفئة",
+      "removed": "تم حذف صورة الفئة بنجاح",
+      "removeFailed": "فشل حذف الصورة"
+    }
+  }
+}

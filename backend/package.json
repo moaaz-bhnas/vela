@@ -41,6 +41,7 @@
     "medusajs-launch-utils": "0.0.18",
     "minio": "^8.0.6",
     "phone": "^3.1.69",
+    "react-i18next": "^13.5.0",
     "resend": "4.0.1",
     "ulid": "^2.4.0",
     "zod": "^3.25.76"

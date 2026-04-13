@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "remove": "Remove",
+      "uploadImage": "Upload Image"
+    },
+    "optional": "(optional)",
+    "states": {
+      "none": "-",
+      "noImage": "No image"
+    },
+    "fileUpload": {
+      "defaultHint": "Drag and drop an image here or click to upload",
+      "uploadedFileReplacesUrl": "Uploaded file will replace URL input",
+      "orUploadBelow": "Or upload a file below",
+      "fileTooLarge": "File \"{{name}}\" is too large ({{size}} MB). Maximum file size is {{max}} MB.",
+      "unsupportedFormat": "File \"{{name}}\" is not a supported image format."
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "Branding"
+    },
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Manage your site's basic branding information"
+      },
+      "logos": {
+        "title": "Logos",
+        "description": "Manage your site logos",
+        "main": "Main Logo",
+        "footer": "Footer Logo",
+        "favicon": "Favicon",
+        "recommendedRatioMain": "Recommended aspect ratio: 4:1 or 3:1 (horizontal logo)",
+        "recommendedRatioFooter": "Recommended aspect ratio: 4:1 or 3:1 (horizontal logo)",
+        "recommendedRatioFavicon": "Recommended: 1:1 (square), ideally 32x32px or 64x64px"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "description": "Manage contact details displayed on your site"
+      },
+      "social": {
+        "title": "Social Links",
+        "description": "Manage your social media links",
+        "empty": "No social links configured",
+        "addLink": "Add Social Link",
+        "link": "Link {{number}}",
+        "platformPlaceholder": "Select platform",
+        "noPlatformsAvailable": "No platforms available"
+      },
+      "seo": {
+        "title": "SEO Defaults",
+        "description": "Configure default SEO settings for your site",
+        "defaultOgImage": "Default OG Image"
+      },
+      "carousel": {
+        "title": "Carousel Slides",
+        "description": "Manage homepage carousel slides",
+        "empty": "No carousel slides configured",
+        "addSlide": "Add Slide",
+        "slide": "Slide {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "Site Title",
+      "copyrightText": "Copyright Text",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "image": "Image",
+      "imageUrl": "Image URL",
+      "altText": "Alt Text",
+      "url": "URL",
+      "platform": "Platform",
+      "siteTagline": "Site Tagline",
+      "metaDescriptionTemplate": "Meta Description Template",
+      "defaultOgImageUrl": "Default OG Image URL",
+      "title": "Title",
+      "description": "Description",
+      "linkUrl": "Link URL",
+      "linkText": "Link Text"
+    },
+    "placeholders": {
+      "siteTitle": "My Store",
+      "copyrightText": "Copyright 2024 My Store. All rights reserved.",
+      "email": "contact@example.com",
+      "phone": "+1-555-123-4567",
+      "address": "123 Main St, City, State 12345",
+      "logoUrl": "https://example.com/logo.png",
+      "logoAlt": "Logo description",
+      "siteTagline": "Your trusted online store",
+      "metaDescriptionTemplate": "{{product}} - Buy {{title}} at My Store. Free shipping on orders over $50.",
+      "ogImageUrl": "https://example.com/og-image.jpg",
+      "socialUrl": "https://facebook.com/yourpage",
+      "slideImageUrl": "https://example.com/slide.jpg",
+      "slideTitle": "Slide title",
+      "slideDescription": "Slide description",
+      "slideLinkUrl": "https://example.com/page",
+      "slideLinkText": "Shop Now"
+    },
+    "hints": {
+      "siteTitle": "The name of your store displayed across the site",
+      "copyrightText": "Copyright notice displayed in the footer",
+      "email": "Contact email displayed on your site",
+      "phone": "Contact phone number",
+      "address": "Physical address or location",
+      "metaDescriptionTemplate": "Template for generating meta descriptions. Use {{product}}, {{title}} as placeholders.",
+      "ogImage": "Default image used when sharing on social media. Or upload a file below."
+    },
+    "drawers": {
+      "editGeneral": "Edit General Settings",
+      "editLogos": "Edit Logos",
+      "editContact": "Edit Contact Information",
+      "editSocial": "Edit Social Links",
+      "editSeo": "Edit SEO Defaults",
+      "editCarousel": "Edit Carousel Slides"
+    },
+    "validation": {
+      "phoneInvalid": "Please enter a valid international phone number (e.g., +1-555-123-4567)",
+      "platformRequired": "Platform is required",
+      "urlInvalid": "Must be a valid URL"
+    },
+    "toasts": {
+      "generalUpdated": "General settings updated successfully",
+      "generalUpdateFailed": "Failed to update general settings",
+      "logosUpdated": "Logos updated successfully",
+      "logosUpdateFailed": "Failed to update logos",
+      "contactUpdated": "Contact information updated successfully",
+      "contactUpdateFailed": "Failed to update contact information",
+      "socialUpdated": "Social links updated successfully",
+      "socialUpdateFailed": "Failed to update social links",
+      "seoUpdated": "SEO defaults updated successfully",
+      "seoUpdateFailed": "Failed to update SEO defaults",
+      "carouselUpdated": "Carousel slides updated successfully",
+      "carouselUpdateFailed": "Failed to update carousel slides"
+    }
+  },
+  "categoryImage": {
+    "title": "Category Image",
+    "description": "Upload an image for this category",
+    "fields": {
+      "image": "Image"
+    },
+    "drawers": {
+      "edit": "Edit Category Image",
+      "uploadNew": "Upload New Image"
+    },
+    "toasts": {
+      "updated": "Category image updated successfully",
+      "updateFailed": "Failed to update category image",
+      "removed": "Category image removed successfully",
+      "removeFailed": "Failed to remove image"
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "common": {
+    "actions": {
+      "edit": "編集",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "remove": "削除",
+      "uploadImage": "画像をアップロード"
+    },
+    "optional": "（任意）",
+    "states": {
+      "none": "-",
+      "noImage": "画像なし"
+    },
+    "fileUpload": {
+      "defaultHint": "画像をここにドラッグ＆ドロップするか、クリックしてアップロード",
+      "uploadedFileReplacesUrl": "アップロードされたファイルが入力したURLを置き換えます",
+      "orUploadBelow": "または下からファイルをアップロード",
+      "fileTooLarge": "ファイル「{{name}}」は大きすぎます（{{size}} MB）。最大ファイルサイズは {{max}} MB です。",
+      "unsupportedFormat": "ファイル「{{name}}」はサポートされていない画像形式です。"
+    }
+  },
+  "branding": {
+    "route": {
+      "label": "ブランディング"
+    },
+    "sections": {
+      "general": {
+        "title": "一般設定",
+        "description": "サイトの基本ブランド情報を管理する"
+      },
+      "logos": {
+        "title": "ロゴ",
+        "description": "サイトのロゴを管理する",
+        "main": "メインロゴ",
+        "footer": "フッターロゴ",
+        "favicon": "ファビコン",
+        "recommendedRatioMain": "推奨アスペクト比：4:1 または 3:1（横型ロゴ）",
+        "recommendedRatioFooter": "推奨アスペクト比：4:1 または 3:1（横型ロゴ）",
+        "recommendedRatioFavicon": "推奨：1:1（正方形）、理想は 32×32 px または 64×64 px"
+      },
+      "contact": {
+        "title": "連絡先情報",
+        "description": "サイトに表示する連絡先情報を管理する"
+      },
+      "social": {
+        "title": "SNSリンク",
+        "description": "SNSのリンクを管理する",
+        "empty": "SNSリンクが設定されていません",
+        "addLink": "SNSリンクを追加",
+        "link": "リンク {{number}}",
+        "platformPlaceholder": "プラットフォームを選択",
+        "noPlatformsAvailable": "利用可能なプラットフォームがありません"
+      },
+      "seo": {
+        "title": "SEOデフォルト",
+        "description": "サイトのデフォルトSEO設定を構成する",
+        "defaultOgImage": "デフォルトOG画像"
+      },
+      "carousel": {
+        "title": "カルーセルスライド",
+        "description": "トップページのカルーセルスライドを管理する",
+        "empty": "カルーセルスライドが設定されていません",
+        "addSlide": "スライドを追加",
+        "slide": "スライド {{number}}"
+      }
+    },
+    "fields": {
+      "siteTitle": "サイトタイトル",
+      "copyrightText": "著作権テキスト",
+      "email": "メールアドレス",
+      "phone": "電話番号",
+      "address": "住所",
+      "image": "画像",
+      "imageUrl": "画像URL",
+      "altText": "代替テキスト",
+      "url": "URL",
+      "platform": "プラットフォーム",
+      "siteTagline": "サイトのキャッチコピー",
+      "metaDescriptionTemplate": "メタディスクリプションテンプレート",
+      "defaultOgImageUrl": "デフォルトOG画像URL",
+      "title": "タイトル",
+      "description": "説明",
+      "linkUrl": "リンクURL",
+      "linkText": "リンクテキスト"
+    },
+    "placeholders": {
+      "siteTitle": "マイストア",
+      "copyrightText": "Copyright 2024 マイストア. All rights reserved.",
+      "email": "info@example.jp",
+      "phone": "+81-3-1234-5678",
+      "address": "東京都千代田区丸の内1-1-1",
+      "logoUrl": "https://example.jp/logo.png",
+      "logoAlt": "ロゴの説明",
+      "siteTagline": "信頼のオンラインストア",
+      "metaDescriptionTemplate": "{{product}} - マイストアで{{title}}をお買い求めください。5,000円以上のご注文で送料無料。",
+      "ogImageUrl": "https://example.jp/og-image.jpg",
+      "socialUrl": "https://facebook.com/yourpage",
+      "slideImageUrl": "https://example.jp/slide.jpg",
+      "slideTitle": "スライドのタイトル",
+      "slideDescription": "スライドの説明",
+      "slideLinkUrl": "https://example.jp/page",
+      "slideLinkText": "今すぐ購入"
+    },
+    "hints": {
+      "siteTitle": "サイト全体に表示されるストア名",
+      "copyrightText": "フッターに表示される著作権表示",
+      "email": "サイトに表示される連絡先メールアドレス",
+      "phone": "連絡先の電話番号",
+      "address": "住所または所在地",
+      "metaDescriptionTemplate": "メタディスクリプション生成用テンプレート。{{product}}、{{title}} をプレースホルダーとして使用。",
+      "ogImage": "SNSでシェア時に使用されるデフォルト画像。または下からファイルをアップロード。"
+    },
+    "drawers": {
+      "editGeneral": "一般設定を編集",
+      "editLogos": "ロゴを編集",
+      "editContact": "連絡先情報を編集",
+      "editSocial": "SNSリンクを編集",
+      "editSeo": "SEOデフォルトを編集",
+      "editCarousel": "カルーセルスライドを編集"
+    },
+    "validation": {
+      "phoneInvalid": "有効な国際電話番号を入力してください（例：+81-3-1234-5678）",
+      "platformRequired": "プラットフォームは必須です",
+      "urlInvalid": "有効なURLを入力してください"
+    },
+    "toasts": {
+      "generalUpdated": "一般設定を更新しました",
+      "generalUpdateFailed": "一般設定の更新に失敗しました",
+      "logosUpdated": "ロゴを更新しました",
+      "logosUpdateFailed": "ロゴの更新に失敗しました",
+      "contactUpdated": "連絡先情報を更新しました",
+      "contactUpdateFailed": "連絡先情報の更新に失敗しました",
+      "socialUpdated": "SNSリンクを更新しました",
+      "socialUpdateFailed": "SNSリンクの更新に失敗しました",
+      "seoUpdated": "SEOデフォルトを更新しました",
+      "seoUpdateFailed": "SEOデフォルトの更新に失敗しました",
+      "carouselUpdated": "カルーセルスライドを更新しました",
+      "carouselUpdateFailed": "カルーセルスライドの更新に失敗しました"
+    }
+  },
+  "categoryImage": {
+    "title": "カテゴリ画像",
+    "description": "このカテゴリに画像をアップロード",
+    "fields": {
+      "image": "画像"
+    },
+    "drawers": {
+      "edit": "カテゴリ画像を編集",
+      "uploadNew": "新しい画像をアップロード"
+    },
+    "toasts": {
+      "updated": "カテゴリ画像を更新しました",
+      "updateFailed": "カテゴリ画像の更新に失敗しました",
+      "removed": "カテゴリ画像を削除しました",
+      "removeFailed": "画像の削除に失敗しました"
+    }
+  }
+}

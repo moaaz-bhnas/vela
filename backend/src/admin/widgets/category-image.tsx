@@ -4,6 +4,7 @@ import { Container, Text } from "@medusajs/ui";
 import { PencilSquare } from "@medusajs/icons";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { ActionMenu } from "../routes/branding/common/action-menu";
 import { EditCategoryImageDrawer } from "./edit-category-image-drawer";
@@ -27,6 +28,7 @@ type AdminProductCategory = {
 const CategoryImageWidget = ({
   data: category,
 }: DetailWidgetProps<AdminProductCategory>) => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   // Fetch category with metadata
@@ -58,10 +60,10 @@ const CategoryImageWidget = ({
         <div className="flex items-center justify-between px-6 py-4">
           <div>
             <Text size="small" leading="compact" weight="plus">
-              Category Image
+              {t("categoryImage.title")}
             </Text>
             <Text size="small" leading="compact" className="text-ui-fg-subtle">
-              Upload an image for this category
+              {t("categoryImage.description")}
             </Text>
           </div>
           <ActionMenu
@@ -70,7 +72,7 @@ const CategoryImageWidget = ({
                 actions: [
                   {
                     icon: <PencilSquare />,
-                    label: "Edit",
+                    label: t("common.actions.edit"),
                     to: `?edit=category-image`,
                   },
                 ],
@@ -80,14 +82,14 @@ const CategoryImageWidget = ({
         </div>
         <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
           <Text size="small" leading="compact" weight="plus">
-            Image
+            {t("categoryImage.fields.image")}
           </Text>
           {imageData?.url ? (
             <div className="flex items-center gap-x-3">
               <div className="bg-ui-bg-component flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border">
                 <img
                   src={imageData.url}
-                  alt={imageData.alt || "Category image"}
+                  alt={imageData.alt || t("categoryImage.title")}
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -100,13 +102,13 @@ const CategoryImageWidget = ({
                   leading="compact"
                   className="text-ui-fg-muted"
                 >
-                  {imageData.alt || "-"}
+                  {imageData.alt || t("common.states.none")}
                 </Text>
               </div>
             </div>
           ) : (
             <Text size="small" leading="compact">
-              -
+              {t("common.states.none")}
             </Text>
           )}
         </div>

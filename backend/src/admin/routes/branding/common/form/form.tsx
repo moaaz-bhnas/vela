@@ -1,6 +1,7 @@
 import { Hint as HintComponent, Label as LabelComponent, Text, clx } from "@medusajs/ui";
 import { Label as RadixLabel, Slot } from "radix-ui";
 import React, { ReactNode, createContext, forwardRef, useContext, useId } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Controller,
   ControllerProps,
@@ -95,6 +96,7 @@ const Label = forwardRef<
     icon?: ReactNode;
   }
 >(({ className, optional = false, tooltip, icon, ...props }, ref) => {
+  const { t } = useTranslation();
   const { formLabelId, formItemId } = useFormField();
 
   return (
@@ -111,7 +113,7 @@ const Label = forwardRef<
       {icon}
       {optional && (
         <Text size="small" leading="compact" className="text-ui-fg-muted">
-          (optional)
+          {t("common.optional")}
         </Text>
       )}
     </div>
