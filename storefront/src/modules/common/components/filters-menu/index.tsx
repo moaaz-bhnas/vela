@@ -5,6 +5,7 @@ import { Adjustments, XMark } from "@medusajs/icons"
 import { Button, Heading, IconButton } from "@medusajs/ui"
 import { Fragment, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 type FiltersMenuProps = {
   /** Product count for the "View (n)" button. */
@@ -16,6 +17,7 @@ export default function FiltersMenu({
   resultCount,
   children,
 }: FiltersMenuProps) {
+  const t = useTranslations("FiltersMenu")
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -32,7 +34,7 @@ export default function FiltersMenu({
           variant="transparent"
           size="small"
           data-testid="filter-sidebar-button"
-          aria-label="Open filters"
+          aria-label={t("openFilters")}
           onClick={() => setOpen(true)}
         >
           <Adjustments />
@@ -73,13 +75,13 @@ export default function FiltersMenu({
                     {/* Header (stays at top) */}
                     <div className="flex-shrink-0 flex items-center justify-between py-2.5 ps-4 pe-2 border-b bg-ui-bg-base">
                       <Heading level="h3" className="font-heading">
-                        Sort and filter
+                        {t("sortAndFilter")}
                       </Heading>
                       <IconButton
                         type="button"
                         variant="transparent"
                         data-testid="close-filter-sidebar-button"
-                        aria-label="Close filters"
+                        aria-label={t("closeFilters")}
                         onClick={() => setOpen(false)}
                       >
                         <XMark />
@@ -100,7 +102,7 @@ export default function FiltersMenu({
                         className="flex-1"
                         onClick={handleClearAll}
                       >
-                        Clear all
+                        {t("clearAll")}
                       </Button>
                       <Button
                         type="button"
@@ -108,7 +110,9 @@ export default function FiltersMenu({
                         className="flex-1"
                         onClick={() => setOpen(false)}
                       >
-                        {resultCount != null ? `View (${resultCount})` : "View"}
+                        {resultCount != null
+                          ? t("viewCount", { count: resultCount })
+                          : t("view")}
                       </Button>
                     </div>
                   </div>

@@ -9,6 +9,8 @@ import { redirect } from "next/navigation"
 import { getAuthHeaders, getCartId, removeCartId, setCartId } from "./cookies"
 import { getProductsById } from "./products"
 import { getRegion } from "./regions"
+import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
+import { getCountryCodeFromLocale } from "@lib/util/locale"
 
 export async function retrieveCart() {
   const cartId = await getCartId()
@@ -18,7 +20,11 @@ export async function retrieveCart() {
   }
 
   return await sdk.store.cart
-    .retrieve(cartId, {}, { next: { tags: ["cart"] }, ...(await getAuthHeaders()) })
+    .retrieve(
+      cartId,
+      {},
+      { next: { tags: ["cart"] }, ...(await getAuthHeaders()) }
+    )
     .then(({ cart }) => cart)
     .catch(() => {
       return null
@@ -33,8 +39,15 @@ export async function getOrSetCart(countryCode: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
+  // Resolve BCP 47 locale for this cart from countryLocaleMap
+  const locale = countryLocaleMap[countryCode] ?? defaultLocale
+
   if (!cart) {
-    const cartResp = await sdk.store.cart.create({ region_id: region.id })
+    const cartResp = await sdk.store.cart.create({
+      region_id: region.id,
+      // Set cart locale so line item / localized content matches storefront language
+      ...(locale ? { metadata: { locale } } : {}),
+    })
     cart = cartResp.cart
     await setCartId(cart.id)
     revalidateTag("cart")
@@ -43,7 +56,10 @@ export async function getOrSetCart(countryCode: string) {
   if (cart && cart?.region_id !== region.id) {
     await sdk.store.cart.update(
       cart.id,
-      { region_id: region.id },
+      {
+        region_id: region.id,
+        ...(locale ? { metadata: { locale } } : {}),
+      },
       {},
       await getAuthHeaders()
     )
@@ -344,9 +360,11 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     return e.message
   }
 
-  redirect(
-    `/${formData.get("shipping_address.country_code")}/checkout?step=delivery`
-  )
+  const shippingCountryCode =
+    (formData.get("shipping_address.country_code") as string)?.toLowerCase() ??
+    ""
+  const locale = countryLocaleMap[shippingCountryCode] ?? defaultLocale
+  redirect(`/${locale}/checkout?step=delivery`)
 }
 
 export async function placeOrder() {
@@ -365,25 +383,27 @@ export async function placeOrder() {
 
   if (cartRes?.type === "order") {
     const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
+      cartRes.order.shipping_address?.country_code?.toLowerCase() ?? ""
+    const locale = countryLocaleMap[countryCode] ?? defaultLocale
     await removeCartId()
-    redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}`)
+    redirect(`/${locale}/order/confirmed/${cartRes?.order.id}`)
   }
 
   return cartRes.cart
 }
 
 /**
- * Updates the countrycode param and revalidates the regions cache
- * @param regionId
- * @param countryCode
+ * Updates the region for the current cart and redirects to the new locale path.
+ * @param locale - BCP 47 locale string (e.g. "ar-EG")
+ * @param currentPath - the current path without the locale prefix
  */
-export async function updateRegion(countryCode: string, currentPath: string) {
+export async function updateRegion(locale: string, currentPath: string) {
   const cartId = await getCartId()
+  const countryCode = getCountryCodeFromLocale(locale)
   const region = await getRegion(countryCode)
 
   if (!region) {
-    throw new Error(`Region not found for country code: ${countryCode}`)
+    throw new Error(`Region not found for locale: ${locale}`)
   }
 
   if (cartId) {
@@ -394,5 +414,5 @@ export async function updateRegion(countryCode: string, currentPath: string) {
   revalidateTag("regions")
   revalidateTag("products")
 
-  redirect(`/${countryCode}${currentPath}`)
+  redirect(`/${locale}${currentPath}`)
 }

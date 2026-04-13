@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import SearchBoxWrapper, {
   ControlledSearchBoxProps,
 } from "../search-box-wrapper"
+import { useTranslations } from "next-intl"
 
 const ControlledSearchBox = ({
   inputRef,
@@ -15,6 +16,7 @@ const ControlledSearchBox = ({
   value,
   ...props
 }: ControlledSearchBoxProps) => {
+  const tSearch = useTranslations("Search")
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     event.stopPropagation()
@@ -63,7 +65,7 @@ const ControlledSearchBox = ({
               className="items-center justify-center text-ui-fg-on-color focus:outline-none gap-x-2 px-2 txt-compact-large flex"
             >
               <XMarkMini />
-              Cancel
+              {tSearch("cancel")}
             </button>
           )}
         </div>
@@ -74,9 +76,10 @@ const ControlledSearchBox = ({
 
 const SearchBox = () => {
   const router = useRouter()
+  const tNav = useTranslations("Nav")
 
   return (
-    <SearchBoxWrapper>
+    <SearchBoxWrapper placeholder={tNav("searchPlaceholder")}>
       {(props) => {
         return (
           <>

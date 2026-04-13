@@ -13,6 +13,7 @@ import {
   type CategoryInfo,
 } from "@lib/util/filter-products"
 import { extractAvailableOptions } from "@lib/util/extract-product-options"
+import { getMedusaLocaleHeaders } from "@lib/util/medusa-locale-headers"
 
 export const getProductsById = cache(async function ({
   ids,
@@ -21,6 +22,7 @@ export const getProductsById = cache(async function ({
   ids: string[]
   regionId: string
 }) {
+  const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.product
     .list(
       {
@@ -29,7 +31,7 @@ export const getProductsById = cache(async function ({
         fields:
           "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*categories",
       },
-      { next: { tags: ["products"] } }
+      { next: { tags: ["products"] }, ...localeHeaders }
     )
     .then(({ products }) => products)
 })
@@ -38,6 +40,8 @@ export const getProductByHandle = cache(async function (
   handle: string,
   regionId: string
 ) {
+  const localeHeaders = await getMedusaLocaleHeaders()
+
   return sdk.store.product
     .list(
       {
@@ -46,7 +50,7 @@ export const getProductByHandle = cache(async function (
         fields:
           "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*categories",
       },
-      { next: { tags: ["products"] } }
+      { next: { tags: ["products"] }, ...localeHeaders }
     )
     .then(({ products }) => products[0])
 })
@@ -75,6 +79,7 @@ export const getProductsList = cache(async function ({
       nextPage: null,
     }
   }
+  const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.product
     .list(
       {
@@ -84,7 +89,7 @@ export const getProductsList = cache(async function ({
         fields: "*variants.calculated_price,*categories,*product_sales",
         ...queryParams,
       },
-      { next: { tags: ["products"] } }
+      { next: { tags: ["products"] }, ...localeHeaders }
     )
     .then(({ products, count }) => {
       const nextPage = count > offset + limit ? pageParam + 1 : null

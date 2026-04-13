@@ -4,6 +4,7 @@ import { MagnifyingGlassMini } from "@medusajs/icons"
 import { useRouter } from "next/navigation"
 import { Button } from "@medusajs/ui"
 import { clx } from "@medusajs/ui"
+import { useTranslations } from "next-intl"
 
 type NavSearchInputProps = {
   className?: string
@@ -13,9 +14,11 @@ type NavSearchInputProps = {
 
 const NavSearchInput = ({
   className,
-  placeholder = "Search products...",
+  placeholder,
   onNavigate,
 }: NavSearchInputProps) => {
+  const t = useTranslations("Nav")
+  const resolvedPlaceholder = placeholder ?? t("searchPlaceholder")
   const router = useRouter()
 
   const handleClick = () => {
@@ -34,7 +37,9 @@ const NavSearchInput = ({
       data-testid="nav-search-input"
     >
       <MagnifyingGlassMini />
-      <span className="text-small-regular flex-1 text-left">{placeholder}</span>
+      <span className="text-small-regular flex-1 text-left">
+        {resolvedPlaceholder}
+      </span>
     </Button>
   )
 }

@@ -3,6 +3,7 @@ import { getRecentProductIds } from "@lib/data/cookies"
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
+import { getTranslations } from "next-intl/server"
 
 type RecentlyVisitedProps = {
   region: HttpTypes.StoreRegion
@@ -11,6 +12,7 @@ type RecentlyVisitedProps = {
 export default async function RecentlyVisited({
   region,
 }: RecentlyVisitedProps) {
+  const t = await getTranslations("Home")
   const recentProductIds = await getRecentProductIds()
 
   const products = await (async function getProducts() {
@@ -31,9 +33,9 @@ export default async function RecentlyVisited({
           level="h2"
           className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
         >
-          Recently Viewed
+          {t("recentlyViewedTitle")}
         </Heading>
-        <Text className="text-ui-fg-muted">Pick up where you left off</Text>
+        <Text className="text-ui-fg-muted">{t("pickUpWhere")}</Text>
       </div>
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-section-inner">
         {products.map((product) => (

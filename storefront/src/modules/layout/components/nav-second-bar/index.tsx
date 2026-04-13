@@ -6,12 +6,14 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import NavSearchInput from "@modules/layout/components/nav-search-input"
 import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
 import { AnimatePresence, motion } from "motion/react"
+import { useTranslations } from "next-intl"
 
 type NavSecondBarProps = {
   categories: HttpTypes.StoreProductCategory[]
 }
 
 const NavSecondBar = ({ categories }: NavSecondBarProps) => {
+  const t = useTranslations("Nav")
   const isScrolled = useNavScroll()
 
   // Filter to only show parent categories (no parent_category), max 8
@@ -59,21 +61,21 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
                     </LocalizedClientLink>
                   ))}
                   <span className="txt-compact-small text-ui-fg-subtle whitespace-nowrap p-2">
-                    |
+                    {t("navSeparator")}
                   </span>
                   <LocalizedClientLink
                     href="/store"
                     className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap p-2"
                     data-testid="nav-store-link"
                   >
-                    Shop All
+                    {t("shopAll")}
                   </LocalizedClientLink>
                   <LocalizedClientLink
                     href="/best-sellers"
                     className="txt-compact-small hover:text-ui-fg-base whitespace-nowrap p-2"
                     data-testid="nav-bestsellers-link"
                   >
-                    Bestsellers
+                    {t("bestsellers")}
                   </LocalizedClientLink>
                 </div>
 

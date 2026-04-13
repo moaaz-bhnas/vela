@@ -5,6 +5,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app"
 import "styles/globals.css"
 import NProgressProvider from "@modules/common/components/progress-bar-provider"
 import { getBrandingSeo } from "@lib/util/metadata"
+import { getLocale } from "next-intl/server"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -42,9 +43,11 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: { children: React.ReactNode }) {
+  const locale = await getLocale()
+
   return (
-    <html lang="en" data-mode="light" className={bricolageGrotesque.variable}>
+    <html lang={locale} data-mode="light" className={bricolageGrotesque.variable}>
       <body>
         <NProgressProvider>
           <NuqsAdapter>

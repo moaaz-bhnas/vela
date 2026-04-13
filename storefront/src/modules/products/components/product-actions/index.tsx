@@ -12,7 +12,9 @@ import OptionSelect from "@modules/products/components/product-actions/option-se
 import MobileActions from "./mobile-actions"
 import ProductPrice from "../product-price"
 import { addToCart } from "@lib/data/cart"
+import { getCountryCodeFromLocale } from "@lib/util/locale"
 import { HttpTypes } from "@medusajs/types"
+import { useTranslations } from "next-intl"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -25,10 +27,12 @@ export default function ProductActions({
   region,
   disabled,
 }: ProductActionsProps) {
+  const t = useTranslations("Product")
   const { options, setOptionValue, selectedVariant } =
     useProductOptions(product)
   const [isAdding, setIsAdding] = useState(false)
-  const countryCode = useParams().countryCode as string
+  const locale = useParams().locale as string
+  const countryCode = getCountryCodeFromLocale(locale)
 
   // If there is only 1 variant, preselect all its options via URL on mount
   useEffect(
@@ -132,10 +136,10 @@ export default function ProductActions({
           data-testid="add-product-button"
         >
           {!selectedVariant
-            ? "Select variant"
+            ? t("selectVariant")
             : !inStock
-            ? "Out of stock"
-            : "Add to cart"}
+            ? t("outOfStock")
+            : t("addToCart")}
         </Button>
         <MobileActions
           product={product}

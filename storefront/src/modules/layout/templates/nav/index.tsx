@@ -4,18 +4,20 @@ import { listCategories } from "@lib/data/categories"
 import { getBrandingConfig } from "@lib/data/branding"
 import { formatPhone } from "@lib/util/format-phone"
 import { StoreRegion } from "@medusajs/types"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import NavCartFallbackLink from "@modules/layout/components/nav-cart-fallback-link"
 import NavFirstBar from "@modules/layout/components/nav-first-bar"
 import NavSecondBar from "@modules/layout/components/nav-second-bar"
 import CartButton from "@modules/layout/components/cart-button"
+import { getTranslations } from "next-intl/server"
 
 export default async function Nav() {
+  const t = await getTranslations("Nav")
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
   const categories = await listCategories()
   const branding = await getBrandingConfig()
 
   const logo = branding?.logos?.main
-  const siteTitle = branding?.site_title || "Medusa Store"
+  const siteTitle = branding?.site_title || t("defaultSiteTitle")
   const phone = formatPhone(branding?.contact_info?.phone)
 
   return (
@@ -29,15 +31,7 @@ export default async function Nav() {
           phone={phone}
         >
           <Suspense
-            fallback={
-              <LocalizedClientLink
-                className="hover:text-ui-fg-base flex gap-2"
-                href="/cart"
-                data-testid="nav-cart-link"
-              >
-                Cart (0)
-              </LocalizedClientLink>
-            }
+            fallback={<NavCartFallbackLink />}
           >
             <CartButton />
           </Suspense>

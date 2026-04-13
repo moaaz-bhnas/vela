@@ -8,6 +8,8 @@ import { StateType } from "@lib/hooks/use-toggle-state"
 import { useParams, usePathname } from "next/navigation"
 import { updateRegion } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
+import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
+import { useTranslations } from "next-intl"
 
 type CountryOption = {
   country: string
@@ -21,13 +23,14 @@ type CountrySelectProps = {
 }
 
 const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
+  const t = useTranslations("CountrySelect")
   const [current, setCurrent] = useState<
     | { country: string | undefined; region: string; label: string | undefined }
     | undefined
   >(undefined)
 
-  const { countryCode } = useParams()
-  const currentPath = usePathname().split(`/${countryCode}`)[1]
+  const { locale } = useParams()
+  const currentPath = usePathname().split(`/${locale}`)[1]
 
   const { state, close } = toggleState
 
@@ -45,14 +48,21 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
   }, [regions])
 
   useEffect(() => {
-    if (countryCode) {
-      const option = options?.find((o) => o?.country === countryCode)
+    if (locale) {
+      // Match by locale — find the option whose country maps to the current locale
+      const option = options?.find(
+        (o) =>
+          o?.country &&
+          (countryLocaleMap[o.country] ?? defaultLocale) === locale
+      )
       setCurrent(option)
     }
-  }, [options, countryCode])
+  }, [options, locale])
 
   const handleChange = (option: CountryOption) => {
-    updateRegion(option.country, currentPath)
+    const targetLocale =
+      (option.country && countryLocaleMap[option.country]) ?? defaultLocale
+    updateRegion(targetLocale, currentPath)
     close()
   }
 
@@ -62,14 +72,18 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
         as="span"
         onChange={handleChange}
         defaultValue={
-          countryCode
-            ? options?.find((o) => o?.country === countryCode)
+          locale
+            ? options?.find(
+                (o) =>
+                  o?.country &&
+                  (countryLocaleMap[o.country] ?? defaultLocale) === locale
+              )
             : undefined
         }
       >
         <Listbox.Button className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
-            <span>Shipping to:</span>
+            <span>{t("shippingTo")}</span>
             {current && (
               <span className="txt-compact-small flex items-center gap-x-2">
                 <ReactCountryFlag

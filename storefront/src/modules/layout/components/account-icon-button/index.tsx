@@ -1,8 +1,13 @@
+"use client"
+
 import { UserMini } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { useTranslations } from "next-intl"
 
 const AccountIconButton = () => {
+  const t = useTranslations("Nav")
+
   return (
     <LocalizedClientLink
       href="/account"
@@ -14,7 +19,7 @@ const AccountIconButton = () => {
         "focus-visible:shadow-buttons-neutral-focus focus-visible:bg-ui-bg-base disabled:!bg-transparent disabled:!shadow-none",
         "h-8 w-8 p-1.5"
       )}
-      aria-label="Account"
+      aria-label={t("accountAria")}
     >
       <UserMini />
     </LocalizedClientLink>
