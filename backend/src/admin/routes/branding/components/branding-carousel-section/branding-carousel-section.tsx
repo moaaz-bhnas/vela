@@ -12,7 +12,7 @@ export const BrandingCarouselSection = ({
   branding,
 }: BrandingCarouselSectionProps) => {
   const { t } = useTranslation();
-  const carouselSlides = branding?.carousel_slides ?? undefined;
+  const slides = branding?.slides ?? undefined;
 
   return (
     <Container className="divide-y p-0">
@@ -38,10 +38,10 @@ export const BrandingCarouselSection = ({
         />
       </div>
       <div className="px-6 py-4">
-        {carouselSlides && carouselSlides.length > 0 ? (
+        {slides && slides.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {carouselSlides
-              .sort((a, b) => (a.order || 0) - (b.order || 0))
+            {slides
+              .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
               .map((slide, index) => (
                 <div
                   key={index}
@@ -65,7 +65,7 @@ export const BrandingCarouselSection = ({
                   <div className="p-3">
                     <div className="flex items-center gap-x-2">
                       <Text size="xsmall" className="text-ui-fg-muted">
-                        #{slide.order || index + 1}
+                        #{slide.sort_order || index + 1}
                       </Text>
                       <Text size="small" weight="plus" className="truncate">
                         {slide.title || t("common.states.none")}
@@ -96,6 +96,7 @@ export const BrandingCarouselSection = ({
             {t("branding.sections.carousel.empty")}
           </Text>
         )}
+
       </div>
     </Container>
   );

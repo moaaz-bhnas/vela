@@ -8,13 +8,14 @@ import NavCartFallbackLink from "@modules/layout/components/nav-cart-fallback-li
 import NavFirstBar from "@modules/layout/components/nav-first-bar"
 import NavSecondBar from "@modules/layout/components/nav-second-bar"
 import CartButton from "@modules/layout/components/cart-button"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 
 export default async function Nav() {
   const t = await getTranslations("Nav")
+  const locale = await getLocale()
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
   const categories = await listCategories()
-  const branding = await getBrandingConfig()
+  const branding = await getBrandingConfig(locale)
 
   const logo = branding?.logos?.main
   const siteTitle = branding?.site_title || t("defaultSiteTitle")

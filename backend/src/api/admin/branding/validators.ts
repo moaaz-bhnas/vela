@@ -21,21 +21,15 @@ const ContactInfoSchema = z.object({
   address: z.string().optional(),
 });
 
-// Carousel slide schema
+// Carousel slide schema — id is present for existing slides (preserves translation records)
 const CarouselSlideSchema = z.object({
-  image_url: z.string().url().optional(),
+  id: z.string().optional(),
+  image_url: z.string().url().optional().or(z.literal("")),
   title: z.string().optional(),
   description: z.string().optional(),
-  link_url: z.string().url().optional(),
+  link_url: z.string().url().optional().or(z.literal("")),
   link_text: z.string().optional(),
-  order: z.number().optional(),
-});
-
-// SEO defaults schema
-const SeoDefaultsSchema = z.object({
-  meta_description_template: z.string().optional(),
-  default_og_image_url: z.string().url().optional(),
-  site_tagline: z.string().optional(),
+  sort_order: z.coerce.number().optional(),
 });
 
 // Logos object schema
@@ -51,8 +45,12 @@ export const PostAdminUpdateBranding = z.object({
   logos: LogosSchema.optional().nullable(),
   social_links: z.array(SocialLinkSchema).optional(),
   contact_info: ContactInfoSchema.optional().nullable(),
-  carousel_slides: z.array(CarouselSlideSchema).optional(),
-  seo_defaults: SeoDefaultsSchema.optional().nullable(),
+  // Carousel slides as a proper relation
+  slides: z.array(CarouselSlideSchema).optional(),
+  // SEO defaults as flat columns
+  seo_site_tagline: z.string().optional().nullable(),
+  seo_meta_description_template: z.string().optional().nullable(),
+  seo_default_og_image_url: z.string().url().optional().or(z.literal("")).nullable(),
 });
 
 export type PostAdminUpdateBrandingType = z.infer<

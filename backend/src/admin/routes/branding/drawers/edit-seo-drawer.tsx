@@ -51,7 +51,7 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
     queryFn: brandingFetcher,
     staleTime: 30_000,
   });
-  const seoDefaults = data?.branding?.seo_defaults ?? undefined;
+  const branding = data?.branding;
 
   const form = useForm<EditSeoFormValues>({
     defaultValues: {
@@ -78,16 +78,12 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
     const justOpened = open && !wasOpenRef.current;
     wasOpenRef.current = open;
     if (!justOpened) return;
-    if (seoDefaults) {
-      reset({
-        site_tagline: seoDefaults.site_tagline || "",
-        meta_description_template: seoDefaults.meta_description_template || "",
-        default_og_image_url: seoDefaults.default_og_image_url || "",
-      });
-    } else {
-      reset({ site_tagline: "", meta_description_template: "", default_og_image_url: "" });
-    }
-  }, [open, seoDefaults, reset]);
+    reset({
+      site_tagline: branding?.seo_site_tagline || "",
+      meta_description_template: branding?.seo_meta_description_template || "",
+      default_og_image_url: branding?.seo_default_og_image_url || "",
+    });
+  }, [open, branding, reset]);
 
   const submitMutation = useMutation({
     mutationFn: async ({
@@ -102,17 +98,12 @@ export const EditSeoDrawer = ({ open }: { open: boolean }) => {
         const { files } = await sdk.admin.upload.create({ files: [file.file] });
         ogImageUrl = files[0]?.url || values.default_og_image_url;
       }
-      const hasContent = values.site_tagline || values.meta_description_template || ogImageUrl;
       return sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
         body: {
-          seo_defaults: hasContent
-            ? {
-                site_tagline: values.site_tagline || undefined,
-                meta_description_template: values.meta_description_template || undefined,
-                default_og_image_url: ogImageUrl || undefined,
-              }
-            : null,
+          seo_site_tagline: values.site_tagline || null,
+          seo_meta_description_template: values.meta_description_template || null,
+          seo_default_og_image_url: ogImageUrl || null,
         },
       });
     },

@@ -34,16 +34,17 @@ const SUPPORTED_IMAGE_FORMATS = [
 ];
 
 const CarouselSlideSchema = z.object({
+  id: z.string().optional(), // DB id — present for existing slides, absent for new ones
   image_url: z.string().url().optional().or(z.literal("")),
   title: z.string().optional(),
   description: z.string().optional(),
   link_url: z.string().url().optional().or(z.literal("")),
   link_text: z.string().optional(),
-  order: z.coerce.number().optional(),
+  sort_order: z.coerce.number().optional(),
 });
 
 const EditCarouselSchema = z.object({
-  carousel_slides: z.array(CarouselSlideSchema),
+  slides: z.array(CarouselSlideSchema),
 });
 
 type EditCarouselFormValues = z.infer<typeof EditCarouselSchema>;
@@ -59,18 +60,18 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
     queryFn: brandingFetcher,
     staleTime: 30_000,
   });
-  const carouselSlides = data?.branding?.carousel_slides ?? undefined;
+  const existingSlides = data?.branding?.slides ?? undefined;
 
   const form = useForm<EditCarouselFormValues>({
     defaultValues: {
-      carousel_slides: [],
+      slides: [],
     },
     resolver: zodResolver(EditCarouselSchema),
   });
 
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
-    name: "carousel_slides",
+    name: "slides",
   });
 
   // Clear staged files when the drawer closes
@@ -91,17 +92,22 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
     const justOpened = open && !wasOpenRef.current;
     wasOpenRef.current = open;
     if (!justOpened) return;
-    if (carouselSlides && carouselSlides.length > 0) {
+    if (existingSlides && existingSlides.length > 0) {
       reset({
-        carousel_slides: carouselSlides.map((slide, index) => ({
-          ...slide,
-          order: slide.order ?? index + 1,
+        slides: existingSlides.map((slide, index) => ({
+          id: slide.id,
+          image_url: slide.image_url || "",
+          title: slide.title || "",
+          description: slide.description || "",
+          link_url: slide.link_url || "",
+          link_text: slide.link_text || "",
+          sort_order: slide.sort_order ?? index + 1,
         })),
       });
     } else {
-      reset({ carousel_slides: [] });
+      reset({ slides: [] });
     }
-  }, [open, carouselSlides, reset]);
+  }, [open, existingSlides, reset]);
 
   const submitMutation = useMutation({
     mutationFn: async ({
@@ -124,23 +130,24 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
         fileUrlMap.set(slideIndex, uploadedUrls[urlIndex++]);
       });
 
-      const slides = values.carousel_slides
+      const slides = values.slides
         .map((slide, index) => {
           const imageUrl = fileUrlMap.get(index) || slide.image_url || undefined;
           return {
+            id: slide.id, // preserve DB id so Translation Module records survive
             image_url: imageUrl,
             title: slide.title || undefined,
             description: slide.description || undefined,
             link_url: slide.link_url || undefined,
             link_text: slide.link_text || undefined,
-            order: index + 1,
+            sort_order: index + 1,
           };
         })
         .filter((slide) => slide.image_url || slide.title);
 
       return sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
-        body: { carousel_slides: slides.length > 0 ? slides : null },
+        body: { slides: slides.length > 0 ? slides : [] },
       });
     },
     onSuccess: () => {
@@ -199,7 +206,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
       description: "",
       link_url: "",
       link_text: "",
-      order: fields.length + 1,
+      sort_order: fields.length + 1,
     });
   };
 
@@ -308,7 +315,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                         <div className="flex flex-col gap-y-4">
                           <Form.Field
                             control={form.control}
-                            name={`carousel_slides.${index}.image_url`}
+                            name={`slides.${index}.image_url`}
                             render={({ field }) => (
                               <Form.Item>
                                 <Form.Label optional>{t("branding.fields.imageUrl")}</Form.Label>
@@ -392,7 +399,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                           )}
                           <Form.Field
                             control={form.control}
-                            name={`carousel_slides.${index}.title`}
+                            name={`slides.${index}.title`}
                             render={({ field }) => (
                               <Form.Item>
                                 <Form.Label optional>{t("branding.fields.title")}</Form.Label>
@@ -405,7 +412,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                           />
                           <Form.Field
                             control={form.control}
-                            name={`carousel_slides.${index}.description`}
+                            name={`slides.${index}.description`}
                             render={({ field }) => (
                               <Form.Item>
                                 <Form.Label optional>{t("branding.fields.description")}</Form.Label>
@@ -419,7 +426,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                           <div className="grid grid-cols-2 gap-4">
                             <Form.Field
                               control={form.control}
-                              name={`carousel_slides.${index}.link_url`}
+                              name={`slides.${index}.link_url`}
                               render={({ field }) => (
                                 <Form.Item>
                                   <Form.Label optional>{t("branding.fields.linkUrl")}</Form.Label>
@@ -432,7 +439,7 @@ export const EditCarouselDrawer = ({ open }: { open: boolean }) => {
                             />
                             <Form.Field
                               control={form.control}
-                              name={`carousel_slides.${index}.link_text`}
+                              name={`slides.${index}.link_text`}
                               render={({ field }) => (
                                 <Form.Item>
                                   <Form.Label optional>{t("branding.fields.linkText")}</Form.Label>
