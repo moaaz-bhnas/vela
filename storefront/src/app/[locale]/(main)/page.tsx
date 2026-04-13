@@ -36,16 +36,14 @@ export default async function Home({
   const countryCode = getCountryCodeFromLocale(locale)
   const collections = await getCollectionsWithProducts(countryCode)
   const region = await getRegion(countryCode)
-  const branding = await getBrandingConfig()
+  const branding = await getBrandingConfig(locale)
 
   if (!collections || !region) {
     return null
   }
 
   const carouselSlides =
-    branding?.carousel_slides && branding.carousel_slides.length > 0
-      ? branding.carousel_slides
-      : null
+    branding?.slides && branding.slides.length > 0 ? branding.slides : null
 
   const categoryIds = await getPersonalizationCategoryIds()
   const hasPersonalizedCategories = categoryIds.length > 0

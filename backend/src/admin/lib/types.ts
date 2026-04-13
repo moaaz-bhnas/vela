@@ -25,18 +25,13 @@ export type ContactInfo = {
 };
 
 export type CarouselSlide = {
+  id?: string;
   image_url?: string;
   title?: string;
   description?: string;
   link_url?: string;
   link_text?: string;
-  order?: number;
-};
-
-export type SeoDefaults = {
-  meta_description_template?: string;
-  default_og_image_url?: string;
-  site_tagline?: string;
+  sort_order?: number;
 };
 
 export type BrandingConfig = {
@@ -46,11 +41,12 @@ export type BrandingConfig = {
   logos?: Logos | null;
   social_links?: SocialLink[] | null;
   contact_info?: ContactInfo | null;
-  carousel_slides?: CarouselSlide[] | null;
-  seo_defaults?: SeoDefaults | null;
+  slides?: CarouselSlide[] | null;
+  seo_site_tagline?: string | null;
+  seo_meta_description_template?: string | null;
+  seo_default_og_image_url?: string | null;
 };
 
 export type BrandingResponse = {
   branding: BrandingConfig;
 };
-

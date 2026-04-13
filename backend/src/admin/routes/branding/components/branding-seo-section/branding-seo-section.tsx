@@ -12,8 +12,6 @@ export const BrandingSeoSection = ({
   branding,
 }: BrandingSeoSectionProps) => {
   const { t } = useTranslation();
-  const seoDefaults = branding?.seo_defaults ?? undefined;
-
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
@@ -42,7 +40,7 @@ export const BrandingSeoSection = ({
           {t("branding.fields.siteTagline")}
         </Text>
         <Text size="small" leading="compact">
-          {seoDefaults?.site_tagline || t("common.states.none")}
+          {branding?.seo_site_tagline || t("common.states.none")}
         </Text>
       </div>
       <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
@@ -50,24 +48,24 @@ export const BrandingSeoSection = ({
           {t("branding.fields.metaDescriptionTemplate")}
         </Text>
         <Text size="small" leading="compact" className="whitespace-pre-line">
-          {seoDefaults?.meta_description_template || t("common.states.none")}
+          {branding?.seo_meta_description_template || t("common.states.none")}
         </Text>
       </div>
       <div className="text-ui-fg-subtle grid grid-cols-2 px-6 py-4">
         <Text size="small" leading="compact" weight="plus">
           {t("branding.sections.seo.defaultOgImage")}
         </Text>
-        {seoDefaults?.default_og_image_url ? (
+        {branding?.seo_default_og_image_url ? (
           <div className="flex items-center gap-x-3">
             <div className="bg-ui-bg-component flex h-10 w-16 items-center justify-center overflow-hidden rounded-md border">
               <img
-                src={seoDefaults.default_og_image_url}
+                src={branding.seo_default_og_image_url}
                 alt={t("branding.sections.seo.defaultOgImage")}
                 className="h-full w-full object-cover"
               />
             </div>
             <Text size="xsmall" leading="compact" className="text-ui-fg-muted truncate max-w-[200px]">
-              {seoDefaults.default_og_image_url}
+              {branding.seo_default_og_image_url}
             </Text>
           </div>
         ) : (
