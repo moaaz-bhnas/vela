@@ -1,5 +1,6 @@
 import { MedusaService } from "@medusajs/framework/utils";
 import { BrandingConfig } from "./models/branding-config";
+import type { PostAdminUpdateBrandingType } from "../../api/admin/branding/validators";
 
 // Default branding configuration object
 // Note: JSON fields match TypeScript's Record<string, unknown> expectation for JSON columns
@@ -53,7 +54,7 @@ class BrandingModuleService extends MedusaService({
    * Update the singleton branding config
    * This method ensures only one config exists by updating the first record
    */
-  async updateConfig(data: any) {
+  async updateConfig(data: PostAdminUpdateBrandingType) {
     const config = await this.getOrCreateConfig();
 
     const updated = await this.updateBrandingConfigs([

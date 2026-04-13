@@ -84,6 +84,11 @@ export const FileUpload = ({
         return;
       }
 
+      if (formats.length > 0 && !formats.includes(file.type)) {
+        rejectedFiles.push({ file, reason: "format" });
+        return;
+      }
+
       const id = Math.random().toString(36).substring(7);
       const previewUrl = URL.createObjectURL(file);
       validFiles.push({

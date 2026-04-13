@@ -2,12 +2,12 @@ import { defineWidgetConfig } from "@medusajs/admin-sdk";
 import { DetailWidgetProps } from "@medusajs/framework/types";
 import { Container, Text } from "@medusajs/ui";
 import { PencilSquare } from "@medusajs/icons";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
-import { sdk } from "../lib/sdk";
 import { ActionMenu } from "../routes/branding/common/action-menu";
 import { EditCategoryImageDrawer } from "./edit-category-image-drawer";
+import { categoryFetcher } from "../lib/queries";
 
 type CategoryImage = {
   url: string;
@@ -24,26 +24,21 @@ type AdminProductCategory = {
   };
 };
 
-const categoryFetcher = async (categoryId: string) => {
-  return await sdk.admin.productCategory.retrieve(categoryId, {
-    fields: "+metadata",
-  });
-};
-
 const CategoryImageWidget = ({
   data: category,
 }: DetailWidgetProps<AdminProductCategory>) => {
   const [searchParams] = useSearchParams();
 
   // Fetch category with metadata
-  const { data: queryResult, isLoading } = useSWR(
-    [`category`, category.id],
-    () => categoryFetcher(category.id)
-  );
+  const { data: queryResult, isLoading } = useQuery({
+    queryKey: ["category", category.id],
+    queryFn: () => categoryFetcher(category.id),
+    staleTime: 30_000,
+  });
 
   const categoryData =
     (queryResult?.product_category as AdminProductCategory) || category;
-  const imageData = categoryData?.metadata?.image as CategoryImage | undefined;
+  const imageData = categoryData?.metadata?.image;
 
   if (isLoading) {
     return (
@@ -116,9 +111,10 @@ const CategoryImageWidget = ({
           )}
         </div>
       </Container>
-      {searchParams.get("edit") === "category-image" && (
-        <EditCategoryImageDrawer categoryId={category.id} />
-      )}
+      <EditCategoryImageDrawer
+        categoryId={category.id}
+        open={searchParams.get("edit") === "category-image"}
+      />
     </>
   );
 };

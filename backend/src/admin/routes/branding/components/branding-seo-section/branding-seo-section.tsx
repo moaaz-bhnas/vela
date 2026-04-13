@@ -1,7 +1,7 @@
 import { PencilSquare } from "@medusajs/icons";
 import { Container, Heading, Text } from "@medusajs/ui";
 import { ActionMenu } from "../../common/action-menu";
-import { BrandingConfig, SeoDefaults } from "../../../../lib/types";
+import { BrandingConfig } from "../../../../lib/types";
 
 type BrandingSeoSectionProps = {
   branding?: BrandingConfig;
@@ -10,13 +10,13 @@ type BrandingSeoSectionProps = {
 export const BrandingSeoSection = ({
   branding,
 }: BrandingSeoSectionProps) => {
-  const seoDefaults = branding?.seo_defaults as SeoDefaults | undefined;
+  const seoDefaults = branding?.seo_defaults ?? undefined;
 
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading>SEO Defaults</Heading>
+          <Heading level="h2">SEO Defaults</Heading>
           <Text className="text-ui-fg-subtle" size="small">
             Configure default SEO settings for your site
           </Text>

@@ -6,3 +6,7 @@ export const GetSearchPopularitySchema = createFindParams();
 export const PostSearchPopularitySchema = z.object({
   product_id: z.string().min(1),
 });
+
+export type PostSearchPopularitySchemaType = z.infer<
+  typeof PostSearchPopularitySchema
+>;

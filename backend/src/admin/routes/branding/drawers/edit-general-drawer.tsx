@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Heading, Input, Textarea, toast, Drawer } from "@medusajs/ui";
+import { Spinner } from "@medusajs/icons";
 import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
@@ -17,59 +18,61 @@ const EditGeneralSchema = z.object({
 
 type EditGeneralFormValues = z.infer<typeof EditGeneralSchema>;
 
-export const EditGeneralDrawer = () => {
+export const EditGeneralDrawer = ({ open }: { open: boolean }) => {
   const navigate = useNavigate();
-  const { mutate } = useSWRConfig();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data, isLoading } = useSWR<BrandingResponse>("branding", brandingFetcher);
+  const { data, isLoading } = useQuery<BrandingResponse>({
+    queryKey: ["branding"],
+    queryFn: brandingFetcher,
+    staleTime: 30_000,
+  });
 
   const form = useForm<EditGeneralFormValues>({
     defaultValues: {
-      site_title: data?.branding?.site_title || "",
-      copyright_text: data?.branding?.copyright_text || "",
+      site_title: "",
+      copyright_text: "",
     },
     resolver: zodResolver(EditGeneralSchema),
   });
 
-  // Open drawer on mount
-  useEffect(function openDrawer() {
-    setOpen(true);
-  }, []);
-
-  // Update form when data loads
-  useEffect(function updateFormData() {
-    if (data?.branding && !form.formState.isDirty) {
-      form.reset({
+  const { reset } = form;
+  const wasOpenRef = useRef(false);
+  useEffect(function syncFormOnOpen() {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (justOpened && data?.branding) {
+      reset({
         site_title: data.branding.site_title || "",
         copyright_text: data.branding.copyright_text || "",
       });
     }
-  }, [data, form]);
+  }, [open, data, reset]);
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      navigate("/branding", { replace: true });
-    }
-    setOpen(open);
-  };
-
-  const handleSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
-      await sdk.client.fetch<BrandingResponse>("/admin/branding", {
+  const submitMutation = useMutation({
+    mutationFn: (values: EditGeneralFormValues) =>
+      sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
         body: values,
-      });
-      await mutate("branding");
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
       toast.success("General settings updated successfully");
       navigate("/branding", { replace: true });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update general settings");
-    } finally {
-      setIsSubmitting(false);
+    },
+  });
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitMutation.isPending) {
+      navigate("/branding", { replace: true });
     }
+  };
+
+  const handleSubmit = form.handleSubmit((values) => {
+    submitMutation.mutate(values);
   });
 
   return (
@@ -81,7 +84,7 @@ export const EditGeneralDrawer = () => {
         {isLoading ? (
           <Drawer.Body>
             <div className="flex items-center justify-center py-8">
-              <div className="text-ui-fg-subtle">Loading...</div>
+              <Spinner />
             </div>
           </Drawer.Body>
         ) : (
@@ -93,7 +96,7 @@ export const EditGeneralDrawer = () => {
                   name="site_title"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label>Site Title</Form.Label>
+                      <Form.Label optional>Site Title</Form.Label>
                       <Form.Control>
                         <Input placeholder="My Store" {...field} />
                       </Form.Control>
@@ -123,11 +126,11 @@ export const EditGeneralDrawer = () => {
               <Drawer.Footer>
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
-                    <Button size="small" variant="secondary">
+                    <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
                       Cancel
                     </Button>
                   </Drawer.Close>
-                  <Button size="small" type="submit" isLoading={isSubmitting}>
+                  <Button size="small" type="submit" isLoading={submitMutation.isPending}>
                     Save
                   </Button>
                 </div>
@@ -139,4 +142,3 @@ export const EditGeneralDrawer = () => {
     </Drawer>
   );
 };
-

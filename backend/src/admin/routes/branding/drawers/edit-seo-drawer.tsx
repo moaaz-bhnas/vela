@@ -8,14 +8,15 @@ import {
   Drawer,
   Text,
 } from "@medusajs/ui";
+import { Spinner } from "@medusajs/icons";
 import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { sdk, brandingFetcher } from "../../../lib/sdk";
-import { BrandingResponse, SeoDefaults } from "../../../lib/types";
+import { BrandingResponse } from "../../../lib/types";
 import { Form } from "../common/form";
 import {
   FileUpload,
@@ -38,18 +39,17 @@ const EditSeoSchema = z.object({
 
 type EditSeoFormValues = z.infer<typeof EditSeoSchema>;
 
-export const EditSeoDrawer = () => {
+export const EditSeoDrawer = ({ open }: { open: boolean }) => {
   const navigate = useNavigate();
-  const { mutate } = useSWRConfig();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const [uploadedFile, setUploadedFile] = useState<FileType | null>(null);
 
-  const { data, isLoading } = useSWR<BrandingResponse>(
-    "branding",
-    brandingFetcher
-  );
-  const seoDefaults = data?.branding?.seo_defaults as SeoDefaults | undefined;
+  const { data, isLoading } = useQuery<BrandingResponse>({
+    queryKey: ["branding"],
+    queryFn: brandingFetcher,
+    staleTime: 30_000,
+  });
+  const seoDefaults = data?.branding?.seo_defaults ?? undefined;
 
   const form = useForm<EditSeoFormValues>({
     defaultValues: {
@@ -60,67 +60,78 @@ export const EditSeoDrawer = () => {
     resolver: zodResolver(EditSeoSchema),
   });
 
-  useEffect(function openDrawer() {
-    setOpen(true);
-  }, []);
-
-  useEffect(
-    function updateFormData() {
-      if (seoDefaults && !form.formState.isDirty) {
-        form.reset({
-          site_tagline: seoDefaults.site_tagline || "",
-          meta_description_template:
-            seoDefaults.meta_description_template || "",
-          default_og_image_url: seoDefaults.default_og_image_url || "",
-        });
-      }
-    },
-    [seoDefaults, form]
-  );
-
-  const handleOpenChange = (open: boolean) => {
+  // Clear staged file when the drawer closes
+  useEffect(function clearFileOnClose() {
     if (!open) {
-      navigate("/branding", { replace: true });
+      setUploadedFile((prev) => {
+        if (prev?.url) URL.revokeObjectURL(prev.url);
+        return null;
+      });
     }
-    setOpen(open);
-  };
+  }, [open]);
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
-      // Upload file first if provided
+  const { reset } = form;
+  const wasOpenRef = useRef(false);
+  useEffect(function syncFormOnOpen() {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+    if (!justOpened) return;
+    if (seoDefaults) {
+      reset({
+        site_tagline: seoDefaults.site_tagline || "",
+        meta_description_template: seoDefaults.meta_description_template || "",
+        default_og_image_url: seoDefaults.default_og_image_url || "",
+      });
+    } else {
+      reset({ site_tagline: "", meta_description_template: "", default_og_image_url: "" });
+    }
+  }, [open, seoDefaults, reset]);
+
+  const submitMutation = useMutation({
+    mutationFn: async ({
+      values,
+      file,
+    }: {
+      values: EditSeoFormValues;
+      file: FileType | null;
+    }) => {
       let ogImageUrl = values.default_og_image_url;
-      if (uploadedFile?.file) {
-        const { files } = await sdk.admin.upload.create({
-          files: [uploadedFile.file],
-        });
+      if (file?.file) {
+        const { files } = await sdk.admin.upload.create({ files: [file.file] });
         ogImageUrl = files[0]?.url || values.default_og_image_url;
       }
-
-      const hasContent =
-        values.site_tagline || values.meta_description_template || ogImageUrl;
-
-      await sdk.client.fetch<BrandingResponse>("/admin/branding", {
+      const hasContent = values.site_tagline || values.meta_description_template || ogImageUrl;
+      return sdk.client.fetch<BrandingResponse>("/admin/branding", {
         method: "POST",
         body: {
           seo_defaults: hasContent
             ? {
                 site_tagline: values.site_tagline || undefined,
-                meta_description_template:
-                  values.meta_description_template || undefined,
+                meta_description_template: values.meta_description_template || undefined,
                 default_og_image_url: ogImageUrl || undefined,
               }
             : null,
         },
       });
-      await mutate("branding");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
       toast.success("SEO defaults updated successfully");
       navigate("/branding", { replace: true });
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update SEO defaults");
-    } finally {
-      setIsSubmitting(false);
+    },
+  });
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && !submitMutation.isPending) {
+      navigate("/branding", { replace: true });
     }
+  };
+
+  const handleSubmit = form.handleSubmit((values) => {
+    submitMutation.mutate({ values, file: uploadedFile });
   });
 
   const handleFileUpload = (file: FileType) => {
@@ -143,7 +154,7 @@ export const EditSeoDrawer = () => {
         {isLoading ? (
           <Drawer.Body>
             <div className="flex items-center justify-center py-8">
-              <div className="text-ui-fg-subtle">Loading...</div>
+              <Spinner />
             </div>
           </Drawer.Body>
         ) : (
@@ -165,9 +176,7 @@ export const EditSeoDrawer = () => {
                           {...field}
                         />
                       </Form.Control>
-                      <Form.Hint>
-                        A short tagline describing your store
-                      </Form.Hint>
+                      <Form.Hint>A short tagline describing your store</Form.Hint>
                       <Form.ErrorMessage />
                     </Form.Item>
                   )}
@@ -177,9 +186,7 @@ export const EditSeoDrawer = () => {
                   name="meta_description_template"
                   render={({ field }) => (
                     <Form.Item>
-                      <Form.Label optional>
-                        Meta Description Template
-                      </Form.Label>
+                      <Form.Label optional>Meta Description Template</Form.Label>
                       <Form.Control>
                         <Textarea
                           placeholder="{{product}} - Buy {{title}} at My Store. Free shipping on orders over $50."
@@ -210,10 +217,7 @@ export const EditSeoDrawer = () => {
                               className="w-16 h-16 object-cover rounded"
                             />
                             <div className="flex-1 min-w-0">
-                              <Text
-                                size="small"
-                                className="text-ui-fg-base truncate"
-                              >
+                              <Text size="small" className="text-ui-fg-base truncate">
                                 {uploadedFile.file.name}
                               </Text>
                               <Text size="xsmall" className="text-ui-fg-muted">
@@ -229,9 +233,7 @@ export const EditSeoDrawer = () => {
                               Remove
                             </Button>
                           </div>
-                          <Form.Hint>
-                            Uploaded file will replace URL input
-                          </Form.Hint>
+                          <Form.Hint>Uploaded file will replace URL input</Form.Hint>
                         </div>
                       ) : (
                         <>
@@ -242,8 +244,7 @@ export const EditSeoDrawer = () => {
                             />
                           </Form.Control>
                           <Form.Hint>
-                            Default image used when sharing on social media. Or
-                            upload a file below.
+                            Default image used when sharing on social media. Or upload a file below.
                           </Form.Hint>
                         </>
                       )}
@@ -257,9 +258,8 @@ export const EditSeoDrawer = () => {
                     hint="Drag and drop an image here or click to upload"
                     formats={SUPPORTED_IMAGE_FORMATS}
                     multiple={false}
-                    maxFileSize={5 * 1024 * 1024} // 5MB
+                    maxFileSize={5 * 1024 * 1024}
                     onUploaded={(files, rejectedFiles) => {
-                      // Handle rejected files first
                       if (rejectedFiles && rejectedFiles.length > 0) {
                         const sizeRejected = rejectedFiles.filter(
                           (f: RejectedFile) => f.reason === "size"
@@ -267,29 +267,21 @@ export const EditSeoDrawer = () => {
                         const formatRejected = rejectedFiles.filter(
                           (f: RejectedFile) => f.reason === "format"
                         );
-
                         if (sizeRejected.length > 0) {
                           const file = sizeRejected[0];
-                          const fileSizeMB = (
-                            file.file.size /
-                            (1024 * 1024)
-                          ).toFixed(2);
+                          const fileSizeMB = (file.file.size / (1024 * 1024)).toFixed(2);
                           toast.error(
                             `File "${file.file.name}" is too large (${fileSizeMB} MB). Maximum file size is 5 MB.`
                           );
                         }
-
                         if (formatRejected.length > 0) {
                           const file = formatRejected[0];
                           toast.error(
                             `File "${file.file.name}" is not a supported image format.`
                           );
                         }
-
-                        return; // Don't process files if there are rejections
+                        return;
                       }
-
-                      // Process valid files
                       if (files.length > 0) {
                         handleFileUpload(files[0]);
                       }
@@ -300,11 +292,11 @@ export const EditSeoDrawer = () => {
               <Drawer.Footer>
                 <div className="flex items-center justify-end gap-x-2">
                   <Drawer.Close asChild>
-                    <Button size="small" variant="secondary">
+                    <Button size="small" variant="secondary" disabled={submitMutation.isPending}>
                       Cancel
                     </Button>
                   </Drawer.Close>
-                  <Button size="small" type="submit" isLoading={isSubmitting}>
+                  <Button size="small" type="submit" isLoading={submitMutation.isPending}>
                     Save
                   </Button>
                 </div>

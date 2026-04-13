@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { incrementProductSearchPopularityWorkflow } from "../../../workflows/increment-product-search-popularity";
+import { PostSearchPopularitySchemaType } from "./validators";
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const query = req.scope.resolve("query");
@@ -23,11 +24,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   });
 };
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const POST = async (
+  req: MedusaRequest<PostSearchPopularitySchemaType>,
+  res: MedusaResponse
+) => {
   const { result } = await incrementProductSearchPopularityWorkflow(
     req.scope
   ).run({
-    input: req.validatedBody as { product_id: string },
+    input: { product_id: req.validatedBody.product_id! },
   });
 
   res.status(200).json(result);
