@@ -46,6 +46,7 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
   const sortedSlides = [...carouselSlides].sort(
     (a, b) => (a.sort_order || 0) - (b.sort_order || 0)
   )
+  const hasMultipleSlides = sortedSlides.length > 1
 
   return (
     <div
@@ -79,20 +80,22 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-4 right-4">
-        <CarouselControls
-          ref={progressRef}
-          currentIndex={currentSlide}
-          totalSlides={carouselSlides.length}
-          onPrev={() => onAutoplayButtonClick(onPrevButtonClick)}
-          onNext={() => onAutoplayButtonClick(onNextButtonClick)}
-          isPrevDisabled={prevBtnDisabled}
-          isNextDisabled={nextBtnDisabled}
-          isPlaying={autoplayIsPlaying}
-          showAutoplayProgress={showAutoplayProgress}
-          toggleAutoplay={toggleAutoplay}
-        />
-      </div>
+      {hasMultipleSlides && (
+        <div className="absolute bottom-4 right-4">
+          <CarouselControls
+            ref={progressRef}
+            currentIndex={currentSlide}
+            totalSlides={carouselSlides.length}
+            onPrev={() => onAutoplayButtonClick(onPrevButtonClick)}
+            onNext={() => onAutoplayButtonClick(onNextButtonClick)}
+            isPrevDisabled={prevBtnDisabled}
+            isNextDisabled={nextBtnDisabled}
+            isPlaying={autoplayIsPlaying}
+            showAutoplayProgress={showAutoplayProgress}
+            toggleAutoplay={toggleAutoplay}
+          />
+        </div>
+      )}
     </div>
   )
 }
