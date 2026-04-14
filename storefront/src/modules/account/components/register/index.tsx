@@ -24,10 +24,9 @@ const Register = ({ setCurrentView }: Props) => {
       className="max-w-sm flex flex-col items-center"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">{t("becomeMember")}</h1>
-      <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        Create your Medusa Store Member profile, and get access to an enhanced
-        shopping experience.
+      <h1 className="text-base leading-6 font-semibold uppercase mb-6">{t("becomeMember")}</h1>
+      <p className="text-center text-sm leading-6 font-normal text-ui-fg-base mb-4">
+        {t("registerSubtitle")}
       </p>
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
@@ -70,28 +69,29 @@ const Register = ({ setCurrentView }: Props) => {
           />
         </div>
         <ErrorMessage error={message} data-testid="register-error" />
-        <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          By creating an account, you agree to Medusa Store&apos;s{" "}
+        <span className="text-center text-ui-fg-base text-xs leading-5 font-normal mt-6">
+          {t("registerLegalA")}
+          {t("registerLegalB")}
           <LocalizedClientLink
             href="/content/privacy-policy"
             className="underline"
           >
             {t("privacyPolicy")}
-          </LocalizedClientLink>{" "}
-          and{" "}
+          </LocalizedClientLink>
+          {t("registerLegalC")}
           <LocalizedClientLink
             href="/content/terms-of-use"
             className="underline"
           >
             {t("termsOfUse")}
           </LocalizedClientLink>
-          .
+          {t("registerLegalD")}
         </span>
         <SubmitButton className="w-full mt-6" data-testid="register-button">
           {t("join")}
         </SubmitButton>
       </form>
-      <span className="text-center text-ui-fg-base text-small-regular mt-6">
+      <span className="text-center text-ui-fg-base text-xs leading-5 font-normal mt-6">
         {t("alreadyMember")}{" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}

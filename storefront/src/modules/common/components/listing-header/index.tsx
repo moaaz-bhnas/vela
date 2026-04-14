@@ -1,6 +1,6 @@
 "use client"
 
-import { clx, Heading } from "@medusajs/ui"
+import { clx, Heading, Text } from "@medusajs/ui"
 
 import FiltersMenu from "@modules/common/components/filters-menu"
 import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
@@ -46,9 +46,12 @@ export default function ListingHeader({
             {title}
           </Heading>
           {count != null && (
-            <span className="text-small-regular text-ui-fg-subtle tabular-nums">
+            <Text
+              size="small"
+              className="text-ui-fg-subtle tabular-nums"
+            >
               ({count})
-            </span>
+            </Text>
           )}
         </div>
 

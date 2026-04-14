@@ -36,7 +36,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
       <Container
         noPadding
-        className="flex flex-col lg:flex-row lg:items-start py-8 relative gap-section-inner-lg"
+        className="flex flex-col lg:flex-row lg:items-start py-stack relative gap-section-inner-lg"
         data-testid="product-container"
       >
         <div className="block w-full relative">

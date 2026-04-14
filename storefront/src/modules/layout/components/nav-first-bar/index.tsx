@@ -102,10 +102,10 @@ const NavFirstBar = ({
             >
               <Headphones className="size-7" />
               <div className="flex flex-col">
-                <span className="text-[11px] leading-4 font-extrabold uppercase font-heading">
+                <span className="text-xs leading-4 font-extrabold uppercase tracking-wide font-heading">
                   {t("howCanWeHelp")}
                 </span>
-                <span className="text-[11px] leading-4">{phone.display}</span>
+                <span className="text-xs leading-4">{phone.display}</span>
               </div>
             </a>
           )}
@@ -173,7 +173,7 @@ const NavFirstBar = ({
 
   return (
     <header className="relative mx-auto border-b duration-200 bg-ui-bg-base border-ui-border-base h-16 z-10">
-      <nav className="txt-xsmall-plus text-ui-fg-subtle text-small-regular h-full">
+      <nav className="txt-xsmall-plus text-ui-fg-subtle text-xs leading-5 font-normal h-full">
         <Container noPadding className="h-full">
           <div className="hidden lg:block h-full">{renderDesktop()}</div>
           <div className="lg:hidden h-full">{renderMobile()}</div>

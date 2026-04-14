@@ -8,8 +8,8 @@ const Help = async () => {
 
   return (
     <div className="mt-6">
-      <Heading className="text-base-semi">{t("needHelp")}</Heading>
-      <div className="text-base-regular my-2">
+      <Heading className="text-sm leading-6 font-semibold">{t("needHelp")}</Heading>
+      <div className="text-sm leading-6 font-normal my-2">
         <ul className="gap-y-2 flex flex-col">
           <li>
             <LocalizedClientLink href="/contact">{t("contact")}</LocalizedClientLink>

@@ -1,19 +1,12 @@
 # Storefront Cursor Rules
 
-## Workspace Structure
-
-- **Main working directory**: `vela/` - This is where all active development and code changes should be made
-- **Reference directories** (read-only for reference):
-  - `guides/` - Contains documentation and guides for reference only
-  - `medusa/` - Contains the Medusa framework source code for reference only
-
 ## File Organization
 
 > **Note**: This section applies specifically to `vela/storefront/`
 
 - **Always** organize components and templates following the existing pattern in `src/modules/`
 - Structure: `src/modules/[module-name]/components/[component-name]/index.tsx`
-- Structure: `src/modules/[module-name]/templates/[template-name]/index.tsx` or `[template-name].tsx`
+- Structure: `src/modules/[module-name]/templates/[template-name]/index.tsx`
 - Each component should have its own folder with an `index.tsx` file
 - Use descriptive, kebab-case names for component folders
 
@@ -50,7 +43,8 @@
 - Use React functional components with proper TypeScript typing
 - Follow the existing patterns for props interfaces and component structure
 - Use the `clx` utility for combining class names conditionally
-- **Always** use named function expressions for `useEffect` hooks (e.g., `useEffect(function myEffect() { ... }, [])`)
+- **Prefer `function` declarations or named function expressions** over anonymous arrow functions—for React components and for callbacks passed to hooks (`useEffect`, `useCallback`, `useMemo`, etc.). Named functions stack traces and refactors read better.
+  - Example: `useEffect(function syncCart() { ... }, [deps])`, `useCallback(function handleSubmit() { ... }, [deps])`
 
 ## Medusa Admin Dashboard Customizations
 
@@ -96,7 +90,7 @@ type MyComponentProps = {
   className?: string;
 };
 
-const MyComponent = ({ title, className }: MyComponentProps) => {
+function MyComponent({ title, className }: MyComponentProps) {
   return (
     <div className={clx("bg-ui-bg-subtle p-4", className)}>
       <Heading level="h1" className="text-ui-fg-base">
@@ -105,7 +99,7 @@ const MyComponent = ({ title, className }: MyComponentProps) => {
       <Button>Click me</Button>
     </div>
   );
-};
+}
 
 export default MyComponent;
 ```

@@ -17,8 +17,8 @@ export default async function NotFound() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
-      <h1 className="text-2xl-semi text-ui-fg-base">{t("title")}</h1>
-      <p className="text-small-regular text-ui-fg-base">{t("description")}</p>
+      <h1 className="text-[30px] leading-[48px] font-semibold text-ui-fg-base">{t("title")}</h1>
+      <p className="text-xs leading-5 font-normal text-ui-fg-base">{t("description")}</p>
       <InteractiveLink href="/">{t("goHome")}</InteractiveLink>
     </div>
   )

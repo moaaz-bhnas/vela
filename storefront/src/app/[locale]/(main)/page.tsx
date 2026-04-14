@@ -49,9 +49,27 @@ export default async function Home({
   const categoryIds = await getPersonalizationCategoryIds()
   const hasPersonalizedCategories = categoryIds.length > 0
 
+  const categorySections = hasPersonalizedCategories
+    ? [
+        <Container key="best-sellers">
+          <BestSellers region={region} />
+        </Container>,
+        <Container key="shop-by-category">
+          <ShopByCategory />
+        </Container>,
+      ]
+    : [
+        <Container key="shop-by-category">
+          <ShopByCategory />
+        </Container>,
+        <Container key="best-sellers">
+          <BestSellers region={region} />
+        </Container>,
+      ]
+
   return (
     <>
-      <Container className="pt-8">
+      <Container className="pt-below-nav">
         {carouselSlides && <Carousel carouselSlides={carouselSlides} />}
       </Container>
 
@@ -59,25 +77,7 @@ export default async function Home({
         <RecentlyVisited region={region} />
       </Container>
 
-      {hasPersonalizedCategories ? (
-        <>
-          <Container>
-            <BestSellers region={region} />
-          </Container>
-          <Container>
-            <ShopByCategory />
-          </Container>
-        </>
-      ) : (
-        <>
-          <Container>
-            <ShopByCategory />
-          </Container>
-          <Container>
-            <BestSellers region={region} />
-          </Container>
-        </>
-      )}
+      {categorySections}
     </>
   )
 }

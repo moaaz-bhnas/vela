@@ -50,7 +50,7 @@ const AddAddress = ({ region }: { region: HttpTypes.StoreRegion }) => {
         onClick={open}
         data-testid="add-address-button"
       >
-        <span className="text-base-semi">{t("newAddress")}</span>
+        <span className="text-sm leading-6 font-semibold">{t("newAddress")}</span>
         <Plus />
       </button>
 
@@ -134,7 +134,7 @@ const AddAddress = ({ region }: { region: HttpTypes.StoreRegion }) => {
             </div>
             {formState.error && (
               <div
-                className="text-rose-500 text-small-regular py-2"
+                className="text-rose-500 text-xs leading-5 font-normal py-2"
                 data-testid="address-error"
               >
                 {formState.error}

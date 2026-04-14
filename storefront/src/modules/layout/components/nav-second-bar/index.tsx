@@ -40,7 +40,7 @@ const NavSecondBar = ({ categories }: NavSecondBarProps) => {
           transition={{
             duration: 0.2,
           }}
-          className="border-b border-ui-border-base bg-white h-12"
+          className="border-b border-ui-border-base bg-ui-bg-base h-12"
         >
           <nav className="flex items-center justify-center h-full overflow-x-auto">
             <Container

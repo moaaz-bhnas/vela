@@ -4,6 +4,7 @@ import { cookies } from "next/headers"
 import Container from "@modules/common/components/container-section"
 import CartTotals from "@modules/common/components/cart-totals"
 import Help from "@modules/order/components/help"
+import PostOrderAccountCta from "@modules/order/components/post-order-account-cta"
 import Items from "@modules/order/components/items"
 import OnboardingCta from "@modules/order/components/onboarding-cta"
 import OrderDetails from "@modules/order/components/order-details"
@@ -28,7 +29,7 @@ export default async function OrderCompletedTemplate({
       <Container noPadding className="flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
         {isOnboarding && <OnboardingCta orderId={order.id} />}
         <div
-          className="flex flex-col gap-4 max-w-4xl h-full bg-white w-full py-10"
+          className="flex flex-col gap-4 max-w-4xl h-full bg-ui-bg-base w-full py-10"
           data-testid="order-complete-container"
         >
           <Heading
@@ -38,8 +39,9 @@ export default async function OrderCompletedTemplate({
             <span>{t("thankYou")}</span>
             <span>{t("orderPlacedSuccess")}</span>
           </Heading>
+          <PostOrderAccountCta />
           <OrderDetails order={order} />
-          <Heading level="h2" className="flex flex-row text-3xl-regular">
+          <Heading level="h2" className="flex flex-row text-[32px] leading-[44px] font-normal">
             {t("summaryHeading")}
           </Heading>
           <Items items={order.items} />

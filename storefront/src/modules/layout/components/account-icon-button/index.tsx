@@ -17,7 +17,7 @@ const AccountIconButton = () => {
         "disabled:bg-ui-bg-disabled disabled:shadow-buttons-neutral disabled:text-ui-fg-disabled disabled:after:hidden",
         "text-ui-fg-subtle bg-ui-button-transparent hover:bg-ui-button-transparent-hover active:bg-ui-button-transparent-pressed",
         "focus-visible:shadow-buttons-neutral-focus focus-visible:bg-ui-bg-base disabled:!bg-transparent disabled:!shadow-none",
-        "h-8 w-8 p-1.5"
+        "min-h-11 min-w-11 p-2"
       )}
       aria-label={t("accountAria")}
     >

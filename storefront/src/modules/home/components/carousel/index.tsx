@@ -1,6 +1,7 @@
 "use client"
 
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
+import Image from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
 import type { CarouselSlide } from "@lib/data/branding"
 import Fade from "embla-carousel-fade"
@@ -11,6 +12,7 @@ import {
   useCarouselIndex,
   usePrevNextButtons,
 } from "@lib/hooks/use-carousel"
+import { usePrefersReducedMotion } from "@lib/hooks/use-prefers-reduced-motion"
 import CarouselSlideContent from "./carousel-slide-content"
 import CarouselControls from "./carousel-controls"
 
@@ -19,10 +21,22 @@ type CarouselProps = {
 }
 
 export default function Carousel({ carouselSlides }: CarouselProps) {
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 }, [
     Fade(),
-    Autoplay({ playOnInit: true, delay: 5000 }),
+    Autoplay({ playOnInit: false, delay: 5000 }),
   ])
+
+  useEffect(() => {
+    const autoplay = emblaApi?.plugins()?.autoplay
+    if (!emblaApi || !autoplay) return
+    if (prefersReducedMotion) {
+      autoplay.stop()
+    } else {
+      autoplay.play()
+    }
+  }, [emblaApi, prefersReducedMotion])
 
   const progressRef = useRef<HTMLDivElement>(null)
   const { showAutoplayProgress } = useAutoplayProgress(emblaApi, progressRef)
@@ -64,12 +78,14 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
               className="embla__slide translate-x-0 flex-[0_0_100%] min-w-0 relative h-[60vh] sm:h-[75vh]"
             >
               {slide.image_url ? (
-                <img
+                <Image
                   src={slide.image_url}
                   alt={slide.title || `Slide ${index + 1}`}
-                  className="embla__slide__img block h-full w-full object-cover select-none"
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "auto"}
+                  fill
+                  className="embla__slide__img object-cover select-none"
+                  sizes="100vw"
+                  priority={index === 0}
+                  unoptimized
                 />
               ) : (
                 <div className="h-full w-full bg-ui-bg-subtle" />
@@ -93,8 +109,11 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
             isPrevDisabled={prevBtnDisabled}
             isNextDisabled={nextBtnDisabled}
             isPlaying={autoplayIsPlaying}
-            showAutoplayProgress={showAutoplayProgress}
+            showAutoplayProgress={
+              showAutoplayProgress && !prefersReducedMotion
+            }
             toggleAutoplay={toggleAutoplay}
+            showAutoplayToggle={!prefersReducedMotion}
           />
         </div>
       )}

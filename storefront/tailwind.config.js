@@ -11,6 +11,7 @@ module.exports = {
     "./node_modules/@medusajs/ui/dist/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
+    // Use Tailwind default breakpoints only (sm/md/lg/xl/2xl). Do not extend `screens` with custom names.
     extend: {
       spacing: {
         // Section spacing (between sections / page-level vertical padding)
@@ -22,6 +23,12 @@ module.exports = {
         "section-inner-lg": "var(--spacing-section-inner-lg)",
         // Tight block (e.g. title + subtitle)
         "block-gap": "var(--spacing-block-gap)",
+        // Offset for first page content under sticky/fixed nav
+        "below-nav": "var(--spacing-below-nav)",
+        // Comfortable vertical gap between stacked groups (was gap-8 / mb-8)
+        stack: "var(--spacing-stack)",
+        // Main page column vertical padding (was py-12)
+        "content-y": "var(--spacing-content-y)",
       },
       transitionProperty: {
         width: "width margin",
@@ -57,21 +64,12 @@ module.exports = {
       maxWidth: {
         "8xl": "100rem",
       },
-      screens: {
-        "2xsmall": "320px",
-        xsmall: "512px",
-        small: "1024px",
-        medium: "1280px",
-        large: "1440px",
-        xlarge: "1680px",
-        "2xlarge": "1920px",
-      },
       fontSize: {
         "3xl": "2rem",
       },
       fontFamily: {
         sans: [
-          "Inter",
+          "var(--font-body)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 
 import type { ProductFilters } from "@lib/util/filter-products"
 import type { CategoryInfo } from "@lib/util/filter-products"
@@ -46,8 +46,14 @@ const RefinementList = ({
   onCategoryFilterChange,
   "data-testid": dataTestId,
 }: RefinementListProps) => {
-  const selectedOptions = filters?.options ?? {}
-  const selectedCategoryIds = filters?.categoryIds ?? []
+  const selectedOptions = useMemo(
+    () => filters?.options ?? {},
+    [filters]
+  )
+  const selectedCategoryIds = useMemo(
+    () => filters?.categoryIds ?? [],
+    [filters]
+  )
 
   const handleOptionToggle = useCallback(
     (optionTitle: string, value: string) => {
@@ -93,7 +99,7 @@ const RefinementList = ({
   )
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-stack">
       {showSortOptions && (
         <>
           <SortProducts

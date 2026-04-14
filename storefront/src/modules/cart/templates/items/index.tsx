@@ -18,7 +18,8 @@ const ItemsTemplate = async ({ items }: ItemsTemplateProps) => {
       <div className="pb-3 flex items-center">
         <Heading className="text-[2rem] leading-[2.75rem]">{t("title")}</Heading>
       </div>
-      <Table>
+      <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
+      <Table className="min-w-[640px] sm:min-w-0 w-full">
         <Table.Header className="border-t-0">
           <Table.Row className="text-ui-fg-subtle txt-medium-plus">
             <Table.HeaderCell className="!pl-0">{t("item")}</Table.HeaderCell>
@@ -46,6 +47,7 @@ const ItemsTemplate = async ({ items }: ItemsTemplateProps) => {
               })}
         </Table.Body>
       </Table>
+      </div>
     </div>
   )
 }

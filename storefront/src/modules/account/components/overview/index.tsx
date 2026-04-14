@@ -17,11 +17,11 @@ const Overview = async ({ customer, orders }: OverviewProps) => {
   return (
     <div data-testid="overview-page-wrapper">
       <div className="hidden lg:block">
-        <div className="text-xl-semi flex justify-between items-center mb-4">
+        <div className="text-2xl leading-[36px] font-semibold flex justify-between items-center mb-4">
           <span data-testid="welcome-message" data-value={customer?.first_name}>
-            {t("hello", { name: customer?.first_name })}
+            {t("hello", { name: customer?.first_name ?? "" })}
           </span>
-          <span className="text-small-regular text-ui-fg-base">
+          <span className="text-xs leading-5 font-normal text-ui-fg-base">
             {t("signedInAs")}{" "}
             <span
               className="font-semibold"
@@ -32,36 +32,36 @@ const Overview = async ({ customer, orders }: OverviewProps) => {
             </span>
           </span>
         </div>
-        <div className="flex flex-col py-8 border-t border-gray-200">
+        <div className="flex flex-col py-8 border-t border-ui-border-base">
           <div className="flex flex-col gap-y-4 h-full col-span-1 row-span-2 flex-1">
             <div className="flex items-start gap-x-16 mb-6">
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">{t("profile")}</h3>
+                <h3 className="text-base leading-6 font-semibold">{t("profile")}</h3>
                 <div className="flex items-end gap-x-2">
                   <span
-                    className="text-3xl-semi leading-none"
+                    className="text-[32px] leading-[44px] font-semibold leading-none"
                     data-testid="customer-profile-completion"
                     data-value={getProfileCompletion(customer)}
                   >
                     {getProfileCompletion(customer)}%
                   </span>
-                  <span className="uppercase text-base-regular text-ui-fg-subtle">
+                  <span className="uppercase text-sm leading-6 font-normal text-ui-fg-subtle">
                     {t("completed")}
                   </span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">{t("addresses")}</h3>
+                <h3 className="text-base leading-6 font-semibold">{t("addresses")}</h3>
                 <div className="flex items-end gap-x-2">
                   <span
-                    className="text-3xl-semi leading-none"
+                    className="text-[32px] leading-[44px] font-semibold leading-none"
                     data-testid="addresses-count"
                     data-value={customer?.addresses?.length || 0}
                   >
                     {customer?.addresses?.length || 0}
                   </span>
-                  <span className="uppercase text-base-regular text-ui-fg-subtle">
+                  <span className="uppercase text-sm leading-6 font-normal text-ui-fg-subtle">
                     {t("saved")}
                   </span>
                 </div>
@@ -70,7 +70,7 @@ const Overview = async ({ customer, orders }: OverviewProps) => {
 
             <div className="flex flex-col gap-y-4">
               <div className="flex items-center gap-x-2">
-                <h3 className="text-large-semi">{t("recentOrders")}</h3>
+                <h3 className="text-base leading-6 font-semibold">{t("recentOrders")}</h3>
               </div>
               <ul
                 className="flex flex-col gap-y-4"
@@ -90,8 +90,8 @@ const Overview = async ({ customer, orders }: OverviewProps) => {
                             number: order.display_id,
                           })}
                         >
-                          <Container className="bg-gray-50 flex justify-between items-center p-4">
-                            <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
+                          <Container className="bg-ui-bg-subtle flex justify-between items-center p-4">
+                            <div className="grid grid-cols-3 grid-rows-2 text-xs leading-5 font-normal gap-x-4 flex-1">
                               <span className="font-semibold">
                                 {t("datePlaced")}
                               </span>

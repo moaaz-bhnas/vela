@@ -22,8 +22,8 @@ export default async function Nav() {
   const phone = formatPhone(branding?.contact_info?.phone)
 
   return (
-    <div className="pb-28">
-      <div className="fixed top-0 inset-x-0 z-50 group">
+    <div className="pb-[calc(7rem+env(safe-area-inset-top,0px))]">
+      <div className="fixed top-0 inset-x-0 z-50 group pt-[env(safe-area-inset-top,0px)]">
         <NavFirstBar
           regions={regions}
           categories={categories || []}

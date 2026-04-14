@@ -1,6 +1,6 @@
 import { getBaseURL } from "@lib/util/env"
-import { Metadata } from "next"
-import { Bricolage_Grotesque } from "next/font/google"
+import { Metadata, Viewport } from "next"
+import { Bricolage_Grotesque, Source_Sans_3 } from "next/font/google"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import "styles/globals.css"
 import NProgressProvider from "@modules/common/components/progress-bar-provider"
@@ -11,6 +11,18 @@ const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage-grotesque",
 })
+
+const sourceSans3 = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+})
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getBrandingSeo()
@@ -47,8 +59,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const locale = await getLocale()
 
   return (
-    <html lang={locale} data-mode="light" className={bricolageGrotesque.variable}>
-      <body>
+    <html
+      lang={locale}
+      data-mode="light"
+      className={`${bricolageGrotesque.variable} ${sourceSans3.variable}`}
+    >
+      <body className="min-h-screen font-sans antialiased">
         <NProgressProvider>
           <NuqsAdapter>
             <main className="relative">{props.children}</main>

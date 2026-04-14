@@ -10,9 +10,7 @@ import { HttpTypes } from "@medusajs/types"
 import { useTranslations } from "next-intl"
 
 type SummaryProps = {
-  cart: HttpTypes.StoreCart & {
-    promotions: HttpTypes.StorePromotion[]
-  }
+  cart: HttpTypes.StoreCart
 }
 
 function getCheckoutStep(cart: HttpTypes.StoreCart) {

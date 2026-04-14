@@ -87,7 +87,7 @@ const ShippingAddress = ({
     <>
       {customer && (addressesInRegion?.length || 0) > 0 && (
         <Container className="mb-6 flex flex-col gap-y-4 p-5">
-          <p className="text-small-regular">
+          <p className="text-xs leading-5 font-normal">
             {t("savedAddressPrompt", { name: customer.first_name ?? "" })}
           </p>
           <AddressSelect

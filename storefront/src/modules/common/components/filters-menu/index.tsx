@@ -32,7 +32,8 @@ export default function FiltersMenu({
         <IconButton
           type="button"
           variant="transparent"
-          size="small"
+          size="base"
+          className="min-h-11 min-w-11 focus-visible:ring-2 focus-visible:ring-ui-fg-interactive focus-visible:ring-offset-2 focus-visible:ring-offset-ui-bg-base"
           data-testid="filter-sidebar-button"
           aria-label={t("openFilters")}
           onClick={() => setOpen(true)}
@@ -45,14 +46,14 @@ export default function FiltersMenu({
       <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
         <Transition.Child
           as={Fragment}
-          enter="transition ease-out duration-150"
+          enter="transition ease-out duration-150 motion-reduce:transition-none motion-reduce:duration-0"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="transition ease-in duration-150"
+          leave="transition ease-in duration-150 motion-reduce:transition-none motion-reduce:duration-0"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-ui-bg-base/80 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-ui-bg-base/80 backdrop-blur-sm motion-reduce:backdrop-blur-none" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-hidden">
@@ -60,14 +61,14 @@ export default function FiltersMenu({
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-0 sm:w-96 w-full justify-end">
               <Transition.Child
                 as={Fragment}
-                enter="transition ease-out duration-150"
-                enterFrom="translate-x-full opacity-0"
+                enter="transition ease-out duration-150 motion-reduce:transition-none motion-reduce:duration-0"
+                enterFrom="translate-x-full opacity-0 motion-reduce:translate-x-0"
                 enterTo="translate-x-0 opacity-100"
-                leave="transition ease-in duration-150"
+                leave="transition ease-in duration-150 motion-reduce:transition-none motion-reduce:duration-0"
                 leaveFrom="translate-x-0 opacity-100"
-                leaveTo="translate-x-full opacity-0"
+                leaveTo="translate-x-full opacity-0 motion-reduce:translate-x-0"
               >
-                <Dialog.Panel className="pointer-events-auto w-full flex flex-col h-full text-sm bg-ui-bg-base shadow">
+                <Dialog.Panel className="pointer-events-auto w-full flex flex-col h-full max-h-[100dvh] text-sm bg-ui-bg-base shadow outline-none focus:outline-none">
                   <div
                     data-testid="filter-sidebar"
                     className="flex flex-col h-full"
@@ -80,6 +81,7 @@ export default function FiltersMenu({
                       <IconButton
                         type="button"
                         variant="transparent"
+                        className="min-h-11 min-w-11 shrink-0 focus-visible:ring-2 focus-visible:ring-ui-fg-interactive focus-visible:ring-offset-2"
                         data-testid="close-filter-sidebar-button"
                         aria-label={t("closeFilters")}
                         onClick={() => setOpen(false)}
@@ -94,12 +96,12 @@ export default function FiltersMenu({
                     </div>
 
                     {/* Sticky footer: Clear all + View (n) */}
-                    <div className="flex-shrink-0 px-4 py-3 border-t flex gap-2">
+                    <div className="flex-shrink-0 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-ui-border-base flex gap-2">
                       <Button
                         type="button"
                         variant="secondary"
                         size="small"
-                        className="flex-1"
+                        className="flex-1 min-h-11 sm:min-h-0"
                         onClick={handleClearAll}
                       >
                         {t("clearAll")}
@@ -107,7 +109,7 @@ export default function FiltersMenu({
                       <Button
                         type="button"
                         size="small"
-                        className="flex-1"
+                        className="flex-1 min-h-11 sm:min-h-0"
                         onClick={() => setOpen(false)}
                       >
                         {resultCount != null

@@ -36,7 +36,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
           data-testid="nav-menu-button"
           aria-label={t("openMenu")}
           onClick={() => setOpen(true)}
-          className="!overflow-auto"
+          className="!overflow-auto min-h-11 min-w-11"
         >
           <BarsThree />
         </IconButton>
