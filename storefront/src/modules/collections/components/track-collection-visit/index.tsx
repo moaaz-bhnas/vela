@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { setCollectionCookie } from "@lib/utils/personalization-cookies"
+import { setCollectionCookie } from "@lib/util/personalization-cookies"
 
 type TrackCollectionVisitProps = {
     collectionId: string

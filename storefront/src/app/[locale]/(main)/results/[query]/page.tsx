@@ -1,7 +1,8 @@
 import type { HttpTypes } from "@medusajs/types"
 import { Metadata } from "next"
+import { notFound } from "next/navigation"
 
-import SearchResultsTemplate from "@modules/search/templates/search-results-template"
+import SearchResultsTemplate from "@modules/search/templates/search-results"
 
 import { search } from "@modules/search/actions"
 import { getRegion } from "@lib/data/regions"
@@ -31,7 +32,7 @@ export default async function SearchResults({ params }: Params) {
   const region = await getRegion(countryCode)
 
   if (!region) {
-    return null
+    return notFound()
   }
 
   return (

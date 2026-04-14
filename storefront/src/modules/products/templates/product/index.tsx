@@ -9,9 +9,10 @@ import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import Container from "@modules/common/components/container-section"
-import ProductActionsWrapper from "./product-actions-wrapper"
+import ProductActionsWrapper from "../product-actions-wrapper"
 import { HttpTypes } from "@medusajs/types"
 import TrackProductVisit from "@modules/products/components/track-product-visit"
+import ProductJsonLd from "@modules/products/components/product-json-ld"
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -30,6 +31,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
   return (
     <>
+      <ProductJsonLd product={product} region={region} />
       <TrackProductVisit product={product} />
 
       <Container

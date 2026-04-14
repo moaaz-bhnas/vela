@@ -156,6 +156,8 @@
     "seeDetails": "Voir le détail",
     "cancel": "Annuler",
     "edit": "Modifier",
+    "remove": "Retirer",
+    "billingAddress": "Adresse de facturation",
     "errorTryAgain": "Une erreur s’est produite, veuillez réessayer",
     "updatedSuccessfully": "mis à jour avec succès",
     "newAddress": "Nouvelle adresse",

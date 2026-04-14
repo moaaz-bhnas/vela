@@ -9,7 +9,8 @@ import {
   getAvailableCategories,
 } from "@lib/util/filter-products"
 import { extractAvailableOptions } from "@lib/util/extract-product-options"
-import _ from "lodash"
+import sortBy from "lodash/sortBy"
+import some from "lodash/some"
 
 export type ProductSales = {
   id: string
@@ -57,11 +58,11 @@ export const getBestSellers = cache(async function ({
     const products = await getProductsById({ ids: productIds, regionId })
 
     // Sort products by preferred category and collection
-    const sortedProducts = _.sortBy(products, [
+    const sortedProducts = sortBy(products, [
       function sortProducts(product) {
         const hasPreferredCategory =
           category_ids &&
-          _.some(product.categories, (c) => category_ids.includes(c.id))
+          some(product.categories, (c) => category_ids.includes(c.id))
         if (hasPreferredCategory) {
           return 0
         }

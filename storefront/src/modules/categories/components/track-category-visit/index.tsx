@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { setCategoryCookie } from "@lib/utils/personalization-cookies"
+import { setCategoryCookie } from "@lib/util/personalization-cookies"
 
 type TrackCategoryVisitProps = {
     categoryId: string

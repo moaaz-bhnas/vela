@@ -5,9 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { RadioGroup } from "@headlessui/react"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
-import { Button, Container, Heading, Text, Tooltip, clx } from "@medusajs/ui"
+import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
 import { CardElement } from "@stripe/react-stripe-js"
 import { StripeCardElementOptions } from "@stripe/stripe-js"
+import { HttpTypes } from "@medusajs/types"
 
 import Divider from "@modules/common/components/divider"
 import PaymentContainer from "@modules/checkout/components/payment-container"
@@ -20,12 +21,12 @@ const Payment = ({
   cart,
   availablePaymentMethods,
 }: {
-  cart: any
-  availablePaymentMethods: any[]
+  cart: HttpTypes.StoreCart
+  availablePaymentMethods: HttpTypes.StorePaymentProvider[]
 }) => {
   const t = useTranslations("Checkout")
   const activeSession = cart.payment_collection?.payment_sessions?.find(
-    (paymentSession: any) => paymentSession.status === "pending"
+    (paymentSession) => paymentSession.status === "pending"
   )
 
   const [isLoading, setIsLoading] = useState(false)
@@ -49,7 +50,8 @@ const Payment = ({
     cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0
 
   const paymentReady =
-    (activeSession && cart?.shipping_methods.length !== 0) || paidByGiftcard
+    (activeSession && (cart?.shipping_methods?.length ?? 0) !== 0) ||
+    paidByGiftcard
 
   const useOptions: StripeCardElementOptions = useMemo(() => {
     return {

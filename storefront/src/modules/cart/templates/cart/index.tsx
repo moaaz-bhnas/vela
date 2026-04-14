@@ -1,8 +1,8 @@
 import Container from "@modules/common/components/container-section"
-import ItemsTemplate from "./items"
-import Summary from "./summary"
-import EmptyCartMessage from "../components/empty-cart-message"
-import SignInPrompt from "../components/sign-in-prompt"
+import ItemsTemplate from "../items"
+import Summary from "../summary"
+import EmptyCartMessage from "../../components/empty-cart-message"
+import SignInPrompt from "../../components/sign-in-prompt"
 import Divider from "@modules/common/components/divider"
 import { HttpTypes } from "@medusajs/types"
 

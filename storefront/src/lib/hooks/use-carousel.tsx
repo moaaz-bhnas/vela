@@ -75,6 +75,10 @@ export const usePrevNextButtons = (
 
         onSelect(emblaApi)
         emblaApi.on("reInit", onSelect).on("select", onSelect)
+
+        return () => {
+            emblaApi.off("reInit", onSelect).off("select", onSelect)
+        }
     }, [emblaApi, onSelect])
 
     return {
@@ -124,13 +128,24 @@ export const useAutoplay = (
 
     useEffect(() => {
         const autoplay = emblaApi?.plugins()?.autoplay
-        if (!autoplay) return
+        if (!autoplay || !emblaApi) return
+
+        const onPlay = () => setAutoplayIsPlaying(true)
+        const onStop = () => setAutoplayIsPlaying(false)
+        const onReInit = () => setAutoplayIsPlaying(autoplay.isPlaying())
 
         setAutoplayIsPlaying(autoplay.isPlaying())
         emblaApi
-            .on("autoplay:play", () => setAutoplayIsPlaying(true))
-            .on("autoplay:stop", () => setAutoplayIsPlaying(false))
-            .on("reInit", () => setAutoplayIsPlaying(autoplay.isPlaying()))
+            .on("autoplay:play", onPlay)
+            .on("autoplay:stop", onStop)
+            .on("reInit", onReInit)
+
+        return () => {
+            emblaApi
+                .off("autoplay:play", onPlay)
+                .off("autoplay:stop", onStop)
+                .off("reInit", onReInit)
+        }
     }, [emblaApi])
 
     return {
@@ -190,11 +205,20 @@ export const useAutoplayProgress = <ProgressElement extends HTMLElement>(
 
     useEffect(() => {
         const autoplay = emblaApi?.plugins()?.autoplay
-        if (!autoplay) return
+        if (!autoplay || !emblaApi) return
+
+        const onTimerSet = () => startProgress(autoplay.timeUntilNext())
+        const onTimerStopped = () => setShowAutoplayProgress(false)
 
         emblaApi
-            .on('autoplay:timerset', () => startProgress(autoplay.timeUntilNext()))
-            .on('autoplay:timerstopped', () => setShowAutoplayProgress(false))
+            .on('autoplay:timerset', onTimerSet)
+            .on('autoplay:timerstopped', onTimerStopped)
+
+        return () => {
+            emblaApi
+                .off('autoplay:timerset', onTimerSet)
+                .off('autoplay:timerstopped', onTimerStopped)
+        }
     }, [emblaApi, startProgress])
 
     useEffect(() => {

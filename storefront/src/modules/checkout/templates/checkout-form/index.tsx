@@ -21,7 +21,9 @@ export default async function CheckoutForm({
   const paymentMethods = await listCartPaymentMethods(cart.region?.id ?? "")
 
   if (!shippingMethods || !paymentMethods) {
-    return null
+    throw new Error(
+      "Unable to load checkout options. Please refresh the page."
+    )
   }
 
   return (

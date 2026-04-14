@@ -6,7 +6,7 @@ import { HttpTypes } from "@medusajs/types"
 
 const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
   const t = useTranslations("ShippingAddress")
-  const [formData, setFormData] = useState<any>({})
+  const [formData, setFormData] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setFormData({
@@ -23,9 +23,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
   }, [cart?.billing_address])
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({
       ...formData,

@@ -6,7 +6,7 @@ import {
     addRecentProduct,
     updateProductCategories,
     updateProductCollection,
-} from "@lib/utils/personalization-cookies"
+} from "@lib/util/personalization-cookies"
 
 type TrackProductVisitProps = {
     product: HttpTypes.StoreProduct

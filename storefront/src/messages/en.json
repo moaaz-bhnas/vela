@@ -156,6 +156,8 @@
     "seeDetails": "See details",
     "cancel": "Cancel",
     "edit": "Edit",
+    "remove": "Remove",
+    "billingAddress": "Billing address",
     "errorTryAgain": "An error occurred, please try again",
     "updatedSuccessfully": "updated successfully",
     "newAddress": "New address",

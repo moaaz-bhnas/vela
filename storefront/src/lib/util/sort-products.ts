@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { SortOptions } from "@lib/types"
 
 interface SortableProduct extends HttpTypes.StoreProduct {
   _minPrice?: number
@@ -16,44 +16,33 @@ export function sortProducts(
   products: HttpTypes.StoreProduct[],
   sortBy: SortOptions
 ): HttpTypes.StoreProduct[] {
-  let sortedProducts = products as SortableProduct[]
-
-  if (["price_asc", "price_desc"].includes(sortBy)) {
-    // Precompute the minimum price for each product
-    sortedProducts.forEach((product) => {
-      if (product.variants && product.variants.length > 0) {
-        product._minPrice = Math.min(
-          ...product.variants.map(
-            (variant) => variant?.calculated_price?.calculated_amount || 0
-          )
-        )
-      } else {
-        product._minPrice = Infinity
-      }
-    })
-
-    // Sort products based on the precomputed minimum prices
-    sortedProducts.sort((a, b) => {
-      const diff = a._minPrice! - b._minPrice!
-      return sortBy === "price_asc" ? diff : -diff
-    })
-  }
-
-  if (sortBy === "created_at") {
-    sortedProducts.sort((a, b) => {
-      return (
-        new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
+  const getMinPrice = (product: SortableProduct): number => {
+    if (!product.variants?.length) return Infinity
+    return Math.min(
+      ...product.variants.map(
+        (variant) => variant?.calculated_price?.calculated_amount || 0
       )
-    })
+    )
   }
 
-  if (sortBy === "popularity") {
-    sortedProducts.sort((a, b) => {
+  const sorted = [...products] as SortableProduct[]
+
+  if (sortBy === "price_asc") {
+    sorted.sort((a, b) => getMinPrice(a) - getMinPrice(b))
+  } else if (sortBy === "price_desc") {
+    sorted.sort((a, b) => getMinPrice(b) - getMinPrice(a))
+  } else if (sortBy === "created_at") {
+    sorted.sort(
+      (a, b) =>
+        new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
+    )
+  } else if (sortBy === "popularity") {
+    sorted.sort((a, b) => {
       const aSales = a.product_sales?.selling_count ?? 0
       const bSales = b.product_sales?.selling_count ?? 0
       return bSales - aSales
     })
   }
 
-  return sortedProducts
+  return sorted
 }

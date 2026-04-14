@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { MagnifyingGlassMini } from "@medusajs/icons"
 import { clx, Container, Text } from "@medusajs/ui"
 
-import { addSearchHistoryProduct } from "@lib/utils/personalization-cookies"
+import { addSearchHistoryProduct } from "@lib/util/personalization-cookies"
 import { sdk } from "@lib/config"
 import { SEARCH_INDEX_NAME, searchClient } from "@lib/search-client"
 import Hit, { ProductHit } from "@modules/search/components/hit"

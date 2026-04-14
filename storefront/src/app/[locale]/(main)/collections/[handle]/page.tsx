@@ -13,7 +13,7 @@ import { getCountryCodeFromLocale } from "@lib/util/locale"
 import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
-  params: { handle: string; locale: string }
+  params: Promise<{ handle: string; locale: string }>
 }
 
 export async function generateStaticParams() {
@@ -49,8 +49,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, handle } = await params
   const seo = await getBrandingSeo()
-  const collection = await getCollectionByHandle(params.handle)
+  const collection = await getCollectionByHandle(handle)
 
   if (!collection) {
     notFound()
@@ -60,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: collection.title,
     description: collection.metadata?.description?.toString() || `${collection.title} collection`,
     alternates: {
-      canonical: `/${params.locale}/collections/${collection.handle}`,
+      canonical: `/${locale}/collections/${collection.handle}`,
     },
     openGraph: {
       title: collection.title,
@@ -73,7 +74,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CollectionPage({ params }: Props) {
-  const collection = await getCollectionByHandle(params.handle)
+  const { locale, handle } = await params
+  const collection = await getCollectionByHandle(handle)
 
   if (!collection) {
     notFound()
@@ -82,7 +84,7 @@ export default async function CollectionPage({ params }: Props) {
   return (
     <CollectionTemplate
       collection={collection}
-      countryCode={getCountryCodeFromLocale(params.locale)}
+      countryCode={getCountryCodeFromLocale(locale)}
     />
   )
 }
