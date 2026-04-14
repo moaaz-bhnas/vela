@@ -13,11 +13,11 @@ const EmptyCartMessage = async () => {
     >
       <Heading
         level="h1"
-        className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+        className="flex flex-row text-[32px] leading-[44px] font-normal gap-x-2 items-baseline"
       >
         {t("title")}
       </Heading>
-      <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
+      <Text className="text-sm leading-6 font-normal mt-4 mb-6 max-w-[32rem]">
         {t("message")}
       </Text>
       <div>

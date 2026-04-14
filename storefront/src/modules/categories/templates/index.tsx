@@ -29,9 +29,9 @@ export default async function CategoryTemplate({
     parents.length > 0 ? (
       <div className="flex flex-row flex-wrap items-center gap-4">
         {parents.map((parent) => (
-          <span key={parent.id} className="text-ui-fg-subtle text-2xl-semi">
+          <span key={parent.id} className="text-ui-fg-subtle text-[30px] leading-[48px] font-semibold">
             <LocalizedClientLink
-              className="mr-4 hover:text-black"
+              className="mr-4 hover:text-ui-fg-base"
               href={`/categories/${parent.handle}`}
               data-testid="sort-by-link"
             >
@@ -44,14 +44,14 @@ export default async function CategoryTemplate({
     ) : undefined
 
   const contentAfterHeader = (
-    <>
+    <div className="flex flex-col gap-stack max-w-prose">
       {category.description && (
-        <div className="text-base-regular">
+        <div className="text-sm leading-6 font-normal text-ui-fg-subtle">
           <p>{category.description}</p>
         </div>
       )}
       {category.category_children && category.category_children.length > 0 && (
-        <div className="text-base-large">
+        <div className="text-base leading-6 font-normal">
           <ul className="grid grid-cols-1 gap-block-gap">
             {category.category_children.map((c) => (
               <li key={c.id}>
@@ -63,7 +63,7 @@ export default async function CategoryTemplate({
           </ul>
         </div>
       )}
-    </>
+    </div>
   )
 
   return (

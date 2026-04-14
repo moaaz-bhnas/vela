@@ -10,6 +10,12 @@
     --spacing-section-inner: 1.5rem;
     --spacing-section-inner-lg: 2.5rem;
     --spacing-block-gap: 0.5rem;
+    /* Vertical gap between sibling groups (Tailwind gap-8 / mb-8) */
+    --spacing-stack: 2rem;
+    /* First content block below fixed nav — same rhythm as stack */
+    --spacing-below-nav: var(--spacing-stack);
+    /* Page shell vertical padding (Tailwind py-12) — account, cart, checkout */
+    --spacing-content-y: 3rem;
   }
 
   * {
@@ -37,7 +43,7 @@
 
   input:focus~label,
   input:not(:placeholder-shown)~label {
-    @apply -translate-y-2 text-xsmall-regular;
+    @apply -translate-y-2 text-xs leading-4 font-normal;
   }
 
   input:focus~label {
@@ -53,9 +59,9 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid var(--border-base);
+    -webkit-text-fill-color: var(--fg-base);
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-base) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -68,6 +74,7 @@
 }
 
 @layer components {
+
   /* Base container: width + horizontal padding only */
   .container {
     @apply max-w-[1440px] w-full mx-auto px-6;
@@ -79,58 +86,6 @@
   }
 
   .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
-  }
-
-  .text-xsmall-regular {
-    @apply text-[10px] leading-4 font-normal;
-  }
-
-  .text-small-regular {
-    @apply text-xs leading-5 font-normal;
-  }
-
-  .text-small-semi {
-    @apply text-xs leading-5 font-semibold;
-  }
-
-  .text-base-regular {
-    @apply text-sm leading-6 font-normal;
-  }
-
-  .text-base-semi {
-    @apply text-sm leading-6 font-semibold;
-  }
-
-  .text-large-regular {
-    @apply text-base leading-6 font-normal;
-  }
-
-  .text-large-semi {
-    @apply text-base leading-6 font-semibold;
-  }
-
-  .text-xl-regular {
-    @apply text-2xl leading-[36px] font-normal;
-  }
-
-  .text-xl-semi {
-    @apply text-2xl leading-[36px] font-semibold;
-  }
-
-  .text-2xl-regular {
-    @apply text-[30px] leading-[48px] font-normal;
-  }
-
-  .text-2xl-semi {
-    @apply text-[30px] leading-[48px] font-semibold;
-  }
-
-  .text-3xl-regular {
-    @apply text-[32px] leading-[44px] font-normal;
-  }
-
-  .text-3xl-semi {
-    @apply text-[32px] leading-[44px] font-semibold;
+    @apply px-4 py-2 border border-ui-border-base text-ui-fg-base rounded-full hover:bg-ui-bg-subtle transition-colors duration-200 ease-in;
   }
 }

@@ -20,7 +20,7 @@ export default function ProductRail({
 
   return (
     <Container>
-      <div className="flex justify-between mb-8">
+      <div className="flex justify-between mb-stack">
         <Text className="txt-xlarge">{collection.title}</Text>
         <InteractiveLink href={`/collections/${collection.handle}`}>
           View all

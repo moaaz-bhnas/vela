@@ -1,41 +1,39 @@
-import React from "react"
-
 import Container from "@modules/common/components/container-section"
 import UnderlineLink from "@modules/common/components/interactive-link"
 
 import AccountNav from "../../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
+import { getTranslations } from "next-intl/server"
 
-interface AccountLayoutProps {
+type AccountLayoutProps = {
   customer: HttpTypes.StoreCustomer | null
   children: React.ReactNode
 }
 
-const AccountLayout: React.FC<AccountLayoutProps> = ({
+export default async function AccountLayout({
   customer,
   children,
-}) => {
+}: AccountLayoutProps) {
+  const t = await getTranslations("Account")
+
   return (
-    <div className="flex-1 lg:py-12" data-testid="account-page">
+    <div className="flex-1 lg:py-content-y" data-testid="account-page">
       <Container
         noPadding
-        className="h-full max-w-5xl mx-auto bg-white flex flex-col"
+        className="h-full max-w-5xl mx-auto bg-ui-bg-base flex flex-col"
       >
-        <div className="grid grid-cols-1  lg:grid-cols-[240px_1fr] py-12">
+        <div className="grid grid-cols-1  lg:grid-cols-[240px_1fr] py-content-y">
           <div>{customer && <AccountNav customer={customer} />}</div>
           <div className="flex-1">{children}</div>
         </div>
-        <div className="flex flex-col lg:flex-row items-end justify-between lg:border-t border-gray-200 py-12 gap-8">
+        <div className="flex flex-col lg:flex-row items-end justify-between lg:border-t border-ui-border-base py-content-y gap-stack">
           <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
+            <h3 className="text-2xl leading-[36px] font-semibold mb-4">{t("gotQuestions")}</h3>
+            <span className="txt-medium">{t("faqLine")}</span>
           </div>
           <div>
             <UnderlineLink href="/customer-service">
-              Customer Service
+              {t("customerService")}
             </UnderlineLink>
           </div>
         </div>
@@ -43,5 +41,3 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
     </div>
   )
 }
-
-export default AccountLayout

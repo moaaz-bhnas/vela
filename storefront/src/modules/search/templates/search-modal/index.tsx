@@ -128,13 +128,15 @@ export default function SearchModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // // disable scroll on body when modal is open
-  // useEffect(() => {
-  //   document.body.style.overflow = "hidden"
-  //   return () => {
-  //     document.body.style.overflow = "unset"
-  //   }
-  // }, [])
+  // disable body scroll while the modal is open
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
 
   // on escape key press, close modal
   useEffect(() => {
@@ -154,7 +156,7 @@ export default function SearchModal({
 
   return (
     <div className="relative z-[75]">
-      <div className="fixed inset-0 bg-opacity-75 backdrop-blur-md opacity-100" />
+      <div className="fixed inset-0 bg-ui-bg-base/80 backdrop-blur-sm" />
       <div className="fixed inset-0 px-5 sm:p-0 overflow-auto" ref={searchRef}>
         <div className="flex flex-col justify-start w-full h-fit transform p-5 items-center text-left align-middle transition-all max-h-[75vh] bg-transparent shadow-none">
           <InstantSearch
@@ -165,7 +167,7 @@ export default function SearchModal({
               className="flex absolute flex-col h-fit w-full sm:w-fit"
               data-testid="search-modal-container"
             >
-              <div className="w-full flex items-center gap-x-2 p-4 bg-[rgba(3,7,18,0.5)] text-ui-fg-on-color backdrop-blur-2xl rounded-rounded">
+              <div className="w-full flex items-center gap-x-2 p-4 bg-ui-fg-base/50 text-ui-fg-on-color backdrop-blur-2xl rounded-rounded">
                 <MagnifyingGlassMini />
                 <SearchBox />
               </div>

@@ -44,11 +44,11 @@ const Addresses = ({
   const [message, formAction] = useFormState(setAddresses, null)
 
   return (
-    <div className="bg-white">
+    <div className="bg-ui-bg-base">
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
-          className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+          className="flex flex-row text-[32px] leading-[44px] font-normal gap-x-2 items-baseline"
         >
           {t("shippingAddress")}
           {!isOpen && <CheckCircleSolid />}
@@ -79,7 +79,7 @@ const Addresses = ({
               <div>
                 <Heading
                   level="h2"
-                  className="text-3xl-regular gap-x-4 pb-6 pt-8"
+                  className="text-[32px] leading-[44px] font-normal gap-x-4 pb-6 pt-8"
                 >
                   {t("billingAddress")}
                 </Heading>
@@ -95,9 +95,9 @@ const Addresses = ({
         </form>
       ) : (
         <div>
-          <div className="text-small-regular">
+          <div className="text-xs leading-5 font-normal">
             {cart && cart.shipping_address ? (
-              <div className="flex items-start gap-x-8">
+              <div className="flex items-start gap-x-stack">
                 <div className="flex items-start gap-x-1 w-full">
                   <div
                     className="flex flex-col w-1/3"

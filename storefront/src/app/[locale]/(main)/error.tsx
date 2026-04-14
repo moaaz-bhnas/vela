@@ -15,13 +15,13 @@ export default function Error({
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
-      <h2 className="text-2xl-semi text-ui-fg-base">Something went wrong</h2>
-      <p className="text-small-regular text-ui-fg-subtle">
+      <h2 className="text-[30px] leading-[48px] font-semibold text-ui-fg-base">Something went wrong</h2>
+      <p className="text-xs leading-5 font-normal text-ui-fg-subtle">
         An unexpected error occurred. Please try again.
       </p>
       <button
         onClick={reset}
-        className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover underline text-small-regular"
+        className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover underline text-xs leading-5 font-normal"
       >
         Try again
       </button>

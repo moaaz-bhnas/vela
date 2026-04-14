@@ -21,7 +21,9 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
   paymentInfoMap,
   disabled = false,
 }) => {
-  const isDevelopment = process.env.NODE_ENV === "development"
+  const showPaymentTestBadge =
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_CHECKOUT_SHOW_PAYMENT_TEST === "true"
 
   return (
     <>
@@ -30,7 +32,7 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
         value={paymentProviderId}
         disabled={disabled}
         className={clx(
-          "flex flex-col gap-y-2 text-small-regular cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active",
+          "flex flex-col gap-y-2 text-xs leading-5 font-normal cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active",
           {
             "border-ui-border-interactive":
               selectedPaymentOptionId === paymentProviderId,
@@ -40,10 +42,10 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
         <div className="flex items-center justify-between ">
           <div className="flex items-center gap-x-4">
             <Radio checked={selectedPaymentOptionId === paymentProviderId} />
-            <Text className="text-base-regular">
+            <Text className="text-sm leading-6 font-normal">
               {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
             </Text>
-            {isManual(paymentProviderId) && isDevelopment && (
+            {isManual(paymentProviderId) && showPaymentTestBadge && (
               <PaymentTest className="hidden lg:block" />
             )}
           </div>
@@ -51,7 +53,7 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
             {paymentInfoMap[paymentProviderId]?.icon}
           </span>
         </div>
-        {isManual(paymentProviderId) && isDevelopment && (
+        {isManual(paymentProviderId) && showPaymentTestBadge && (
           <PaymentTest className="lg:hidden text-[10px]" />
         )}
       </RadioGroup.Option>

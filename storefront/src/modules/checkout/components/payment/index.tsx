@@ -46,8 +46,13 @@ const Payment = ({
   const isStripe = isStripeFunc(activeSession?.provider_id)
   const stripeReady = useContext(StripeContext)
 
+  const cartWithGiftcards = cart as HttpTypes.StoreCart & {
+    gift_cards?: { length: number }[] | null
+  }
   const paidByGiftcard =
-    cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0
+    cartWithGiftcards.gift_cards &&
+    cartWithGiftcards.gift_cards.length > 0 &&
+    cart?.total === 0
 
   const paymentReady =
     (activeSession && (cart?.shipping_methods?.length ?? 0) !== 0) ||
@@ -57,10 +62,10 @@ const Payment = ({
     return {
       style: {
         base: {
-          fontFamily: "Inter, sans-serif",
-          color: "#424270",
+          fontFamily: '"Source Sans 3", ui-sans-serif, sans-serif',
+          color: "var(--fg-base)",
           "::placeholder": {
-            color: "rgb(107 114 128)",
+            color: "var(--fg-muted)",
           },
         },
       },
@@ -118,12 +123,12 @@ const Payment = ({
   }, [isOpen])
 
   return (
-    <div className="bg-white">
+    <div className="bg-ui-bg-base">
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
           className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
+            "flex flex-row text-[32px] leading-[44px] font-normal gap-x-2 items-baseline",
             {
               "opacity-50 pointer-events-none select-none":
                 !isOpen && !paymentReady,
@@ -136,8 +141,9 @@ const Payment = ({
         {!isOpen && paymentReady && (
           <Text>
             <button
+              type="button"
               onClick={handleEdit}
-              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover min-h-11 px-1 -mx-1 rounded-rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive focus-visible:ring-offset-2"
               data-testid="edit-payment-button"
             >
               {t("edit")}
@@ -155,7 +161,7 @@ const Payment = ({
               >
                 {availablePaymentMethods
                   .sort((a, b) => {
-                    return a.provider_id > b.provider_id ? 1 : -1
+                    return a.id > b.id ? 1 : -1
                   })
                   .map((paymentMethod) => {
                     return (
@@ -191,7 +197,7 @@ const Payment = ({
           )}
 
           {paidByGiftcard && (
-            <div className="flex flex-col w-1/3">
+            <div className="flex flex-col w-full sm:max-w-xs">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
                 {t("paymentMethod")}
               </Text>
@@ -211,7 +217,7 @@ const Payment = ({
 
           <Button
             size="large"
-            className="mt-6"
+            className="mt-6 w-full min-h-11 sm:w-auto"
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
@@ -228,8 +234,8 @@ const Payment = ({
 
         <div className={isOpen ? "hidden" : "block"}>
           {cart && paymentReady && activeSession ? (
-            <div className="flex items-start gap-x-1 w-full">
-              <div className="flex flex-col w-1/3">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full">
+              <div className="flex flex-col w-full sm:w-1/3 min-w-0">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
                   {t("paymentMethod")}
                 </Text>
@@ -241,7 +247,7 @@ const Payment = ({
                     selectedPaymentMethod}
                 </Text>
               </div>
-              <div className="flex flex-col w-1/3">
+              <div className="flex flex-col w-full sm:w-1/3 min-w-0">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
                   {t("paymentDetails")}
                 </Text>
@@ -263,7 +269,7 @@ const Payment = ({
               </div>
             </div>
           ) : paidByGiftcard ? (
-            <div className="flex flex-col w-1/3">
+            <div className="flex flex-col w-full sm:max-w-xs">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
                 {t("paymentMethod")}
               </Text>

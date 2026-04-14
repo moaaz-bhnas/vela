@@ -14,8 +14,8 @@ export default async function CheckoutLayout({
   const t = await getTranslations("Checkout")
 
   return (
-    <div className="w-full bg-white relative lg:min-h-screen">
-      <div className="h-16 bg-white border-b ">
+    <div className="w-full bg-ui-bg-base relative lg:min-h-screen">
+      <div className="h-16 bg-ui-bg-base border-b border-ui-border-base">
         <nav className="flex h-full items-center justify-between">
           <Container
             noPadding
@@ -23,7 +23,7 @@ export default async function CheckoutLayout({
           >
             <LocalizedClientLink
               href="/cart"
-              className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
+              className="text-xs leading-5 font-semibold text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
               data-testid="back-to-cart-link"
             >
               <ChevronDown className="rotate-90" size={16} />

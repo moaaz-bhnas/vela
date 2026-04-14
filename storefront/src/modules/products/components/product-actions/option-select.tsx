@@ -29,19 +29,25 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
         data-testid={dataTestId}
       >
         {filteredOptions?.map((v) => {
+          const selected = v === current
           return (
             <button
+              type="button"
               onClick={() => updateOption(option.title ?? "", v ?? "")}
               key={v}
               className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
+                "border bg-ui-bg-subtle text-xs leading-5 font-normal min-h-11 rounded-rounded px-3 py-2 flex-1 text-center transition-shadow ease-in-out duration-150",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive focus-visible:ring-offset-2 focus-visible:ring-offset-ui-bg-base",
                 {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
+                  "border-ui-fg-base border-2 shadow-sm": selected,
+                  "border-ui-border-base": !selected,
+                  "hover:shadow-elevation-card-rest": !selected && !disabled,
+                  "opacity-50 cursor-not-allowed": disabled,
                 }
               )}
               disabled={disabled}
+              aria-pressed={selected}
+              aria-label={`${title}: ${v}${selected ? ", selected" : ""}`}
               data-testid="option-button"
             >
               {v}

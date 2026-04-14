@@ -20,7 +20,7 @@ const OrderDetailsTemplate = async ({ order }: OrderDetailsTemplateProps) => {
   return (
     <div className="flex flex-col justify-center gap-y-4">
       <div className="flex gap-2 justify-between items-center">
-        <h1 className="text-2xl-semi">{t("orderDetails")}</h1>
+        <h1 className="text-[30px] leading-[48px] font-semibold">{t("orderDetails")}</h1>
         <LocalizedClientLink
           href="/account/orders"
           className="flex gap-2 items-center text-ui-fg-subtle hover:text-ui-fg-base"
@@ -30,7 +30,7 @@ const OrderDetailsTemplate = async ({ order }: OrderDetailsTemplateProps) => {
         </LocalizedClientLink>
       </div>
       <div
-        className="flex flex-col gap-4 h-full bg-white w-full"
+        className="flex flex-col gap-4 h-full bg-ui-bg-base w-full"
         data-testid="order-details-container"
       >
         <OrderDetails order={order} showStatus />

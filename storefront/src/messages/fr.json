@@ -1,6 +1,6 @@
 {
   "Nav": {
-    "defaultSiteTitle": "Medusa Store",
+    "defaultSiteTitle": "Vela",
     "cartFallback": "Panier (0)",
     "cartAria": "Panier ({count} articles)",
     "cartItemsCountAria": "{count} articles dans le panier",
@@ -30,14 +30,14 @@
     "shippingTo": "Livraison vers :"
   },
   "Footer": {
-    "defaultStoreName": "Medusa Store",
+    "defaultStoreName": "Vela",
     "categories": "Catégories",
     "collections": "Collections",
     "medusa": "Medusa",
     "github": "GitHub",
     "documentation": "Documentation",
     "sourceCode": "Code source",
-    "copyright": "© {year} Medusa Store. Tous droits réservés."
+    "copyright": "© {year} Vela. Tous droits réservés."
   },
   "MedusaCta": {
     "poweredBy": "Propulsé par",
@@ -65,11 +65,6 @@
     "message": "Votre panier est vide. Commencez vos achats via le lien ci-dessous.",
     "explore": "Découvrir les produits"
   },
-  "SignInPrompt": {
-    "title": "Vous avez déjà un compte ?",
-    "subtitle": "Connectez-vous pour une meilleure expérience.",
-    "signIn": "Se connecter"
-  },
   "Checkout": {
     "title": "Paiement",
     "backToCart": "Retour au panier",
@@ -93,7 +88,7 @@
     "continueToReview": "Continuer vers la validation",
     "enterCardDetailsButton": "Saisir les informations de carte",
     "review": "Vérification",
-    "placeOrderLegal": "En cliquant sur Commander, vous confirmez avoir lu et accepté nos Conditions d’utilisation, Conditions de vente et Politique de retours, et avoir pris connaissance de la Politique de confidentialité.",
+    "placeOrderLegal": "En commandant, vous acceptez nos Conditions de vente, notre Politique de retours et notre Politique de confidentialité.",
     "placeOrder": "Commander",
     "selectPaymentMethod": "Sélectionnez un mode de paiement",
     "addPromotionCode": "Ajouter un ou plusieurs codes promo",
@@ -142,7 +137,12 @@
     "signIn": "Se connecter",
     "notMember": "Pas encore membre ?",
     "joinUs": "Nous rejoindre",
-    "becomeMember": "Devenir membre Medusa Store",
+    "becomeMember": "Devenir membre Vela",
+    "registerSubtitle": "Créez votre profil membre Vela et profitez d'une expérience d'achat enrichie.",
+    "registerLegalA": "En créant un compte, vous acceptez la ",
+    "registerLegalB": "",
+    "registerLegalC": " et les ",
+    "registerLegalD": " de Vela.",
     "join": "S’inscrire",
     "alreadyMember": "Déjà membre ?",
     "privacyPolicy": "Politique de confidentialité",
@@ -212,6 +212,7 @@
     "relatedProducts": "Produits associés",
     "relatedSubtitle": "Ces produits pourraient aussi vous intéresser.",
     "selectOptions": "Choisir les options",
+    "closeOptions": "Fermer",
     "tabProductInformation": "Informations produit",
     "tabShippingReturns": "Livraison et retours",
     "weightGrams": "{weight} g",
@@ -249,7 +250,11 @@
     "testOrderSuccess": "Votre commande test a bien été créée !",
     "completeSetupAdmin": "Terminer la configuration dans l’admin",
     "backToOverview": "Retour à l’aperçu",
-    "returnsExchanges": "Retours et échanges"
+    "returnsExchanges": "Retours et échanges",
+    "shippingMethodUnavailable": "Non disponible",
+    "createAccountTitle": "Un paiement plus rapide la prochaine fois ?",
+    "createAccountSubtitle": "Créez un compte avec l’e-mail utilisé pour cette commande pour suivre les livraisons et recommander facilement.",
+    "createAccountCta": "Créer un compte"
   },
   "Store": {
     "allProducts": "Tous les produits",

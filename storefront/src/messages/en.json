@@ -1,6 +1,6 @@
 {
   "Nav": {
-    "defaultSiteTitle": "Medusa Store",
+    "defaultSiteTitle": "Vela",
     "cartFallback": "Cart (0)",
     "cartAria": "Cart ({count} items)",
     "cartItemsCountAria": "{count} items in cart",
@@ -30,14 +30,14 @@
     "shippingTo": "Shipping to:"
   },
   "Footer": {
-    "defaultStoreName": "Medusa Store",
+    "defaultStoreName": "Vela",
     "categories": "Categories",
     "collections": "Collections",
     "medusa": "Medusa",
     "github": "GitHub",
     "documentation": "Documentation",
     "sourceCode": "Source code",
-    "copyright": "© {year} Medusa Store. All rights reserved."
+    "copyright": "© {year} Vela. All rights reserved."
   },
   "MedusaCta": {
     "poweredBy": "Powered by",
@@ -65,11 +65,6 @@
     "message": "You don't have anything in your cart. Let's change that, use the link below to start browsing our products.",
     "explore": "Explore products"
   },
-  "SignInPrompt": {
-    "title": "Already have an account?",
-    "subtitle": "Sign in for a better experience.",
-    "signIn": "Sign in"
-  },
   "Checkout": {
     "title": "Checkout",
     "backToCart": "Back to shopping cart",
@@ -93,7 +88,7 @@
     "continueToReview": "Continue to review",
     "enterCardDetailsButton": "Enter card details",
     "review": "Review",
-    "placeOrderLegal": "By clicking the Place Order button, you confirm that you have read, understand and accept our Terms of Use, Terms of Sale and Returns Policy and acknowledge that you have read Medusa Store's Privacy Policy.",
+    "placeOrderLegal": "By placing your order, you agree to our Terms of Sale, Returns Policy, and Privacy Policy.",
     "placeOrder": "Place order",
     "selectPaymentMethod": "Select a payment method",
     "addPromotionCode": "Add Promotion Code(s)",
@@ -142,7 +137,12 @@
     "signIn": "Sign in",
     "notMember": "Not a member?",
     "joinUs": "Join us",
-    "becomeMember": "Become a Medusa Store Member",
+    "becomeMember": "Become a Vela Member",
+    "registerSubtitle": "Create your Vela Member profile, and get access to an enhanced shopping experience.",
+    "registerLegalA": "By creating an account, you agree to ",
+    "registerLegalB": "Vela's ",
+    "registerLegalC": " and ",
+    "registerLegalD": ".",
     "join": "Join",
     "alreadyMember": "Already a member?",
     "privacyPolicy": "Privacy Policy",
@@ -212,6 +212,7 @@
     "relatedProducts": "Related products",
     "relatedSubtitle": "You might also want to check out these products.",
     "selectOptions": "Select options",
+    "closeOptions": "Close",
     "tabProductInformation": "Product information",
     "tabShippingReturns": "Shipping & returns",
     "weightGrams": "{weight} g",
@@ -249,7 +250,11 @@
     "testOrderSuccess": "Your test order was successfully created!",
     "completeSetupAdmin": "Complete setup in admin",
     "backToOverview": "Back to overview",
-    "returnsExchanges": "Returns & exchanges"
+    "returnsExchanges": "Returns & exchanges",
+    "shippingMethodUnavailable": "Not available",
+    "createAccountTitle": "Want faster checkout next time?",
+    "createAccountSubtitle": "Create an account with the email you used for this order to track deliveries and reorder easily.",
+    "createAccountCta": "Create account"
   },
   "Store": {
     "allProducts": "All products",

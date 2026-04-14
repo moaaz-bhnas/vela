@@ -24,7 +24,7 @@ const DeleteButton = ({
   return (
     <div
       className={clx(
-        "flex items-center justify-between text-small-regular",
+        "flex items-center justify-between text-xs leading-5 font-normal",
         className
       )}
     >

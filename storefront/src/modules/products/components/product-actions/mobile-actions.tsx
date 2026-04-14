@@ -61,15 +61,15 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         <Transition
           as={Fragment}
           show={show}
-          enter="ease-in-out duration-300"
+          enter="ease-in-out duration-300 motion-reduce:transition-none motion-reduce:duration-0"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-300"
+          leave="ease-in duration-300 motion-reduce:transition-none motion-reduce:duration-0"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
           <div
-            className="bg-white flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-gray-200"
+            className="bg-ui-bg-base flex flex-col gap-y-3 justify-center items-center text-base leading-6 font-normal px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] h-full w-full border-t border-ui-border-base"
             data-testid="mobile-actions"
           >
             <div className="flex items-center gap-x-2">
@@ -79,7 +79,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div className="flex items-end gap-x-2 text-ui-fg-base">
                   {selectedPrice.price_type === "sale" && (
                     <p>
-                      <span className="line-through text-small-regular">
+                      <span className="line-through text-xs leading-5 font-normal">
                         {selectedPrice.original_price}
                       </span>
                     </p>
@@ -101,7 +101,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={open}
                 variant="secondary"
-                className="w-full"
+                className="w-full min-h-11"
                 data-testid="mobile-actions-button"
               >
                 <div className="flex items-center justify-between w-full">
@@ -116,7 +116,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={handleAddToCart}
                 disabled={!inStock || !variant}
-                className="w-full"
+                className="w-full min-h-11"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
               >
@@ -134,41 +134,43 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         <Dialog as="div" className="relative z-[75]" onClose={close}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-out duration-300 motion-reduce:transition-none motion-reduce:duration-0"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-200"
+            leave="ease-in duration-200 motion-reduce:transition-none motion-reduce:duration-0"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-gray-700 bg-opacity-75 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-ui-bg-base/80 backdrop-blur-sm motion-reduce:backdrop-blur-none" />
           </Transition.Child>
 
-          <div className="fixed bottom-0 inset-x-0">
+          <div className="fixed bottom-0 inset-x-0 pb-[env(safe-area-inset-bottom,0px)]">
             <div className="flex min-h-full h-full items-center justify-center text-center">
               <Transition.Child
                 as={Fragment}
-                enter="ease-out duration-300"
+                enter="ease-out duration-300 motion-reduce:transition-none motion-reduce:duration-0"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="ease-in duration-200"
+                leave="ease-in duration-200 motion-reduce:transition-none motion-reduce:duration-0"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
                 <Dialog.Panel
-                  className="w-full h-full transform overflow-hidden text-left flex flex-col gap-y-3"
+                  className="w-full h-full max-h-[100dvh] transform overflow-hidden overflow-y-auto text-left flex flex-col gap-y-3 outline-none"
                   data-testid="mobile-actions-modal"
                 >
-                  <div className="w-full flex justify-end pr-6">
+                  <div className="w-full flex justify-end pr-4 pt-2">
                     <button
+                      type="button"
                       onClick={close}
-                      className="bg-white w-12 h-12 rounded-full text-ui-fg-base flex justify-center items-center"
+                      className="bg-ui-bg-base min-h-12 min-w-12 h-12 w-12 rounded-full text-ui-fg-base flex justify-center items-center shadow-elevation-card-rest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive focus-visible:ring-offset-2"
                       data-testid="close-modal-button"
+                      aria-label={t("closeOptions")}
                     >
                       <X />
                     </button>
                   </div>
-                  <div className="bg-white px-6 py-12">
+                  <div className="bg-ui-bg-base px-6 py-content-y">
                     {(product.variants?.length ?? 0) > 1 && (
                       <div className="flex flex-col gap-y-6">
                         {(product.options || []).map((option) => {
