@@ -2,11 +2,7 @@ import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
 
-export type SortOptions =
-  | "price_asc"
-  | "price_desc"
-  | "created_at"
-  | "popularity"
+export type { SortOptions } from "@lib/types"
 
 type SortProductsProps = {
   sortBy: SortOptions

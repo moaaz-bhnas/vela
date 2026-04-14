@@ -17,7 +17,7 @@ import {
   getCategoryCounts,
 } from "@lib/util/filter-products"
 import { sortProducts } from "@lib/util/sort-products"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { SortOptions } from "@lib/types"
 import ActiveFiltersChips from "@modules/store/components/active-filters-chips"
 import RefinementList from "@modules/store/components/refinement-list"
 import ListingHeader from "@modules/common/components/listing-header"

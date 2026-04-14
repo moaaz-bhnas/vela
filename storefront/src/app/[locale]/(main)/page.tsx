@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { notFound } from "next/navigation"
 import Carousel from "@modules/home/components/carousel"
 import ShopByCategory from "@modules/home/components/shop-by-category"
 import BestSellers from "@modules/home/components/best-sellers"
@@ -39,7 +40,7 @@ export default async function Home({
   const branding = await getBrandingConfig(locale)
 
   if (!collections || !region) {
-    return null
+    return notFound()
   }
 
   const carouselSlides =

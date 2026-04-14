@@ -1,5 +1,3 @@
-"use client"
-
 import { Badge, Text } from "@medusajs/ui"
 import { HttpTypes } from "@medusajs/types"
 

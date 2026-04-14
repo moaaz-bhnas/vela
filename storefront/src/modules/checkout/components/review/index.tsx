@@ -1,12 +1,13 @@
 "use client"
 
 import { Heading, Text, clx } from "@medusajs/ui"
+import { HttpTypes } from "@medusajs/types"
 
 import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 
-const Review = ({ cart }: { cart: any }) => {
+const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   const t = useTranslations("Checkout")
   const searchParams = useSearchParams()
 
@@ -17,7 +18,7 @@ const Review = ({ cart }: { cart: any }) => {
 
   const previousStepsCompleted =
     cart.shipping_address &&
-    cart.shipping_methods.length > 0 &&
+    (cart.shipping_methods?.length ?? 0) > 0 &&
     (cart.payment_collection || paidByGiftcard)
 
   return (

@@ -3,7 +3,7 @@ import React from "react"
 import Container from "@modules/common/components/container-section"
 import UnderlineLink from "@modules/common/components/interactive-link"
 
-import AccountNav from "../components/account-nav"
+import AccountNav from "../../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
 
 interface AccountLayoutProps {

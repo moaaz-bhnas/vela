@@ -68,6 +68,8 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
                   src={slide.image_url}
                   alt={slide.title || `Slide ${index + 1}`}
                   className="embla__slide__img block h-full w-full object-cover select-none"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                 />
               ) : (
                 <div className="h-full w-full bg-ui-bg-subtle" />

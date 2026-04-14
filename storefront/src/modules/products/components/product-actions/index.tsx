@@ -4,7 +4,7 @@ import { Button } from "@medusajs/ui"
 import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 
-import { useIntersection } from "@lib/hooks/use-in-view"
+import { useInView } from "@lib/hooks/use-in-view"
 import { useProductOptions } from "@lib/hooks/use-product-options"
 import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
@@ -81,7 +81,7 @@ export default function ProductActions({
 
   const actionsRef = useRef<HTMLDivElement>(null)
 
-  const inView = useIntersection(actionsRef, "0px")
+  const inView = useInView(actionsRef, "0px")
 
   // add the selected variant to the cart
   const handleAddToCart = async () => {

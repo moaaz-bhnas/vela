@@ -1,7 +1,7 @@
 import { useFormState } from "react-dom"
 import { useTranslations } from "next-intl"
 
-import { LOGIN_VIEW } from "@modules/account/templates/login-template"
+import { LOGIN_VIEW } from "@modules/account/templates/login"
 import Input from "@modules/common/components/input"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"

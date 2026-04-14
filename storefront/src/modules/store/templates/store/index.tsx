@@ -1,7 +1,7 @@
 import { getProductsForClient } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { getTranslations } from "next-intl/server"
-import ProductListWithFilters from "./product-list-with-filters"
+import ProductListWithFilters from "../product-list-with-filters"
 
 const StoreTemplate = async ({ countryCode }: { countryCode: string }) => {
   const [initialData, region, t] = await Promise.all([

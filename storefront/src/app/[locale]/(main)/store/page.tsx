@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 
-import StoreTemplate from "@modules/store/templates"
+import StoreTemplate from "@modules/store/templates/store"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
 
 export const metadata: Metadata = {

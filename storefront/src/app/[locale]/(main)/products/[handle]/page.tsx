@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import ProductTemplate from "@modules/products/templates"
+import ProductTemplate from "@modules/products/templates/product"
 import { getRegion, listRegions } from "@lib/data/regions"
 import { getProductByHandle, getProductsList } from "@lib/data/products"
 import { getBrandingSeo } from "@lib/util/metadata"
@@ -9,7 +9,7 @@ import { getCountryCodeFromLocale } from "@lib/util/locale"
 import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
-  params: { locale: string; handle: string }
+  params: Promise<{ locale: string; handle: string }>
 }
 
 export async function generateStaticParams() {
@@ -47,8 +47,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const countryCode = getCountryCodeFromLocale(params.locale)
-  const { handle } = params
+  const { locale, handle } = await params
+  const countryCode = getCountryCodeFromLocale(locale)
   const region = await getRegion(countryCode)
   const seo = await getBrandingSeo()
 
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product.title,
     description: product.description || seo.defaultDescription,
     alternates: {
-      canonical: `/${params.locale}/products/${product.handle}`,
+      canonical: `/${locale}/products/${product.handle}`,
     },
     openGraph: {
       title: product.title,
@@ -78,14 +78,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const countryCode = getCountryCodeFromLocale(params.locale)
+  const { locale, handle } = await params
+  const countryCode = getCountryCodeFromLocale(locale)
   const region = await getRegion(countryCode)
 
   if (!region) {
     notFound()
   }
 
-  const pricedProduct = await getProductByHandle(params.handle, region.id)
+  const pricedProduct = await getProductByHandle(handle, region.id)
   if (!pricedProduct) {
     notFound()
   }

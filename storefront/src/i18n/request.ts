@@ -1,6 +1,6 @@
 import { getRequestConfig } from "next-intl/server"
 import { defaultLocale } from "./routing"
-import { getMessageCatalog } from "./messagesCatalog"
+import { getMessageCatalog } from "./messages-catalog"
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = (await requestLocale) ?? defaultLocale

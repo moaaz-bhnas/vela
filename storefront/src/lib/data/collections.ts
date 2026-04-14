@@ -18,10 +18,10 @@ export const getCollectionsList = cache(async function (
   const localeHeaders = await getMedusaLocaleHeaders()
   return sdk.store.collection
     .list(
-      { limit, offset: 0 },
+      { limit, offset },
       { next: { tags: ["collections"] }, ...localeHeaders }
     )
-    .then(({ collections }) => ({ collections, count: collections.length }))
+    .then(({ collections, count }) => ({ collections, count }))
 })
 
 export const getCollectionByHandle = cache(async function (
@@ -46,24 +46,21 @@ export const getCollectionsWithProducts = cache(
       .filter(Boolean) as string[]
 
     const { response } = await getProductsList({
-      queryParams: { collection_id: collectionIds },
+      queryParams: { collection_id: collectionIds } as any,
       countryCode,
     })
 
-    response.products.forEach((product) => {
-      const collection = collections.find(
-        (collection) => collection.id === product.collection_id
-      )
-
-      if (collection) {
-        if (!collection.products) {
-          collection.products = []
-        }
-
-        collection.products.push(product as any)
+    const productsByCollection = new Map<string, HttpTypes.StoreProduct[]>()
+    for (const product of response.products) {
+      if (product.collection_id) {
+        const existing = productsByCollection.get(product.collection_id) ?? []
+        productsByCollection.set(product.collection_id, [...existing, product])
       }
-    })
+    }
 
-    return collections as unknown as HttpTypes.StoreCollection[]
+    return collections.map((collection) => ({
+      ...collection,
+      products: productsByCollection.get(collection.id) ?? [],
+    })) as unknown as HttpTypes.StoreCollection[]
   }
 )

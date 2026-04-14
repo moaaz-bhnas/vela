@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import Fade from "embla-carousel-fade"
 import { Container, clx, IconButton } from "@medusajs/ui"
@@ -8,7 +8,18 @@ import { ChevronLeft, ChevronRight } from "@medusajs/icons"
 import Image from "next/image"
 import { useCarouselIndex, usePrevNextButtons } from "@lib/hooks/use-carousel"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
-import { useMediaQuery } from "@uidotdev/usehooks"
+
+function useIsDesktop(breakpoint = 768) {
+  const [isDesktop, setIsDesktop] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${breakpoint}px)`)
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [breakpoint])
+  return isDesktop
+}
 
 type ProductPreviewCarouselProps = {
   thumbnail?: string | null
@@ -42,7 +53,7 @@ export default function ProductPreviewCarousel({
   const displayUrls = hasSlides ? slideUrls.slice(0, MAX_SLIDES) : [""]
   const showControls = displayUrls.length > 1
   const totalSlides = displayUrls.length
-  const isDesktop = useMediaQuery("(min-width: 768px)") ?? false
+  const isDesktop = useIsDesktop(768)
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, duration: 30, watchDrag: !isDesktop },

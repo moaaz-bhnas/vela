@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useState } from "react"
 
-export const useIntersection = (
+export const useInView = (
   element: RefObject<HTMLDivElement>,
   rootMargin: string
 ) => {

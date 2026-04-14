@@ -10,7 +10,7 @@ import { getCountryCodeFromLocale } from "@lib/util/locale"
 import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
-  params: { category: string[]; locale: string }
+  params: Promise<{ category: string[]; locale: string }>
 }
 
 export async function generateStaticParams() {
@@ -44,8 +44,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    const { locale, category } = await params
     const seo = await getBrandingSeo()
-    const { product_categories } = await getCategoryByHandle(params.category)
+    const { product_categories } = await getCategoryByHandle(category)
 
     const title = product_categories
       .map((category: StoreProductCategory) => category.name)
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description: description || seo.defaultDescription,
       alternates: {
-        canonical: `/${params.locale}/categories/${params.category.join("/")}`,
+        canonical: `/${locale}/categories/${category.join("/")}`,
       },
     }
   } catch {
@@ -68,7 +69,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const { product_categories } = await getCategoryByHandle(params.category)
+  const { locale, category } = await params
+  const { product_categories } = await getCategoryByHandle(category)
 
   if (!product_categories) {
     notFound()
@@ -77,7 +79,7 @@ export default async function CategoryPage({ params }: Props) {
   return (
     <CategoryTemplate
       categories={product_categories}
-      countryCode={getCountryCodeFromLocale(params.locale)}
+      countryCode={getCountryCodeFromLocale(locale)}
     />
   )
 }

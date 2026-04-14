@@ -120,7 +120,7 @@ const Shipping: React.FC<ShippingProps> = ({
                     </div>
                     <span className="justify-self-end text-ui-fg-base">
                       {convertToLocale({
-                        amount: option.amount!,
+                        amount: option.amount ?? 0,
                         currency_code: cart?.currency_code,
                       })}
                     </span>
@@ -157,7 +157,7 @@ const Shipping: React.FC<ShippingProps> = ({
                 <Text className="txt-medium text-ui-fg-subtle">
                   {selectedShippingMethod?.name}{" "}
                   {convertToLocale({
-                    amount: selectedShippingMethod?.amount!,
+                    amount: selectedShippingMethod?.amount ?? 0,
                     currency_code: cart?.currency_code,
                   })}
                 </Text>

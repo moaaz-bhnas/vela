@@ -10,22 +10,20 @@ import { getAuthHeaders, removeAuthToken, setAuthToken } from "./cookies"
 
 export const getCustomer = cache(async function () {
   return await sdk.store.customer
-    .retrieve({}, { next: { tags: ["customer"] }, ...getAuthHeaders() })
+    .retrieve({}, { next: { tags: ["customer"] }, ...(await getAuthHeaders()) })
     .then(({ customer }) => customer)
     .catch(() => null)
 })
 
-export const updateCustomer = cache(async function (
-  body: HttpTypes.StoreUpdateCustomer
-) {
+export async function updateCustomer(body: HttpTypes.StoreUpdateCustomer) {
   const updateRes = await sdk.store.customer
-    .update(body, {}, getAuthHeaders())
+    .update(body, {}, await getAuthHeaders())
     .then(({ customer }) => customer)
     .catch(medusaError)
 
   revalidateTag("customer")
   return updateRes
-})
+}
 
 export async function signup(_currentState: unknown, formData: FormData) {
   const password = formData.get("password") as string
@@ -106,7 +104,7 @@ export const addCustomerAddress = async (
   }
 
   return sdk.store.customer
-    .createAddress(address, {}, getAuthHeaders())
+    .createAddress(address, {}, await getAuthHeaders())
     .then(({ customer }) => {
       revalidateTag("customer")
       return { success: true, error: null }
@@ -118,9 +116,9 @@ export const addCustomerAddress = async (
 
 export const deleteCustomerAddress = async (
   addressId: string
-): Promise<void> => {
-  await sdk.store.customer
-    .deleteAddress(addressId, getAuthHeaders())
+): Promise<{ success: boolean; error: string | null }> => {
+  return sdk.store.customer
+    .deleteAddress(addressId, await getAuthHeaders())
     .then(() => {
       revalidateTag("customer")
       return { success: true, error: null }
@@ -150,7 +148,7 @@ export const updateCustomerAddress = async (
   }
 
   return sdk.store.customer
-    .updateAddress(addressId, address, {}, getAuthHeaders())
+    .updateAddress(addressId, address, {}, await getAuthHeaders())
     .then(() => {
       revalidateTag("customer")
       return { success: true, error: null }

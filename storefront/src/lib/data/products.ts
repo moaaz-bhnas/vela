@@ -2,7 +2,7 @@ import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { cache } from "react"
 import { getRegion } from "./regions"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { SortOptions } from "@lib/types"
 import { sortProducts } from "@lib/util/sort-products"
 import {
   filterProducts,
@@ -177,7 +177,7 @@ export function buildStoreProductsForClient(
  * Fetches products, then filters, sorts, and paginates. Returns filtered count and option metadata for the refinement UI.
  */
 export const getProductsListWithSort = cache(async function ({
-  page = 0,
+  page = 1,
   queryParams,
   sortBy = "popularity",
   filters,
@@ -201,7 +201,7 @@ export const getProductsListWithSort = cache(async function ({
   const {
     response: { products: unfilteredProducts },
   } = await getProductsList({
-    pageParam: 0,
+    pageParam: 1,
     queryParams: {
       ...queryParams,
       limit: 1000,
