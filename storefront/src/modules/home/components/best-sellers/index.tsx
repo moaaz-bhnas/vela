@@ -1,30 +1,17 @@
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
-import { getBestSellers } from "@lib/data/best-sellers"
 import { getTranslations } from "next-intl/server"
-import {
-  getPersonalizationCategoryIds,
-  getPersonalizationCollectionId,
-} from "@lib/data/cookies"
 
 type BestSellersProps = {
   region: HttpTypes.StoreRegion
+  products: HttpTypes.StoreProduct[]
 }
 
-export default async function BestSellers({ region }: BestSellersProps) {
+export default async function BestSellers({ region, products }: BestSellersProps) {
   if (!region) return null
 
   const t = await getTranslations("Home")
-  const categoryIds = await getPersonalizationCategoryIds()
-  const collectionId = await getPersonalizationCollectionId()
-
-  const products = await getBestSellers({
-    category_ids: categoryIds.length > 0 ? categoryIds : undefined,
-    collection_id: collectionId ?? undefined,
-    regionId: region.id,
-    limit: 12,
-  })
 
   return (
     <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
