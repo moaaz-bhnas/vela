@@ -4,10 +4,14 @@ import Carousel from "@modules/home/components/carousel"
 import ShopByCategory from "@modules/home/components/shop-by-category"
 import BestSellers from "@modules/home/components/best-sellers"
 import RecentlyVisited from "@modules/home/components/recently-visited"
+import { getBestSellers } from "@lib/data/best-sellers"
 import { getCollectionsWithProducts } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 import { getBrandingConfig } from "@lib/data/branding"
-import { getPersonalizationCategoryIds } from "@lib/data/cookies"
+import {
+  getPersonalizationCategoryIds,
+  getPersonalizationCollectionId,
+} from "@lib/data/cookies"
 import Container from "@modules/common/components/container-section"
 import { getBrandingSeo } from "@lib/util/metadata"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
@@ -47,25 +51,31 @@ export default async function Home({
     branding?.slides && branding.slides.length > 0 ? branding.slides : null
 
   const categoryIds = await getPersonalizationCategoryIds()
+  const collectionId = await getPersonalizationCollectionId()
   const hasPersonalizedCategories = categoryIds.length > 0
+  const bestSellersProducts = await getBestSellers({
+    category_ids: hasPersonalizedCategories ? categoryIds : undefined,
+    collection_id: collectionId ?? undefined,
+    regionId: region.id,
+    limit: 12,
+  })
+  const shouldShowBestSellers = bestSellersProducts.length >= 4
+
+  const bestSellersSection = shouldShowBestSellers ? (
+    <Container key="best-sellers">
+      <BestSellers region={region} products={bestSellersProducts} />
+    </Container>
+  ) : null
+
+  const shopByCategorySection = (
+    <Container key="shop-by-category">
+      <ShopByCategory />
+    </Container>
+  )
 
   const categorySections = hasPersonalizedCategories
-    ? [
-        <Container key="best-sellers">
-          <BestSellers region={region} />
-        </Container>,
-        <Container key="shop-by-category">
-          <ShopByCategory />
-        </Container>,
-      ]
-    : [
-        <Container key="shop-by-category">
-          <ShopByCategory />
-        </Container>,
-        <Container key="best-sellers">
-          <BestSellers region={region} />
-        </Container>,
-      ]
+    ? [bestSellersSection, shopByCategorySection]
+    : [shopByCategorySection, bestSellersSection]
 
   return (
     <>
