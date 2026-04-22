@@ -13,7 +13,13 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "shopAllShort": "Shop all",
-    "accountAria": "Account"
+    "accountAria": "Account",
+    "language": "Language",
+    "region": "Region",
+    "regionLanguageAria": "Choose region and language",
+    "languageEmptySelectRegion": "Select a region to see available languages.",
+    "languageEmptyNone": "No languages available for this region.",
+    "regionLanguageUpdateError": "We couldn’t switch region or language. Please try again."
   },
   "CartDropdown": {
     "title": "Cart",

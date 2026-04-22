@@ -6,8 +6,9 @@ import { listRegions } from "@lib/data/regions"
 import { StoreProductCategory, StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { getBrandingSeo } from "@lib/util/metadata"
+import { listStoreLocales } from "@lib/data/locales"
+import { defaultLocaleTagForCountry } from "@lib/i18n/locale-policy"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
-import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
   params: Promise<{ category: string[]; locale: string }>
@@ -20,18 +21,22 @@ export async function generateStaticParams() {
     return []
   }
 
-  const countryCodes = await listRegions().then((regions: StoreRegion[]) =>
-    regions
-      ?.map((r) => r.countries?.map((c) => c.iso_2))
-      .flat()
-      .filter(Boolean) as string[]
-  )
+  const [countryCodes, storeLocales] = await Promise.all([
+    listRegions().then(
+      (regions: StoreRegion[]) =>
+        regions
+          ?.map((r) => r.countries?.map((c) => c.iso_2))
+          .flat()
+          .filter(Boolean) as string[]
+    ),
+    listStoreLocales(),
+  ])
 
   const categoryHandles = product_categories.map((category) => category.handle)
 
   const staticParams = countryCodes
     ?.map((countryCode: string) => {
-      const locale = countryLocaleMap[countryCode] ?? defaultLocale
+      const locale = defaultLocaleTagForCountry(countryCode, storeLocales)
       return categoryHandles.map((handle) => ({
         locale,
         category: [handle],

@@ -15,9 +15,10 @@ import { useTranslations } from "next-intl"
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
   categories: HttpTypes.StoreProductCategory[] | null
+  storeLocales: HttpTypes.StoreLocale[]
 }
 
-const SideMenu = ({ regions, categories }: SideMenuProps) => {
+const SideMenu = ({ regions, categories, storeLocales }: SideMenuProps) => {
   const t = useTranslations("Nav")
   const tFooter = useTranslations("Footer")
   const toggleState = useToggleState()
@@ -114,6 +115,7 @@ const SideMenu = ({ regions, categories }: SideMenuProps) => {
                             <CountrySelect
                               toggleState={toggleState}
                               regions={regions}
+                              storeLocales={storeLocales}
                             />
                           )}
                           <ArrowRightMini

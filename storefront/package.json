@@ -13,6 +13,7 @@
     "dev": "npm run wait && npm run launcher dev",
     "build": "npm run wait && npm run launcher build",
     "start": "npm run launcher start",
+    "generate:locales": "tsx scripts/generate-route-locales.ts",
     "build:next": "next build",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
@@ -90,6 +91,7 @@
     "postcss": "^8.4.8",
     "prettier": "^2.8.8",
     "tailwindcss": "^3.0.23",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.2"
   },
   "peerDependencies": {

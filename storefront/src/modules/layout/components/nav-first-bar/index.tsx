@@ -2,8 +2,7 @@
 
 import Image from "next/image"
 
-import { Phone } from "@medusajs/icons"
-import { StoreProductCategory, StoreRegion } from "@medusajs/types"
+import { HttpTypes, StoreProductCategory, StoreRegion } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
 import { AnimatePresence, motion } from "motion/react"
 import Container from "@modules/common/components/container-section"
@@ -11,17 +10,15 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import SideMenu from "@modules/layout/components/side-menu"
 import AccountIconButton from "@modules/layout/components/account-icon-button"
 import NavSearchInput from "@modules/layout/components/nav-search-input"
+import RegionLanguageSwitcher from "@modules/layout/components/region-language-switcher"
 import { useNavScroll } from "@modules/layout/components/nav-scroll-wrapper"
-import type { FormattedPhone } from "@lib/util/format-phone"
-import { Headphones, Headset } from "lucide-react"
-import { useTranslations } from "next-intl"
 
 type NavFirstBarProps = {
   regions: StoreRegion[]
   categories: StoreProductCategory[]
   logo?: { url?: string; alt?: string; width?: number; height?: number } | null
   siteTitle: string
-  phone?: FormattedPhone | null
+  storeLocales: HttpTypes.StoreLocale[]
   children: React.ReactNode
 }
 
@@ -30,10 +27,9 @@ const NavFirstBar = ({
   categories,
   logo,
   siteTitle,
-  phone,
+  storeLocales,
   children,
 }: NavFirstBarProps) => {
-  const t = useTranslations("Nav")
   const isScrolled = useNavScroll()
 
   function renderDesktop() {
@@ -41,7 +37,6 @@ const NavFirstBar = ({
       <div className="flex items-center justify-between h-full">
         {/* Left: Menu and Logo */}
         <div className="flex items-center h-full">
-          {/* Desktop: Show menu icon only when scrolled */}
           <AnimatePresence>
             {isScrolled && (
               <motion.div
@@ -54,7 +49,11 @@ const NavFirstBar = ({
                 }}
                 className="h-full flex items-center"
               >
-                <SideMenu regions={regions} categories={categories} />
+                <SideMenu
+                  regions={regions}
+                  categories={categories}
+                  storeLocales={storeLocales}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -86,29 +85,12 @@ const NavFirstBar = ({
           <NavSearchInput />
         </div>
 
-        {/* Right: Contact phone (if set) + Account + Cart */}
+        {/* Right: Region/language + Account + Cart */}
         <div className="flex items-center gap-x-2 h-full">
-          {phone && (
-            <a
-              href={phone.href}
-              className={clx(
-                "inline-flex items-center gap-x-2 rounded-md px-3 py-1.5 me-1.5",
-                "text-ui-fg-subtle hover:text-ui-fg-base bg-ui-bg-subtle-hover",
-                "transition-fg focus-visible:shadow-borders-interactive-with-active focus-visible:outline-none",
-                "border border-transparent hover:border-ui-border-base"
-              )}
-              aria-label={t("callUsAria", { number: phone.display })}
-              data-testid="nav-phone-link"
-            >
-              <Headphones className="size-7" />
-              <div className="flex flex-col">
-                <span className="text-xs leading-4 font-extrabold uppercase tracking-wide font-heading">
-                  {t("howCanWeHelp")}
-                </span>
-                <span className="text-xs leading-4">{phone.display}</span>
-              </div>
-            </a>
-          )}
+          <RegionLanguageSwitcher
+            regions={regions}
+            storeLocales={storeLocales}
+          />
           <AccountIconButton />
           {children}
         </div>
@@ -122,7 +104,11 @@ const NavFirstBar = ({
         {/* Left: Menu (on scroll desktop / always mobile) and Logo */}
         <div className="flex items-center h-full gap-x-2">
           <div className="h-full flex items-center lg:hidden">
-            <SideMenu regions={regions} categories={categories} />
+            <SideMenu
+              regions={regions}
+              categories={categories}
+              storeLocales={storeLocales}
+            />
           </div>
           <div className="flex items-center h-full">
             <LocalizedClientLink
@@ -148,22 +134,12 @@ const NavFirstBar = ({
           </div>
         </div>
 
-        {/* Right: Contact phone (if set) + Account + Cart */}
+        {/* Right: Region/language + Account + Cart */}
         <div className="flex items-center gap-x-2 h-full">
-          {phone && (
-            <a
-              href={phone.href}
-              className={clx(
-                "inline-flex items-center gap-x-1.5 rounded-md p-1.5 min-w-[2rem] justify-center",
-                "text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-subtle-hover",
-                "transition-fg focus-visible:shadow-borders-interactive-with-active focus-visible:outline-none"
-              )}
-              aria-label={t("callUsAria", { number: phone.display })}
-              data-testid="nav-phone-link"
-            >
-              <Headphones className="size-4" />
-            </a>
-          )}
+          <RegionLanguageSwitcher
+            regions={regions}
+            storeLocales={storeLocales}
+          />
           <AccountIconButton />
           {children}
         </div>
@@ -172,7 +148,7 @@ const NavFirstBar = ({
   }
 
   return (
-    <header className="relative mx-auto border-b duration-200 bg-ui-bg-base border-ui-border-base h-16 z-10">
+    <header className="relative mx-auto h-[var(--nav-first-bar-height)] border-b border-ui-border-base bg-ui-bg-base duration-200 z-10">
       <nav className="txt-xsmall-plus text-ui-fg-subtle text-xs leading-5 font-normal h-full">
         <Container noPadding className="h-full">
           <div className="hidden lg:block h-full">{renderDesktop()}</div>

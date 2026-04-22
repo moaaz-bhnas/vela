@@ -63,6 +63,16 @@ module.exports = {
       },
       maxWidth: {
         "8xl": "100rem",
+        /** Nav popovers (region switcher, etc.) — pair with z-nav-dropdown */
+        "nav-panel": "420px",
+      },
+      maxHeight: {
+        /** Region/language panel scroll area cap */
+        "nav-panel": "min(70vh, 27.5rem)",
+      },
+      zIndex: {
+        /** Dropdowns in header (below modals z-[75], above page content) */
+        "nav-dropdown": "900",
       },
       fontSize: {
         "3xl": "2rem",
