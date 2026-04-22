@@ -58,15 +58,15 @@ export default function FiltersMenu({
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-0 sm:w-96 w-full justify-end">
+            <div className="pointer-events-none fixed inset-y-0 end-0 flex max-w-full ps-10 sm:ps-0 sm:w-96 w-full justify-end">
               <Transition.Child
                 as={Fragment}
                 enter="transition ease-out duration-150 motion-reduce:transition-none motion-reduce:duration-0"
-                enterFrom="translate-x-full opacity-0 motion-reduce:translate-x-0"
+                enterFrom="opacity-0 ltr:translate-x-full rtl:-translate-x-full motion-reduce:translate-x-0"
                 enterTo="translate-x-0 opacity-100"
                 leave="transition ease-in duration-150 motion-reduce:transition-none motion-reduce:duration-0"
                 leaveFrom="translate-x-0 opacity-100"
-                leaveTo="translate-x-full opacity-0 motion-reduce:translate-x-0"
+                leaveTo="opacity-0 ltr:translate-x-full rtl:-translate-x-full motion-reduce:translate-x-0"
               >
                 <Dialog.Panel className="pointer-events-auto w-full flex flex-col h-full max-h-[100dvh] text-sm bg-ui-bg-base shadow outline-none focus:outline-none">
                   <div

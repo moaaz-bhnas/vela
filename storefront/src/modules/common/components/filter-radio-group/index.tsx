@@ -1,3 +1,4 @@
+import { useLocaleDirection } from "@/lib/hooks/use-locale-direction"
 import { Label, RadioGroup, Text, clx } from "@medusajs/ui"
 
 type FilterRadioGroupProps = {
@@ -18,6 +19,8 @@ const FilterRadioGroup = ({
   handleChange,
   "data-testid": dataTestId,
 }: FilterRadioGroupProps) => {
+  const direction = useLocaleDirection()
+
   return (
     <div className="flex flex-col gap-y-3">
       <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
@@ -25,6 +28,7 @@ const FilterRadioGroup = ({
         value={value}
         onValueChange={handleChange}
         data-testid={dataTestId}
+        dir={direction}
       >
         {items?.map((i) => (
           <div key={i.value} className="flex items-center gap-x-3">

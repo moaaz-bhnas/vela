@@ -156,10 +156,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 leaveTo="opacity-0"
               >
                 <Dialog.Panel
-                  className="w-full h-full max-h-[100dvh] transform overflow-hidden overflow-y-auto text-left flex flex-col gap-y-3 outline-none"
+                  className="w-full h-full max-h-[100dvh] transform overflow-hidden overflow-y-auto text-start flex flex-col gap-y-3 outline-none"
                   data-testid="mobile-actions-modal"
                 >
-                  <div className="w-full flex justify-end pr-4 pt-2">
+                  <div className="w-full flex justify-end pe-4 pt-2">
                     <button
                       type="button"
                       onClick={close}

@@ -1,6 +1,7 @@
 import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
+import { SortOptions } from "@lib/types"
 
 export type { SortOptions } from "@lib/types"
 

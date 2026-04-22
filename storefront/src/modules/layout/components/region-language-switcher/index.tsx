@@ -246,7 +246,7 @@ export default function RegionLanguageSwitcher({
                 static
                 className={clx(
                   "z-nav-dropdown overflow-hidden rounded-rounded border border-ui-border-base bg-ui-bg-base shadow-elevation-card-rest",
-                  "max-lg:fixed max-lg:left-4 max-lg:right-4 max-lg:top-[calc(var(--nav-first-bar-height)+0.25rem)] max-lg:mt-0 max-lg:w-auto",
+                  "max-lg:fixed max-lg:start-4 max-lg:end-4 max-lg:top-[calc(var(--nav-first-bar-height)+0.25rem)] max-lg:mt-0 max-lg:w-auto",
                   "lg:absolute lg:end-0 lg:top-full lg:mt-1 lg:w-[calc(100vw-2rem)] lg:max-w-nav-panel"
                 )}
                 data-testid="nav-region-language-panel"
@@ -318,7 +318,7 @@ export default function RegionLanguageSwitcher({
                     <div
                       role="group"
                       aria-labelledby={regionGroupLabelId}
-                      className="flex min-h-0 flex-col pl-1"
+                      className="flex min-h-0 flex-col ps-1"
                     >
                       <div
                         id={regionGroupLabelId}

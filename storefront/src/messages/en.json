@@ -253,6 +253,7 @@
     "contact": "Contact",
     "payment": "Payment",
     "paymentMethod": "Payment method",
+    "paymentDetails": "Payment details",
     "testOrderSuccess": "Your test order was successfully created!",
     "completeSetupAdmin": "Complete setup in admin",
     "backToOverview": "Back to overview",
@@ -260,7 +261,13 @@
     "shippingMethodUnavailable": "Not available",
     "createAccountTitle": "Want faster checkout next time?",
     "createAccountSubtitle": "Create an account with the email you used for this order to track deliveries and reorder easily.",
-    "createAccountCta": "Create account"
+    "createAccountCta": "Create account",
+    "confirmationSentTo": "We have sent the order confirmation details to",
+    "orderDate": "Order date",
+    "orderNumber": "Order number",
+    "orderStatus": "Order status",
+    "paymentStatus": "Payment status",
+    "paidAt": "{amount} paid at {date}"
   },
   "Store": {
     "allProducts": "All products",
@@ -290,6 +297,14 @@
     "total": "Total",
     "original": "Original:",
     "delete": "Delete"
+  },
+  "CartTotals": {
+    "subtotalExclShippingAndTaxes": "Subtotal (excl. shipping and taxes)",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "taxes": "Taxes",
+    "giftCard": "Gift card",
+    "total": "Total"
   },
   "Metadata": {
     "homeTitle": "Home",

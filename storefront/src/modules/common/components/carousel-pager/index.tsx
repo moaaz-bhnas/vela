@@ -1,6 +1,7 @@
 import React from "react"
 import { IconButton } from "@medusajs/ui"
 import { ChevronLeft, ChevronRight } from "@medusajs/icons"
+import { useLocaleDirection } from "@lib/hooks/use-locale-direction"
 
 type CarouselPagerProps = {
   currentIndex: number
@@ -19,9 +20,12 @@ const CarouselPager: React.FC<CarouselPagerProps> = ({
   isPrevDisabled,
   isNextDisabled,
 }) => {
+  const direction = useLocaleDirection()
+  const isRtl = direction === "rtl"
+
   return (
     <div
-      className="rounded-full flex divide-x bg-ui-bg-base h-11 min-h-11 overflow-hidden shadow border border-ui-border-base"
+      className="rounded-full flex bg-ui-bg-base h-11 min-h-11 overflow-hidden shadow border border-ui-border-base [&>*:not(:first-child)]:border-s [&>*:not(:first-child)]:border-ui-border-base"
       role="group"
       aria-label="Slide navigation"
     >
@@ -34,7 +38,11 @@ const CarouselPager: React.FC<CarouselPagerProps> = ({
         disabled={isPrevDisabled}
         aria-label="Previous slide"
       >
-        <ChevronLeft className="text-ui-fg-muted" />
+        {isRtl ? (
+          <ChevronRight className="text-ui-fg-muted" />
+        ) : (
+          <ChevronLeft className="text-ui-fg-muted" />
+        )}
       </IconButton>
       <span className="w-10 flex items-center justify-center text-xs leading-5 font-semibold text-ui-fg-muted">
         {currentIndex + 1}/{totalSlides}
@@ -48,11 +56,14 @@ const CarouselPager: React.FC<CarouselPagerProps> = ({
         disabled={isNextDisabled}
         aria-label="Next slide"
       >
-        <ChevronRight className="text-ui-fg-muted" />
+        {isRtl ? (
+          <ChevronLeft className="text-ui-fg-muted" />
+        ) : (
+          <ChevronRight className="text-ui-fg-muted" />
+        )}
       </IconButton>
     </div>
   )
 }
 
 export default CarouselPager
-

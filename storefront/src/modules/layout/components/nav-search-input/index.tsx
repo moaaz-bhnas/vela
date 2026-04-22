@@ -37,7 +37,7 @@ const NavSearchInput = ({
       data-testid="nav-search-input"
     >
       <MagnifyingGlassMini />
-      <span className="text-xs leading-5 font-normal flex-1 text-left">
+      <span className="text-xs leading-5 font-normal flex-1 text-start">
         {resolvedPlaceholder}
       </span>
     </Button>

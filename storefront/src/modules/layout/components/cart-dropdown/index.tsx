@@ -116,7 +116,7 @@ const CartDropdown = ({
             <span
               aria-live="polite"
               aria-label={tNav("cartItemsCountAria", { count: totalItems })}
-              className="absolute top-0.5 right-0.5 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-ui-bg-base"
+              className="absolute top-0.5 end-0.5 bg-ui-bg-interactive text-ui-fg-on-color text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-ui-bg-base"
             >
               {totalItems}
             </span>
@@ -137,7 +137,7 @@ const CartDropdown = ({
             id={cartPanelId}
             role="dialog"
             aria-label={t("title")}
-            className="hidden lg:block absolute top-[calc(100%+1px)] right-0 bg-ui-bg-base border-x border-b border-ui-border-base w-[min(420px,calc(100vw-2rem))] max-w-[420px] text-ui-fg-base shadow-elevation-card-rest"
+            className="hidden lg:block absolute top-[calc(100%+1px)] end-0 bg-ui-bg-base border-x border-b border-ui-border-base w-[min(420px,calc(100vw-2rem))] max-w-[420px] text-ui-fg-base shadow-elevation-card-rest"
             data-testid="nav-cart-dropdown"
           >
             <div className="p-4 flex items-center justify-center">
@@ -173,7 +173,7 @@ const CartDropdown = ({
                         <div className="flex flex-col justify-between flex-1">
                           <div className="flex flex-col flex-1">
                             <div className="flex items-start justify-between gap-2 min-w-0">
-                              <div className="flex flex-col min-w-0 flex-1 mr-2">
+                              <div className="flex flex-col min-w-0 flex-1 me-2">
                                 <Text
                                   size="small"
                                   className="text-sm leading-6 font-normal line-clamp-2 break-words"

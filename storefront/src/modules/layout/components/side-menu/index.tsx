@@ -1,14 +1,13 @@
 "use client"
 
 import { Dialog, Transition } from "@headlessui/react"
-import { ArrowRightMini, BarsThree, XMark } from "@medusajs/icons"
-import { Button, IconButton, Text, clx, useToggleState } from "@medusajs/ui"
+import { BarsThree, XMark } from "@medusajs/icons"
+import { Button, IconButton, Text } from "@medusajs/ui"
 import { Fragment, useState } from "react"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import NavSearchInput from "../nav-search-input"
 import SideMenuCategories from "../side-menu-categories"
-import CountrySelect from "../country-select"
 import { HttpTypes } from "@medusajs/types"
 import { useTranslations } from "next-intl"
 
@@ -18,10 +17,9 @@ type SideMenuProps = {
   storeLocales: HttpTypes.StoreLocale[]
 }
 
-const SideMenu = ({ regions, categories, storeLocales }: SideMenuProps) => {
+const SideMenu = ({ regions: _regions, categories, storeLocales: _storeLocales }: SideMenuProps) => {
   const t = useTranslations("Nav")
   const tFooter = useTranslations("Footer")
-  const toggleState = useToggleState()
   const [open, setOpen] = useState(false)
 
   const parentCategories =
@@ -63,7 +61,7 @@ const SideMenu = ({ regions, categories, storeLocales }: SideMenuProps) => {
 
           <div className="fixed inset-0 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 left-0 flex max-w-full pr-10 sm:pr-0 sm:max-w-[33.333%] 2xl:max-w-[25%] w-full">
+              <div className="pointer-events-none fixed inset-y-0 start-0 flex max-w-full pe-10 sm:pe-0 sm:max-w-[33.333%] 2xl:max-w-[25%] w-full">
                 <Transition.Child
                   as={Fragment}
                   enter="transition ease-out duration-150"
@@ -78,7 +76,7 @@ const SideMenu = ({ regions, categories, storeLocales }: SideMenuProps) => {
                       data-testid="nav-menu-popup"
                       className="flex flex-col h-full"
                     >
-                      {/* Scrollable area: close, search, categories, shipping, copyright */}
+                      {/* Scrollable area: close, search, categories, copyright */}
                       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col divide-y">
                         <div
                           className="flex justify-end py-2.5 px-2"
@@ -105,26 +103,6 @@ const SideMenu = ({ regions, categories, storeLocales }: SideMenuProps) => {
                           onLinkClick={() => setOpen(false)}
                         />
 
-                        {/* Shipping to */}
-                        <div
-                          className="flex justify-between items-center px-4 py-3"
-                          onMouseEnter={toggleState.open}
-                          onMouseLeave={toggleState.close}
-                        >
-                          {regions && (
-                            <CountrySelect
-                              toggleState={toggleState}
-                              regions={regions}
-                              storeLocales={storeLocales}
-                            />
-                          )}
-                          <ArrowRightMini
-                            className={clx(
-                              "transition-transform duration-150",
-                              toggleState.state ? "-rotate-90" : ""
-                            )}
-                          />
-                        </div>
                         <Text className="txt-compact-small text-ui-fg-muted px-4 py-3">
                           {tFooter("copyright", {
                             year: new Date().getFullYear(),
