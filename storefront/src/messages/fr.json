@@ -13,7 +13,13 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "shopAllShort": "Tout le magasin",
-    "accountAria": "Compte"
+    "accountAria": "Compte",
+    "language": "Langue",
+    "region": "Région",
+    "regionLanguageAria": "Choisir la région et la langue",
+    "languageEmptySelectRegion": "Sélectionnez une région pour voir les langues disponibles.",
+    "languageEmptyNone": "Aucune langue disponible pour cette région.",
+    "regionLanguageUpdateError": "Impossible de changer la région ou la langue. Veuillez réessayer."
   },
   "CartDropdown": {
     "title": "Panier",

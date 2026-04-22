@@ -5,21 +5,25 @@ import ProductTemplate from "@modules/products/templates/product"
 import { getRegion, listRegions } from "@lib/data/regions"
 import { getProductByHandle, getProductsList } from "@lib/data/products"
 import { getBrandingSeo } from "@lib/util/metadata"
+import { listStoreLocales } from "@lib/data/locales"
+import { defaultLocaleTagForCountry } from "@lib/i18n/locale-policy"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
-import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
   params: Promise<{ locale: string; handle: string }>
 }
 
 export async function generateStaticParams() {
-  const countryCodes = await listRegions().then(
-    (regions) =>
-      regions
-        ?.map((r) => r.countries?.map((c) => c.iso_2))
-        .flat()
-        .filter(Boolean) as string[]
-  )
+  const [countryCodes, storeLocales] = await Promise.all([
+    listRegions().then(
+      (regions) =>
+        regions
+          ?.map((r) => r.countries?.map((c) => c.iso_2))
+          .flat()
+          .filter(Boolean) as string[]
+    ),
+    listStoreLocales(),
+  ])
 
   if (!countryCodes) {
     return null
@@ -35,7 +39,7 @@ export async function generateStaticParams() {
 
   const staticParams = countryCodes
     ?.map((countryCode) => {
-      const locale = countryLocaleMap[countryCode] ?? defaultLocale
+      const locale = defaultLocaleTagForCountry(countryCode, storeLocales)
       return products.map((product) => ({
         locale,
         handle: product.handle,

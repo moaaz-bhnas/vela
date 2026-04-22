@@ -6,11 +6,13 @@ import { HttpTypes } from "@medusajs/types"
 import { omit } from "lodash"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
-import { getAuthHeaders, getCartId, removeCartId, setCartId } from "./cookies"
+import { defaultLocaleTagForCountry } from "@lib/i18n/locale-policy"
+import { getCountryCodeFromLocale } from "@lib/util/locale"
+import { defaultLocale } from "@/i18n/routing"
+import { getAuthHeaders, getCartId, getMedusaLocale, removeCartId, setCartId } from "./cookies"
+import { listStoreLocales } from "./locales"
 import { getProductsById } from "./products"
 import { getRegion } from "./regions"
-import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
-import { getCountryCodeFromLocale } from "@lib/util/locale"
 
 export async function retrieveCart() {
   const cartId = await getCartId()
@@ -31,6 +33,19 @@ export async function retrieveCart() {
     })
 }
 
+async function resolveCartLocaleTag(countryCode: string) {
+  const normalized = countryCode.toLowerCase()
+  const cookieLocale = await getMedusaLocale()
+  if (
+    cookieLocale &&
+    getCountryCodeFromLocale(cookieLocale) === normalized
+  ) {
+    return cookieLocale
+  }
+  const storeLocales = await listStoreLocales()
+  return defaultLocaleTagForCountry(normalized, storeLocales)
+}
+
 export async function getOrSetCart(countryCode: string) {
   let cart = await retrieveCart()
   const region = await getRegion(countryCode)
@@ -39,27 +54,38 @@ export async function getOrSetCart(countryCode: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
-  // Resolve BCP 47 locale for this cart from countryLocaleMap
-  const locale = countryLocaleMap[countryCode] ?? defaultLocale
+  const locale = await resolveCartLocaleTag(countryCode)
 
   if (!cart) {
     const cartResp = await sdk.store.cart.create({
       region_id: region.id,
-      // Set cart locale so line item / localized content matches storefront language
-      ...(locale ? { metadata: { locale } } : {}),
+      ...(locale ? { locale } : {}),
     })
     cart = cartResp.cart
     await setCartId(cart.id)
     revalidateTag("cart")
+    return cart
   }
 
-  if (cart && cart?.region_id !== region.id) {
+  if (cart.region_id !== region.id) {
     await sdk.store.cart.update(
       cart.id,
       {
         region_id: region.id,
-        ...(locale ? { metadata: { locale } } : {}),
+        ...(locale ? { locale } : {}),
       },
+      {},
+      await getAuthHeaders()
+    )
+    revalidateTag("cart")
+  } else if (
+    locale &&
+    (cart as HttpTypes.StoreCart & { locale?: string | null }).locale !==
+      locale
+  ) {
+    await sdk.store.cart.update(
+      cart.id,
+      { locale },
       {},
       await getAuthHeaders()
     )
@@ -319,7 +345,13 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
   const shippingCountryCode =
     (formData.get("shipping_address.country_code") as string)?.toLowerCase() ??
     ""
-  const locale = countryLocaleMap[shippingCountryCode] ?? defaultLocale
+  const storeLocales = await listStoreLocales()
+  const medusaLocale = await getMedusaLocale()
+  const locale =
+    medusaLocale ??
+    (shippingCountryCode
+      ? defaultLocaleTagForCountry(shippingCountryCode, storeLocales)
+      : defaultLocale)
   redirect(`/${locale}/checkout?step=delivery`)
 }
 
@@ -340,7 +372,13 @@ export async function placeOrder() {
   if (cartRes?.type === "order") {
     const countryCode =
       cartRes.order.shipping_address?.country_code?.toLowerCase() ?? ""
-    const locale = countryLocaleMap[countryCode] ?? defaultLocale
+    const storeLocales = await listStoreLocales()
+    const medusaLocale = await getMedusaLocale()
+    const locale =
+      medusaLocale ??
+      (countryCode
+        ? defaultLocaleTagForCountry(countryCode, storeLocales)
+        : defaultLocale)
     await removeCartId()
     redirect(`/${locale}/order/confirmed/${cartRes?.order.id}`)
   }
@@ -363,7 +401,10 @@ export async function updateRegion(locale: string, currentPath: string) {
   }
 
   if (cartId) {
-    await updateCart({ region_id: region.id })
+    await updateCart({
+      region_id: region.id,
+      locale,
+    })
     revalidateTag("cart")
   }
 

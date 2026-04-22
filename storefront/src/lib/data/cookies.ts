@@ -36,6 +36,12 @@ export const getCartId = async () => {
   return cookiesStore.get("_medusa_cart_id")?.value
 }
 
+/** BCP 47 locale from middleware (e.g. fr-FR), aligned with the URL segment */
+export const getMedusaLocale = async () => {
+  const cookiesStore = await cookies()
+  return cookiesStore.get("_medusa_locale")?.value
+}
+
 export const setCartId = async (cartId: string) => {
   const cookiesStore = await cookies()
   cookiesStore.set("_medusa_cart_id", cartId, {

@@ -7,8 +7,12 @@ import ReactCountryFlag from "react-country-flag"
 import { StateType } from "@lib/hooks/use-toggle-state"
 import { useParams, usePathname } from "next/navigation"
 import { updateRegion } from "@lib/data/cart"
+import {
+  buildLocaleTag,
+  defaultLocaleTagForCountry,
+  parseRouteLocale,
+} from "@lib/i18n/locale-policy"
 import { HttpTypes } from "@medusajs/types"
-import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 
 type CountryOption = {
@@ -20,9 +24,14 @@ type CountryOption = {
 type CountrySelectProps = {
   toggleState: StateType
   regions: HttpTypes.StoreRegion[]
+  storeLocales: HttpTypes.StoreLocale[]
 }
 
-const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
+const CountrySelect = ({
+  toggleState,
+  regions,
+  storeLocales,
+}: CountrySelectProps) => {
   const t = useTranslations("CountrySelect")
   const [current, setCurrent] = useState<
     | { country: string | undefined; region: string; label: string | undefined }
@@ -47,39 +56,51 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
       .sort((a, b) => (a?.label ?? "").localeCompare(b?.label ?? ""))
   }, [regions])
 
-  useEffect(() => {
-    if (locale) {
-      // Match by locale — find the option whose country maps to the current locale
+  useEffect(
+    function syncCurrentCountry() {
+      if (!locale || typeof locale !== "string") {
+        return
+      }
+      const parsed = parseRouteLocale(locale)
+      const cc = parsed?.region
       const option = options?.find(
-        (o) =>
-          o?.country &&
-          (countryLocaleMap[o.country] ?? defaultLocale) === locale
+        (o) => o?.country && o.country.toLowerCase() === cc
       )
       setCurrent(option)
-    }
-  }, [options, locale])
+    },
+    [options, locale]
+  )
 
   const handleChange = (option: CountryOption) => {
-    const targetLocale =
-      (option.country && countryLocaleMap[option.country]) ?? defaultLocale
+    if (!option.country || typeof locale !== "string") {
+      return
+    }
+    const parsed = parseRouteLocale(locale)
+    const lang = parsed?.language
+    const targetLocale = lang
+      ? buildLocaleTag(lang, option.country)
+      : defaultLocaleTagForCountry(option.country, storeLocales)
     updateRegion(targetLocale, currentPath)
     close()
   }
+
+  const defaultOption =
+    locale && typeof locale === "string"
+      ? options?.find((o) => {
+          const parsed = parseRouteLocale(locale)
+          return (
+            o?.country &&
+            o.country.toLowerCase() === parsed?.region
+          )
+        })
+      : undefined
 
   return (
     <div>
       <Listbox
         as="span"
         onChange={handleChange}
-        defaultValue={
-          locale
-            ? options?.find(
-                (o) =>
-                  o?.country &&
-                  (countryLocaleMap[o.country] ?? defaultLocale) === locale
-              )
-            : undefined
-        }
+        defaultValue={defaultOption}
       >
         <Listbox.Button className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
@@ -108,7 +129,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className="absolute -bottom-[calc(100%-36px)] left-0 sm:left-auto sm:right-0 max-h-[442px] overflow-y-scroll z-[900] bg-ui-bg-base shadow-elevation-card-rest text-xs leading-5 font-normal uppercase text-ui-fg-base no-scrollbar rounded-rounded border border-ui-border-base w-full"
+              className="absolute -bottom-[calc(100%-36px)] left-0 sm:left-auto sm:right-0 max-h-[442px] overflow-y-scroll z-nav-dropdown bg-ui-bg-base shadow-elevation-card-rest text-xs leading-5 font-normal uppercase text-ui-fg-base no-scrollbar rounded-rounded border border-ui-border-base w-full"
               static
             >
               {options?.map((o, index) => {

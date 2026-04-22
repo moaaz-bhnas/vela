@@ -9,8 +9,9 @@ import { listRegions } from "@lib/data/regions"
 import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
 import { getBrandingSeo } from "@lib/util/metadata"
+import { listStoreLocales } from "@lib/data/locales"
+import { defaultLocaleTagForCountry } from "@lib/i18n/locale-policy"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
-import { countryLocaleMap, defaultLocale } from "@/i18n/routing"
 
 type Props = {
   params: Promise<{ handle: string; locale: string }>
@@ -23,13 +24,16 @@ export async function generateStaticParams() {
     return []
   }
 
-  const countryCodes = await listRegions().then(
-    (regions: StoreRegion[]) =>
-      regions
-        ?.map((r) => r.countries?.map((c) => c.iso_2))
-        .flat()
-        .filter(Boolean) as string[]
-  )
+  const [countryCodes, storeLocales] = await Promise.all([
+    listRegions().then(
+      (regions: StoreRegion[]) =>
+        regions
+          ?.map((r) => r.countries?.map((c) => c.iso_2))
+          .flat()
+          .filter(Boolean) as string[]
+    ),
+    listStoreLocales(),
+  ])
 
   const collectionHandles = collections.map(
     (collection: StoreCollection) => collection.handle
@@ -37,7 +41,7 @@ export async function generateStaticParams() {
 
   const staticParams = countryCodes
     ?.map((countryCode: string) => {
-      const locale = countryLocaleMap[countryCode] ?? defaultLocale
+      const locale = defaultLocaleTagForCountry(countryCode, storeLocales)
       return collectionHandles.map((handle: string | undefined) => ({
         locale,
         handle,

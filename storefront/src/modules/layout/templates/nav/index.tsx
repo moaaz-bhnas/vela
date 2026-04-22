@@ -1,8 +1,9 @@
 import { Suspense } from "react"
-import { listRegions } from "@lib/data/regions"
+
 import { listCategories } from "@lib/data/categories"
 import { getBrandingConfig } from "@lib/data/branding"
-import { formatPhone } from "@lib/util/format-phone"
+import { listRegions } from "@lib/data/regions"
+import { listStoreLocales } from "@lib/data/locales"
 import { StoreRegion } from "@medusajs/types"
 import NavCartFallbackLink from "@modules/layout/components/nav-cart-fallback-link"
 import NavFirstBar from "@modules/layout/components/nav-first-bar"
@@ -13,13 +14,15 @@ import { getLocale, getTranslations } from "next-intl/server"
 export default async function Nav() {
   const t = await getTranslations("Nav")
   const locale = await getLocale()
-  const regions = await listRegions().then((regions: StoreRegion[]) => regions)
-  const categories = await listCategories()
+  const [regions, categories, storeLocales] = await Promise.all([
+    listRegions().then((regions: StoreRegion[]) => regions),
+    listCategories(),
+    listStoreLocales(),
+  ])
   const branding = await getBrandingConfig(locale)
 
   const logo = branding?.logos?.main
   const siteTitle = branding?.site_title || t("defaultSiteTitle")
-  const phone = formatPhone(branding?.contact_info?.phone)
 
   return (
     <div className="pb-[calc(7rem+env(safe-area-inset-top,0px))]">
@@ -29,11 +32,9 @@ export default async function Nav() {
           categories={categories || []}
           logo={logo}
           siteTitle={siteTitle}
-          phone={phone}
+          storeLocales={storeLocales}
         >
-          <Suspense
-            fallback={<NavCartFallbackLink />}
-          >
+          <Suspense fallback={<NavCartFallbackLink />}>
             <CartButton />
           </Suspense>
         </NavFirstBar>

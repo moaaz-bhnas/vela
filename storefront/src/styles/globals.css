@@ -14,6 +14,8 @@
     --spacing-stack: 2rem;
     /* First content block below fixed nav — same rhythm as stack */
     --spacing-below-nav: var(--spacing-stack);
+    /* Primary top nav (`h-16`) — popovers that anchor below the bar */
+    --nav-first-bar-height: 4rem;
     /* Page shell vertical padding (Tailwind py-12) — account, cart, checkout */
     --spacing-content-y: 3rem;
   }
