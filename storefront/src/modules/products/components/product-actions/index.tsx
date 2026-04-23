@@ -100,17 +100,14 @@ export default function ProductActions({
     setAddToCartError(null)
     setIsAdding(true)
     try {
-      await addToCart({
+      const result = await addToCart({
         variantId: selectedVariant.id,
         quantity: 1,
         countryCode,
       })
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error && err.message
-          ? err.message
-          : t("addToCartError")
-      setAddToCartError(message)
+      if (!result.success) {
+        setAddToCartError(result.error)
+      }
     } finally {
       setIsAdding(false)
     }

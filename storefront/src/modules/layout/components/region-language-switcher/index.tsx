@@ -165,10 +165,12 @@ export default function RegionLanguageSwitcher({
     }
     setUpdateError(null)
     try {
-      await updateRegion(next, currentPath)
+      const result = await updateRegion(next, currentPath)
+      if (result && !result.success) {
+        setUpdateError(result.error)
+      }
     } catch (e) {
       unstable_rethrow(e)
-      setUpdateError(t("regionLanguageUpdateError"))
     }
   }
 

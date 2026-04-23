@@ -13,29 +13,30 @@ type MyInformationProps = {
   customer: HttpTypes.StoreCustomer
 }
 
+type ProfilePhoneFormState = { success: boolean; error: string | null }
+
 const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
   const [successState, setSuccessState] = React.useState(false)
 
   const updateCustomerPhone = async (
-    _currentState: Record<string, unknown>,
+    _currentState: ProfilePhoneFormState,
     formData: FormData
   ) => {
     const customer = {
       phone: formData.get("phone") as string,
     }
 
-    try {
-      await updateCustomer(customer)
-      return { success: true, error: null }
-    } catch (error: any) {
-      return { success: false, error: error.toString() }
+    const result = await updateCustomer(customer)
+    if (!result.success) {
+      return { success: false, error: result.error }
     }
+    return { success: true, error: null }
   }
 
   const [state, formAction] = useFormState(updateCustomerPhone, {
-    error: false,
+    error: null,
     success: false,
-  })
+  } satisfies ProfilePhoneFormState)
 
   const clearState = () => {
     setSuccessState(false)
@@ -52,7 +53,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
         currentInfo={`${customer.phone}`}
         isSuccess={successState}
         isError={!!state.error}
-        errorMessage={state.error}
+        errorMessage={state.error ?? undefined}
         clearState={clearState}
         data-testid="account-phone-editor"
       >

@@ -13,11 +13,13 @@ type MyInformationProps = {
   customer: HttpTypes.StoreCustomer
 }
 
+type ProfileNameFormState = { success: boolean; error: string | null }
+
 const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
   const [successState, setSuccessState] = React.useState(false)
 
   const updateCustomerName = async (
-    _currentState: Record<string, unknown>,
+    _currentState: ProfileNameFormState,
     formData: FormData
   ) => {
     const customer = {
@@ -25,18 +27,17 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
       last_name: formData.get("last_name") as string,
     }
 
-    try {
-      await updateCustomer(customer)
-      return { success: true, error: null }
-    } catch (error: any) {
-      return { success: false, error: error.toString() }
+    const result = await updateCustomer(customer)
+    if (!result.success) {
+      return { success: false, error: result.error }
     }
+    return { success: true, error: null }
   }
 
   const [state, formAction] = useFormState(updateCustomerName, {
-    error: false,
+    error: null,
     success: false,
-  })
+  } satisfies ProfileNameFormState)
 
   const clearState = () => {
     setSuccessState(false)

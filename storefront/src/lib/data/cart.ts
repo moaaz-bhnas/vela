@@ -1,7 +1,12 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import medusaError from "@lib/util/medusa-error"
+import type {
+  MutationResult,
+  PlaceOrderResult,
+  UpdateCartResult,
+} from "@lib/util/action-result"
+import { formatMedusaError } from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { omit } from "lodash"
 import { revalidateTag } from "next/cache"
@@ -92,19 +97,29 @@ export async function getOrSetCart(countryCode: string) {
   return cart
 }
 
-export async function updateCart(data: HttpTypes.StoreUpdateCart) {
+export async function updateCart(
+  data: HttpTypes.StoreUpdateCart
+): Promise<UpdateCartResult> {
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error("No existing cart found, please create one before updating")
+    return {
+      success: false,
+      error: "No existing cart found, please create one before updating",
+    }
   }
 
-  return sdk.store.cart
-    .update(cartId, data, {}, await getAuthHeaders())
-    .then(({ cart }) => {
-      revalidateTag("cart")
-      return cart
-    })
-    .catch(medusaError)
+  try {
+    const { cart } = await sdk.store.cart.update(
+      cartId,
+      data,
+      {},
+      await getAuthHeaders()
+    )
+    revalidateTag("cart")
+    return { success: true, cart }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
 export async function addToCart({
@@ -115,18 +130,18 @@ export async function addToCart({
   variantId: string
   quantity: number
   countryCode: string
-}) {
+}): Promise<MutationResult> {
   if (!variantId) {
-    throw new Error("Missing variant ID when adding to cart")
+    return { success: false, error: "Missing variant ID when adding to cart" }
   }
 
-  const cart = await getOrSetCart(countryCode)
-  if (!cart) {
-    throw new Error("Error retrieving or creating cart")
-  }
+  try {
+    const cart = await getOrSetCart(countryCode)
+    if (!cart) {
+      return { success: false, error: "Error retrieving or creating cart" }
+    }
 
-  await sdk.store.cart
-    .createLineItem(
+    await sdk.store.cart.createLineItem(
       cart.id,
       {
         variant_id: variantId,
@@ -135,10 +150,11 @@ export async function addToCart({
       {},
       await getAuthHeaders()
     )
-    .then(() => {
-      revalidateTag("cart")
-    })
-    .catch(medusaError)
+    revalidateTag("cart")
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
 export async function updateLineItem({
@@ -147,40 +163,48 @@ export async function updateLineItem({
 }: {
   lineId: string
   quantity: number
-}) {
+}): Promise<MutationResult> {
   if (!lineId) {
-    throw new Error("Missing lineItem ID when updating line item")
+    return { success: false, error: "Missing lineItem ID when updating line item" }
   }
 
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error("Missing cart ID when updating line item")
+    return { success: false, error: "Missing cart ID when updating line item" }
   }
 
-  await sdk.store.cart
-    .updateLineItem(cartId, lineId, { quantity }, {}, await getAuthHeaders())
-    .then(() => {
-      revalidateTag("cart")
-    })
-    .catch(medusaError)
+  try {
+    await sdk.store.cart.updateLineItem(
+      cartId,
+      lineId,
+      { quantity },
+      {},
+      await getAuthHeaders()
+    )
+    revalidateTag("cart")
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
-export async function deleteLineItem(lineId: string) {
+export async function deleteLineItem(lineId: string): Promise<MutationResult> {
   if (!lineId) {
-    throw new Error("Missing lineItem ID when deleting line item")
+    return { success: false, error: "Missing lineItem ID when deleting line item" }
   }
 
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error("Missing cart ID when deleting line item")
+    return { success: false, error: "Missing cart ID when deleting line item" }
   }
 
-  await sdk.store.cart
-    .deleteLineItem(cartId, lineId, {}, await getAuthHeaders())
-    .then(() => {
-      revalidateTag("cart")
-    })
-    .catch(medusaError)
+  try {
+    await sdk.store.cart.deleteLineItem(cartId, lineId, {}, await getAuthHeaders())
+    revalidateTag("cart")
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
 export async function enrichLineItems(
@@ -236,18 +260,19 @@ export async function setShippingMethod({
 }: {
   cartId: string
   shippingMethodId: string
-}) {
-  return sdk.store.cart
-    .addShippingMethod(
+}): Promise<MutationResult> {
+  try {
+    await sdk.store.cart.addShippingMethod(
       cartId,
       { option_id: shippingMethodId },
       {},
       await getAuthHeaders()
     )
-    .then(() => {
-      revalidateTag("cart")
-    })
-    .catch(medusaError)
+    revalidateTag("cart")
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
 export async function initiatePaymentSession(
@@ -256,27 +281,37 @@ export async function initiatePaymentSession(
     provider_id: string
     context?: Record<string, unknown>
   }
-) {
-  return sdk.store.payment
-    .initiatePaymentSession(cart, data, {}, await getAuthHeaders())
-    .then((resp) => {
-      revalidateTag("cart")
-      return resp
-    })
-    .catch(medusaError)
+): Promise<
+  | { success: true; data: Awaited<ReturnType<typeof sdk.store.payment.initiatePaymentSession>> }
+  | { success: false; error: string }
+> {
+  try {
+    const resp = await sdk.store.payment.initiatePaymentSession(
+      cart,
+      data,
+      {},
+      await getAuthHeaders()
+    )
+    revalidateTag("cart")
+    return { success: true, data: resp }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
-export async function applyPromotions(codes: string[]) {
+export async function applyPromotions(
+  codes: string[]
+): Promise<MutationResult> {
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error("No existing cart found")
+    return { success: false, error: "No existing cart found" }
   }
 
-  await updateCart({ promo_codes: codes })
-    .then(() => {
-      revalidateTag("cart")
-    })
-    .catch(medusaError)
+  const result = await updateCart({ promo_codes: codes })
+  if (!result.success) {
+    return { success: false, error: result.error }
+  }
+  return { success: true }
 }
 
 export async function submitPromotionForm(
@@ -284,11 +319,11 @@ export async function submitPromotionForm(
   formData: FormData
 ) {
   const code = formData.get("code") as string
-  try {
-    await applyPromotions([code])
-  } catch (e: any) {
-    return e.message
+  const result = await applyPromotions([code])
+  if (!result.success) {
+    return result.error
   }
+  return null
 }
 
 // TODO: Pass a POJO instead of a form entity here
@@ -334,9 +369,12 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
-    await updateCart(data)
-  } catch (e: any) {
-    return e.message
+    const updateResult = await updateCart(data)
+    if (!updateResult.success) {
+      return updateResult.error
+    }
+  } catch (e) {
+    return formatMedusaError(e)
   }
 
   const shippingCountryCode =
@@ -352,19 +390,22 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
   redirect(`/${locale}/checkout?step=delivery`)
 }
 
-export async function placeOrder() {
+export async function placeOrder(): Promise<PlaceOrderResult> {
   const cartId = await getCartId()
   if (!cartId) {
-    throw new Error("No existing cart found when placing an order")
+    return {
+      success: false,
+      error: "No existing cart found when placing an order",
+    }
   }
 
-  const cartRes = await sdk.store.cart
-    .complete(cartId, {}, await getAuthHeaders())
-    .then((cartRes) => {
-      revalidateTag("cart")
-      return cartRes
-    })
-    .catch(medusaError)
+  let cartRes: Awaited<ReturnType<typeof sdk.store.cart.complete>>
+  try {
+    cartRes = await sdk.store.cart.complete(cartId, {}, await getAuthHeaders())
+    revalidateTag("cart")
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 
   if (cartRes?.type === "order") {
     const countryCode =
@@ -380,7 +421,7 @@ export async function placeOrder() {
     redirect(`/${locale}/order/confirmed/${cartRes?.order.id}`)
   }
 
-  return cartRes.cart
+  return { success: true, cart: cartRes.cart }
 }
 
 /**
@@ -388,20 +429,26 @@ export async function placeOrder() {
  * @param locale - BCP 47 locale string (e.g. "ar-EG")
  * @param currentPath - the current path without the locale prefix
  */
-export async function updateRegion(locale: string, currentPath: string) {
+export async function updateRegion(
+  locale: string,
+  currentPath: string
+): Promise<{ success: false; error: string } | void> {
   const cartId = await getCartId()
   const countryCode = getCountryCodeFromLocale(locale)
   const region = await getRegion(countryCode)
 
   if (!region) {
-    throw new Error(`Region not found for locale: ${locale}`)
+    return { success: false, error: `Region not found for locale: ${locale}` }
   }
 
   if (cartId) {
-    await updateCart({
+    const u = await updateCart({
       region_id: region.id,
       locale,
     })
+    if (!u.success) {
+      return { success: false, error: u.error }
+    }
     revalidateTag("cart")
   }
 

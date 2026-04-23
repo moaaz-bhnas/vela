@@ -29,17 +29,17 @@ const Item = ({ item, type = "full" }: ItemProps) => {
   const changeQuantity = async (quantity: number) => {
     setError(null)
     setUpdating(true)
-
-    const message = await updateLineItem({
-      lineId: item.id,
-      quantity,
-    })
-      .catch((err) => {
-        setError(err.message)
+    try {
+      const result = await updateLineItem({
+        lineId: item.id,
+        quantity,
       })
-      .finally(() => {
-        setUpdating(false)
-      })
+      if (!result.success) {
+        setError(result.error)
+      }
+    } finally {
+      setUpdating(false)
+    }
   }
 
   // TODO: Update this to grab the actual max inventory

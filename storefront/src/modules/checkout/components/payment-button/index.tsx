@@ -68,20 +68,35 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
 const GiftCardPaymentButton = () => {
   const t = useTranslations("Checkout")
   const [submitting, setSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handleOrder = async () => {
     setSubmitting(true)
-    await placeOrder()
+    setErrorMessage(null)
+    try {
+      const result = await placeOrder()
+      if (!result.success) {
+        setErrorMessage(result.error)
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
-    <Button
-      onClick={handleOrder}
-      isLoading={submitting}
-      data-testid="submit-order-button"
-    >
-      {t("placeOrder")}
-    </Button>
+    <>
+      <Button
+        onClick={handleOrder}
+        isLoading={submitting}
+        data-testid="submit-order-button"
+      >
+        {t("placeOrder")}
+      </Button>
+      <ErrorMessage
+        error={errorMessage}
+        data-testid="gift-card-payment-error-message"
+      />
+    </>
   )
 }
 
@@ -99,13 +114,14 @@ const StripePaymentButton = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
+    try {
+      const result = await placeOrder()
+      if (!result.success) {
+        setErrorMessage(result.error)
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const stripe = useStripe()
@@ -208,13 +224,14 @@ const PayPalPaymentButton = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
+    try {
+      const result = await placeOrder()
+      if (!result.success) {
+        setErrorMessage(result.error)
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const session = cart.payment_collection?.payment_sessions?.find(
@@ -271,13 +288,14 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
+    try {
+      const result = await placeOrder()
+      if (!result.success) {
+        setErrorMessage(result.error)
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handlePayment = () => {
