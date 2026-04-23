@@ -1,20 +1,22 @@
 "use client"
 
 import { Button } from "@medusajs/ui"
+import { HttpTypes } from "@medusajs/types"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
 
+import { addToCart } from "@lib/data/cart"
 import { useInView } from "@lib/hooks/use-in-view"
 import { useProductOptions } from "@lib/hooks/use-product-options"
+import { getCountryCodeFromLocale } from "@lib/util/locale"
+
+import ErrorMessage from "@modules/checkout/components/error-message"
 import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 
 import MobileActions from "./mobile-actions"
 import ProductPrice from "../product-price"
-import { addToCart } from "@lib/data/cart"
-import { getCountryCodeFromLocale } from "@lib/util/locale"
-import { HttpTypes } from "@medusajs/types"
-import { useTranslations } from "next-intl"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -31,6 +33,7 @@ export default function ProductActions({
   const { options, setOptionValue, selectedVariant } =
     useProductOptions(product)
   const [isAdding, setIsAdding] = useState(false)
+  const [addToCartError, setAddToCartError] = useState<string | null>(null)
   const locale = useParams().locale as string
   const countryCode = getCountryCodeFromLocale(locale)
 
@@ -83,19 +86,34 @@ export default function ProductActions({
 
   const inView = useInView(actionsRef, "0px")
 
+  useEffect(
+    function clearAddToCartErrorOnVariantChange() {
+      setAddToCartError(null)
+    },
+    [selectedVariant?.id]
+  )
+
   // add the selected variant to the cart
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
 
+    setAddToCartError(null)
     setIsAdding(true)
-
-    await addToCart({
-      variantId: selectedVariant.id,
-      quantity: 1,
-      countryCode,
-    })
-
-    setIsAdding(false)
+    try {
+      await addToCart({
+        variantId: selectedVariant.id,
+        quantity: 1,
+        countryCode,
+      })
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error && err.message
+          ? err.message
+          : t("addToCartError")
+      setAddToCartError(message)
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   return (
@@ -141,6 +159,10 @@ export default function ProductActions({
             ? t("outOfStock")
             : t("addToCart")}
         </Button>
+        <ErrorMessage
+          error={addToCartError}
+          data-testid="add-to-cart-error-message"
+        />
         <MobileActions
           product={product}
           variant={selectedVariant}

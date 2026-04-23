@@ -9,7 +9,13 @@ import { redirect } from "next/navigation"
 import { defaultLocaleTagForCountry } from "@lib/i18n/locale-policy"
 import { getCountryCodeFromLocale } from "@lib/util/locale"
 import { defaultLocale } from "@/i18n/routing"
-import { getAuthHeaders, getCartId, getMedusaLocale, removeCartId, setCartId } from "./cookies"
+import {
+  getAuthHeaders,
+  getCartId,
+  getMedusaLocale,
+  removeCartId,
+  setCartId,
+} from "./cookies"
 import { listStoreLocales } from "./locales"
 import { getProductsById } from "./products"
 import { getRegion } from "./regions"
@@ -36,10 +42,7 @@ export async function retrieveCart() {
 async function resolveCartLocaleTag(countryCode: string) {
   const normalized = countryCode.toLowerCase()
   const cookieLocale = await getMedusaLocale()
-  if (
-    cookieLocale &&
-    getCountryCodeFromLocale(cookieLocale) === normalized
-  ) {
+  if (cookieLocale && getCountryCodeFromLocale(cookieLocale) === normalized) {
     return cookieLocale
   }
   const storeLocales = await listStoreLocales()
@@ -80,15 +83,9 @@ export async function getOrSetCart(countryCode: string) {
     revalidateTag("cart")
   } else if (
     locale &&
-    (cart as HttpTypes.StoreCart & { locale?: string | null }).locale !==
-      locale
+    (cart as HttpTypes.StoreCart & { locale?: string | null }).locale !== locale
   ) {
-    await sdk.store.cart.update(
-      cart.id,
-      { locale },
-      {},
-      await getAuthHeaders()
-    )
+    await sdk.store.cart.update(cart.id, { locale }, {}, await getAuthHeaders())
     revalidateTag("cart")
   }
 
