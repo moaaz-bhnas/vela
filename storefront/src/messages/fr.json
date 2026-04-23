@@ -195,6 +195,7 @@
     "selectVariant": "Choisir une variante",
     "outOfStock": "Rupture de stock",
     "addToCart": "Ajouter au panier",
+    "addToCartError": "Impossible d'ajouter au panier. Veuillez réessayer.",
     "material": "Matière",
     "countryOfOrigin": "Pays d’origine",
     "type": "Type",

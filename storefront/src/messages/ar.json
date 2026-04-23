@@ -195,6 +195,7 @@
     "selectVariant": "اختر المتغير",
     "outOfStock": "نفد من المخزون",
     "addToCart": "أضف إلى السلة",
+    "addToCartError": "تعذر إضافة المنتج إلى السلة. يرجى المحاولة مرة أخرى.",
     "material": "المادة",
     "countryOfOrigin": "بلد المنشأ",
     "type": "النوع",

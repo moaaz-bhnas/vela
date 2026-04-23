@@ -195,6 +195,7 @@
     "selectVariant": "Select variant",
     "outOfStock": "Out of stock",
     "addToCart": "Add to cart",
+    "addToCartError": "We couldn't add this to your cart. Please try again.",
     "material": "Material",
     "countryOfOrigin": "Country of origin",
     "type": "Type",
