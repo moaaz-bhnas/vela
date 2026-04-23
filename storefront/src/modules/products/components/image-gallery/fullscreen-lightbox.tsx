@@ -1,3 +1,5 @@
+"use client"
+
 import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import useEmblaCarousel from "embla-carousel-react"
@@ -6,6 +8,7 @@ import Image from "next/image"
 import { IconButton } from "@medusajs/ui"
 import { XMark } from "@medusajs/icons"
 import { usePrevNextButtons } from "@lib/hooks/use-carousel"
+import { useLocaleDirection } from "@lib/hooks/use-locale-direction"
 import CarouselPager from "@modules/common/components/carousel-pager"
 
 type FullscreenLightboxProps = {
@@ -19,10 +22,12 @@ export default function FullscreenLightbox({
   startIndex,
   onClose,
 }: FullscreenLightboxProps) {
+  const direction = useLocaleDirection()
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     startIndex,
     duration: 20,
+    direction,
   })
   const [currentIndex, setCurrentIndex] = useState(startIndex)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -54,8 +59,9 @@ export default function FullscreenLightbox({
   }, [emblaApi, onSelect])
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose()
+      // Map physical arrows to Embla prev/next; with direction "rtl" Embla inverts flow.
       if (e.key === "ArrowLeft") emblaApi?.scrollPrev()
       if (e.key === "ArrowRight") emblaApi?.scrollNext()
     }
@@ -78,7 +84,7 @@ export default function FullscreenLightbox({
       aria-label="Image lightbox"
     >
       {/* Close button */}
-      <div className="absolute right-4 top-4 z-10">
+      <div className="absolute end-4 top-4 z-10">
         <IconButton
           type="button"
           className="rounded-full"

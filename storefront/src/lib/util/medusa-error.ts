@@ -1,4 +1,6 @@
 export default function medusaError(error: any): never {
+  console.error(error)
+
   // SDK v2 wraps fetch errors with a `status` and `body` (or `message`) property
   if (error?.status != null) {
     const body = error.body ?? {}

@@ -6,6 +6,7 @@ import "styles/globals.css"
 import NProgressProvider from "@modules/common/components/progress-bar-provider"
 import { getBrandingSeo } from "@lib/util/metadata"
 import { getLocale } from "next-intl/server"
+import { getDirectionForLocale } from "@lib/i18n/direction"
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -57,10 +58,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const locale = await getLocale()
+  const dir = getDirectionForLocale(locale)
 
   return (
     <html
       lang={locale}
+      dir={dir}
       data-mode="light"
       className={`${bricolageGrotesque.variable} ${sourceSans3.variable}`}
     >

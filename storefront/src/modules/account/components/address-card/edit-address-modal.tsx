@@ -78,7 +78,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
       >
         <div className="flex flex-col">
           <Heading
-            className="text-left text-sm leading-6 font-semibold"
+            className="text-start text-sm leading-6 font-semibold"
             data-testid="address-name"
           >
             {address.first_name} {address.last_name}
@@ -91,7 +91,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               {address.company}
             </Text>
           )}
-          <Text className="flex flex-col text-left text-sm leading-6 font-normal mt-2">
+          <Text className="flex flex-col text-start text-sm leading-6 font-normal mt-2">
             <span data-testid="address-address">
               {address.address_1}
               {address.address_2 && <span>, {address.address_2}</span>}

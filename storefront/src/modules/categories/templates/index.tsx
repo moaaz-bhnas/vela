@@ -31,7 +31,7 @@ export default async function CategoryTemplate({
         {parents.map((parent) => (
           <span key={parent.id} className="text-ui-fg-subtle text-[30px] leading-[48px] font-semibold">
             <LocalizedClientLink
-              className="mr-4 hover:text-ui-fg-base"
+              className="me-4 hover:text-ui-fg-base"
               href={`/categories/${parent.handle}`}
               data-testid="sort-by-link"
             >

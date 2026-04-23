@@ -253,6 +253,7 @@
     "contact": "Contact",
     "payment": "Paiement",
     "paymentMethod": "Mode de paiement",
+    "paymentDetails": "Détails du paiement",
     "testOrderSuccess": "Votre commande test a bien été créée !",
     "completeSetupAdmin": "Terminer la configuration dans l’admin",
     "backToOverview": "Retour à l’aperçu",
@@ -260,7 +261,13 @@
     "shippingMethodUnavailable": "Non disponible",
     "createAccountTitle": "Un paiement plus rapide la prochaine fois ?",
     "createAccountSubtitle": "Créez un compte avec l’e-mail utilisé pour cette commande pour suivre les livraisons et recommander facilement.",
-    "createAccountCta": "Créer un compte"
+    "createAccountCta": "Créer un compte",
+    "confirmationSentTo": "Nous avons envoyé les détails de confirmation de commande à",
+    "orderDate": "Date de commande",
+    "orderNumber": "Numéro de commande",
+    "orderStatus": "Statut de la commande",
+    "paymentStatus": "Statut du paiement",
+    "paidAt": "{amount} payé le {date}"
   },
   "Store": {
     "allProducts": "Tous les produits",
@@ -290,6 +297,14 @@
     "total": "Total",
     "original": "Prix d’origine :",
     "delete": "Supprimer"
+  },
+  "CartTotals": {
+    "subtotalExclShippingAndTaxes": "Sous-total (hors livraison et taxes)",
+    "discount": "Remise",
+    "shipping": "Livraison",
+    "taxes": "Taxes",
+    "giftCard": "Carte cadeau",
+    "total": "Total"
   },
   "Metadata": {
     "homeTitle": "Accueil",

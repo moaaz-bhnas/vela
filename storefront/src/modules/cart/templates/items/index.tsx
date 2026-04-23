@@ -22,13 +22,13 @@ const ItemsTemplate = async ({ items }: ItemsTemplateProps) => {
       <Table className="min-w-[640px] sm:min-w-0 w-full">
         <Table.Header className="border-t-0">
           <Table.Row className="text-ui-fg-subtle txt-medium-plus">
-            <Table.HeaderCell className="!pl-0">{t("item")}</Table.HeaderCell>
+            <Table.HeaderCell className="!ps-0">{t("item")}</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
             <Table.HeaderCell>{t("quantity")}</Table.HeaderCell>
             <Table.HeaderCell className="hidden lg:table-cell">
               {t("price")}
             </Table.HeaderCell>
-            <Table.HeaderCell className="!pr-0 text-right">
+            <Table.HeaderCell className="!pe-0 text-end">
               {t("total")}
             </Table.HeaderCell>
           </Table.Row>

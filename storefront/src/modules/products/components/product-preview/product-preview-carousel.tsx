@@ -7,6 +7,7 @@ import { Container, clx, IconButton } from "@medusajs/ui"
 import { ChevronLeft, ChevronRight } from "@medusajs/icons"
 import Image from "next/image"
 import { useCarouselIndex, usePrevNextButtons } from "@lib/hooks/use-carousel"
+import { useLocaleDirection } from "@lib/hooks/use-locale-direction"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
 function useIsDesktop(breakpoint = 768) {
@@ -54,9 +55,11 @@ export default function ProductPreviewCarousel({
   const showControls = displayUrls.length > 1
   const totalSlides = displayUrls.length
   const isDesktop = useIsDesktop(768)
+  const direction = useLocaleDirection()
+  const isRtl = direction === "rtl"
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, duration: 30, watchDrag: !isDesktop },
+    { loop: true, duration: 30, watchDrag: !isDesktop, direction },
     [Fade()]
   )
 
@@ -145,7 +148,7 @@ export default function ProductPreviewCarousel({
           {/* Side-centered arrows, no background container */}
           <div
             className={clx(
-              "pointer-events-none absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-2 z-10 transition-opacity",
+              "pointer-events-none absolute inset-y-0 inset-x-0 hidden md:flex items-center justify-between px-2 z-10 transition-opacity",
               "opacity-100 md:opacity-0 md:group-hover:opacity-100"
             )}
             aria-label="Carousel navigation"
@@ -160,7 +163,11 @@ export default function ProductPreviewCarousel({
               disabled={prevBtnDisabled}
               aria-label="Previous image"
             >
-              <ChevronLeft className="text-ui-fg-muted" />
+              {isRtl ? (
+                <ChevronRight className="text-ui-fg-muted" />
+              ) : (
+                <ChevronLeft className="text-ui-fg-muted" />
+              )}
             </IconButton>
             <IconButton
               type="button"
@@ -171,15 +178,20 @@ export default function ProductPreviewCarousel({
               disabled={nextBtnDisabled}
               aria-label="Next image"
             >
-              <ChevronRight className="text-ui-fg-muted" />
+              {isRtl ? (
+                <ChevronLeft className="text-ui-fg-muted" />
+              ) : (
+                <ChevronRight className="text-ui-fg-muted" />
+              )}
             </IconButton>
           </div>
 
           {/* Bottom-centered dots */}
           <div
             className={clx(
-              "absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center z-10 transition-opacity",
-              "opacity-100 md:opacity-0 md:group-hover:opacity-100"
+              "absolute bottom-3 start-1/2 flex items-center z-10 transition-opacity",
+              "opacity-100 md:opacity-0 md:group-hover:opacity-100",
+              isRtl ? "translate-x-1/2" : "-translate-x-1/2"
             )}
             aria-label="Carousel pagination"
             data-prevent-progress="true"

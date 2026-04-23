@@ -8,6 +8,7 @@ import { clx, Container } from "@medusajs/ui"
 import { ChevronLeft, ChevronRight } from "@medusajs/icons"
 import { IconButton } from "@medusajs/ui"
 import { usePrevNextButtons } from "@lib/hooks/use-carousel"
+import { useLocaleDirection } from "@lib/hooks/use-locale-direction"
 import { useProductOptions } from "@lib/hooks/use-product-options"
 import { useMediaQuery } from "@uidotdev/usehooks"
 import FullscreenLightbox from "./fullscreen-lightbox"
@@ -69,17 +70,20 @@ function ThumbsCarousel({
   selectedIndex,
   onThumbClick,
   isDesktop,
+  direction,
 }: {
   slides: HttpTypes.StoreProductImage[]
   selectedIndex: number
   onThumbClick: (index: number) => void
   isDesktop: boolean
+  direction: "ltr" | "rtl"
 }) {
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     axis: isDesktop ? "y" : "x",
     containScroll: "keepSnaps",
     dragFree: true,
     align: "start",
+    direction,
   })
 
   useEffect(() => {
@@ -118,10 +122,13 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 1024px)") ?? false
+  const direction = useLocaleDirection()
+  const isRtl = direction === "rtl"
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel({
     loop: false,
     align: "start",
     duration: 25,
+    direction,
   })
 
   const {
@@ -220,7 +227,7 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
 
         {showControls && (
           <div
-            className="absolute inset-y-0 left-0 right-0 flex items-center px-2 pointer-events-none"
+            className="absolute inset-y-0 inset-x-0 flex items-center px-2 pointer-events-none"
             aria-hidden
           >
             {!prevBtnDisabled && (
@@ -231,7 +238,11 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
                 onClick={onPrevButtonClick}
                 aria-label="Previous image"
               >
-                <ChevronLeft className="text-ui-fg-base" />
+                {isRtl ? (
+                  <ChevronRight className="text-ui-fg-base" />
+                ) : (
+                  <ChevronLeft className="text-ui-fg-base" />
+                )}
               </IconButton>
             )}
             {!nextBtnDisabled && (
@@ -242,7 +253,11 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
                 onClick={onNextButtonClick}
                 aria-label="Next image"
               >
-                <ChevronRight className="text-ui-fg-base" />
+                {isRtl ? (
+                  <ChevronLeft className="text-ui-fg-base" />
+                ) : (
+                  <ChevronRight className="text-ui-fg-base" />
+                )}
               </IconButton>
             )}
           </div>
@@ -258,6 +273,7 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
             selectedIndex={selectedIndex}
             onThumbClick={onThumbClick}
             isDesktop={isDesktop}
+            direction={direction}
           />
         </div>
       )}

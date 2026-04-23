@@ -13,6 +13,7 @@ import {
   usePrevNextButtons,
 } from "@lib/hooks/use-carousel"
 import { usePrefersReducedMotion } from "@lib/hooks/use-prefers-reduced-motion"
+import { useLocaleDirection } from "@lib/hooks/use-locale-direction"
 import CarouselSlideContent from "./carousel-slide-content"
 import CarouselControls from "./carousel-controls"
 
@@ -22,11 +23,15 @@ type CarouselProps = {
 
 export default function Carousel({ carouselSlides }: CarouselProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
+  const direction = useLocaleDirection()
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 }, [
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, duration: 30, direction },
+    [
     Fade(),
     Autoplay({ playOnInit: false, delay: 5000 }),
-  ])
+  ]
+  )
 
   useEffect(() => {
     const autoplay = emblaApi?.plugins()?.autoplay
@@ -99,7 +104,7 @@ export default function Carousel({ carouselSlides }: CarouselProps) {
       </div>
 
       {hasMultipleSlides && (
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-4 end-4">
           <CarouselControls
             ref={progressRef}
             currentIndex={currentSlide}

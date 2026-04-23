@@ -129,7 +129,7 @@ const CountrySelect = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className="absolute -bottom-[calc(100%-36px)] left-0 sm:left-auto sm:right-0 max-h-[442px] overflow-y-scroll z-nav-dropdown bg-ui-bg-base shadow-elevation-card-rest text-xs leading-5 font-normal uppercase text-ui-fg-base no-scrollbar rounded-rounded border border-ui-border-base w-full"
+              className="absolute -bottom-[calc(100%-36px)] start-0 sm:start-auto sm:end-0 max-h-[442px] overflow-y-scroll z-nav-dropdown bg-ui-bg-base shadow-elevation-card-rest text-xs leading-5 font-normal uppercase text-ui-fg-base no-scrollbar rounded-rounded border border-ui-border-base w-full"
               static
             >
               {options?.map((o, index) => {

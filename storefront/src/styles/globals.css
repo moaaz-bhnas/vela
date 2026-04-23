@@ -49,7 +49,7 @@
   }
 
   input:focus~label {
-    @apply left-0;
+    @apply start-0;
   }
 
   input:-webkit-autofill,

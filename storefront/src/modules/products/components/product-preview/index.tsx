@@ -36,7 +36,7 @@ export default function ProductPreview({
             <Badge
               size="small"
               color={badge.color}
-              className="absolute left-2 top-2 z-10"
+              className="absolute start-2 top-2 z-10"
             >
               {badge.label}
             </Badge>
