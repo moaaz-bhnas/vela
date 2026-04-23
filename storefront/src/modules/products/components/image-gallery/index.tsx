@@ -160,21 +160,25 @@ export default function ImageGallery({ product }: ImageGalleryProps) {
     emblaMainApi.on("select", onSelect).on("reInit", onSelect)
   }, [emblaMainApi, onSelect])
 
-  // Reset to first slide when variant changes
-  useEffect(
-    () =>
-      function resetToFirstSlide() {
-        if (!emblaMainApi) return
-        emblaMainApi.scrollTo(0)
-        setSelectedIndex(0)
-      },
-    [emblaMainApi, selectedVariant?.id]
-  )
-
   const slides = getVariantImages(selectedVariant, product.images ?? [])
   const hasSlides = slides.length > 0
   const showThumbnails = slides.length > 1
   const showControls = slides.length > 1
+
+  // Keep user position across variants, but clamp if next variant has fewer images.
+  useEffect(
+    function clampSelectedIndexOnVariantChange() {
+      if (!emblaMainApi || slides.length === 0) return
+
+      const nextIndex = Math.min(selectedIndex, slides.length - 1)
+
+      if (nextIndex === selectedIndex) return
+
+      emblaMainApi.scrollTo(nextIndex)
+      setSelectedIndex(nextIndex)
+    },
+    [emblaMainApi, selectedVariant?.id, selectedIndex, slides.length]
+  )
 
   if (!hasSlides) {
     return (
