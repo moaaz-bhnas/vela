@@ -71,6 +71,12 @@
     "message": "You don't have anything in your cart. Let's change that, use the link below to start browsing our products.",
     "explore": "Explore products"
   },
+  "ErrorPage": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "checkoutDescription": "An unexpected error occurred during checkout. Please try again.",
+    "tryAgain": "Try again"
+  },
   "Checkout": {
     "title": "Checkout",
     "backToCart": "Back to shopping cart",

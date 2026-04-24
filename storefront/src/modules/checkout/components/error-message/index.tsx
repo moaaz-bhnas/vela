@@ -7,6 +7,8 @@ const ErrorMessage = ({ error, 'data-testid': dataTestid }: { error?: string | n
     <div
       className="pt-2 text-xs font-normal leading-5 text-ui-fg-error"
       data-testid={dataTestid}
+      role="status"
+      aria-live="polite"
     >
       <span>{error}</span>
     </div>

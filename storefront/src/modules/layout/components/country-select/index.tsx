@@ -5,7 +5,7 @@ import { Fragment, useEffect, useMemo, useState } from "react"
 import ReactCountryFlag from "react-country-flag"
 
 import { StateType } from "@lib/hooks/use-toggle-state"
-import { useParams, usePathname } from "next/navigation"
+import { unstable_rethrow, useParams, usePathname } from "next/navigation"
 import { updateRegion } from "@lib/data/cart"
 import {
   buildLocaleTag,
@@ -14,6 +14,8 @@ import {
 } from "@lib/i18n/locale-policy"
 import { HttpTypes } from "@medusajs/types"
 import { useTranslations } from "next-intl"
+
+import ErrorMessage from "@modules/checkout/components/error-message"
 
 type CountryOption = {
   country: string
@@ -33,6 +35,7 @@ const CountrySelect = ({
   storeLocales,
 }: CountrySelectProps) => {
   const t = useTranslations("CountrySelect")
+  const [updateError, setUpdateError] = useState<string | null>(null)
   const [current, setCurrent] = useState<
     | { country: string | undefined; region: string; label: string | undefined }
     | undefined
@@ -71,7 +74,7 @@ const CountrySelect = ({
     [options, locale]
   )
 
-  const handleChange = (option: CountryOption) => {
+  const handleChange = async (option: CountryOption) => {
     if (!option.country || typeof locale !== "string") {
       return
     }
@@ -80,7 +83,16 @@ const CountrySelect = ({
     const targetLocale = lang
       ? buildLocaleTag(lang, option.country)
       : defaultLocaleTagForCountry(option.country, storeLocales)
-    updateRegion(targetLocale, currentPath)
+    setUpdateError(null)
+    try {
+      const result = await updateRegion(targetLocale, currentPath)
+      if (result && !result.success) {
+        setUpdateError(result.error)
+        return
+      }
+    } catch (e) {
+      unstable_rethrow(e)
+    }
     close()
   }
 
@@ -155,6 +167,10 @@ const CountrySelect = ({
           </Transition>
         </div>
       </Listbox>
+      <ErrorMessage
+        error={updateError}
+        data-testid="country-select-region-error"
+      />
     </div>
   )
 }

@@ -1,7 +1,8 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import medusaError from "@lib/util/medusa-error"
+import type { UpdateCustomerResult } from "@lib/util/action-result"
+import { formatMedusaError } from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
@@ -15,14 +16,16 @@ export const getCustomer = cache(async function () {
     .catch(() => null)
 })
 
-export async function updateCustomer(body: HttpTypes.StoreUpdateCustomer) {
-  const updateRes = await sdk.store.customer
-    .update(body, {}, await getAuthHeaders())
-    .then(({ customer }) => customer)
-    .catch(medusaError)
-
-  revalidateTag("customer")
-  return updateRes
+export async function updateCustomer(
+  body: HttpTypes.StoreUpdateCustomer
+): Promise<UpdateCustomerResult> {
+  try {
+    await sdk.store.customer.update(body, {}, await getAuthHeaders())
+    revalidateTag("customer")
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: formatMedusaError(e) }
+  }
 }
 
 export async function signup(_currentState: unknown, formData: FormData) {

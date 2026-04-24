@@ -71,6 +71,12 @@
     "message": "Votre panier est vide. Commencez vos achats via le lien ci-dessous.",
     "explore": "Découvrir les produits"
   },
+  "ErrorPage": {
+    "title": "Une erreur s’est produite",
+    "description": "Une erreur inattendue s’est produite. Veuillez réessayer.",
+    "checkoutDescription": "Une erreur inattendue s’est produite pendant le paiement. Veuillez réessayer.",
+    "tryAgain": "Réessayer"
+  },
   "Checkout": {
     "title": "Paiement",
     "backToCart": "Retour au panier",
