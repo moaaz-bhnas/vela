@@ -6,7 +6,7 @@ import ReactCountryFlag from "react-country-flag"
 
 import { StateType } from "@lib/hooks/use-toggle-state"
 import { unstable_rethrow, useParams, usePathname } from "next/navigation"
-import { updateRegion } from "@lib/data/cart"
+import { updateRegion } from "@lib/data/region-locale"
 import {
   buildLocaleTag,
   defaultLocaleTagForCountry,
