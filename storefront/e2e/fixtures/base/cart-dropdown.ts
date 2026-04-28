@@ -16,17 +16,12 @@ export class CartDropdown {
   }
 
   async displayCart() {
-    await this.navCartLink.hover()
+    await this.navCartLink.click()
   }
 
   async close() {
     if (await this.cartDropdown.isVisible()) {
-      const box = await this.cartDropdown.boundingBox()
-      if (!box) {
-        return
-      }
-      await this.page.mouse.move(box.x + box.width / 4, box.y + box.height / 4)
-      await this.page.mouse.move(5, 10)
+      await this.page.keyboard.press("Escape")
     }
   }
 
