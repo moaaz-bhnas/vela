@@ -5,14 +5,10 @@ import { Fragment, useEffect, useId, useMemo, useState } from "react"
 import { Popover, Transition } from "@headlessui/react"
 import { Text, clx } from "@medusajs/ui"
 import { HttpTypes } from "@medusajs/types"
-import {
-  unstable_rethrow,
-  useParams,
-  usePathname,
-} from "next/navigation"
+import { unstable_rethrow, useParams, usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 
-import { updateRegion } from "@lib/data/cart"
+import { updateRegion } from "@lib/data/region-locale"
 import {
   allowedLanguageSubtagsForCountry,
   buildLocaleTag,
@@ -163,6 +159,7 @@ export default function RegionLanguageSwitcher({
       close()
       return
     }
+    close()
     setUpdateError(null)
     try {
       const result = await updateRegion(next, currentPath)
@@ -253,7 +250,7 @@ export default function RegionLanguageSwitcher({
                 )}
                 data-testid="nav-region-language-panel"
               >
-                <div className="flex max-h-nav-panel flex-col overflow-hidden">
+                <div className="relative flex max-h-nav-panel flex-col overflow-hidden">
                   {updateError ? (
                     <div
                       role="alert"
@@ -262,104 +259,106 @@ export default function RegionLanguageSwitcher({
                       {updateError}
                     </div>
                   ) : null}
-                  <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.55fr)_minmax(0,1.45fr)] sm:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
-                    <div
-                      role="group"
-                      aria-labelledby={languageGroupLabelId}
-                      className="flex min-h-0 flex-col border-e border-ui-border-base"
-                    >
+                  <div className="relative min-h-0 flex-1">
+                    <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.55fr)_minmax(0,1.45fr)] sm:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
                       <div
-                        id={languageGroupLabelId}
-                        className="shrink-0 px-3 pt-3 pb-2.5 sm:px-4"
+                        role="group"
+                        aria-labelledby={languageGroupLabelId}
+                        className="flex min-h-0 flex-col border-e border-ui-border-base"
                       >
-                        <Text
-                          size="small"
-                          className="block uppercase tracking-wide text-ui-fg-subtle"
+                        <div
+                          id={languageGroupLabelId}
+                          className="shrink-0 px-3 pt-3 pb-2.5 sm:px-4"
                         >
-                          {t("language")}
-                        </Text>
+                          <Text
+                            size="small"
+                            className="block uppercase tracking-wide text-ui-fg-subtle"
+                          >
+                            {t("language")}
+                          </Text>
+                        </div>
+                        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1.5 pb-3 pt-1 sm:px-3">
+                          {!country ? (
+                            <p className="px-2 py-2.5 text-sm text-ui-fg-muted sm:px-1">
+                              {t("languageEmptySelectRegion")}
+                            </p>
+                          ) : languageChoices.length === 0 ? (
+                            <p className="px-2 py-2.5 text-sm text-ui-fg-muted sm:px-1">
+                              {t("languageEmptyNone")}
+                            </p>
+                          ) : (
+                            languageChoices.map(function languageItem(lang) {
+                              const selected = lang === language
+                              return (
+                                <button
+                                  key={lang}
+                                  type="button"
+                                  aria-current={selected ? "true" : undefined}
+                                  className={clx(
+                                    "flex w-full min-h-11 min-w-0 items-center rounded-md px-2 py-2.5 text-start text-sm sm:px-3",
+                                    "text-ui-fg-base transition-fg",
+                                    "hover:bg-ui-bg-subtle-hover",
+                                    "focus-visible:outline-none focus-visible:shadow-borders-interactive-with-active",
+                                    selected &&
+                                      "bg-ui-bg-subtle-hover font-medium text-ui-fg-base"
+                                  )}
+                                  onClick={function onPickLanguage() {
+                                    handleSelectLanguage(lang, close)
+                                  }}
+                                >
+                                  <span className="min-w-0 truncate">
+                                    {languageLabelsByCode.get(lang) ?? lang}
+                                  </span>
+                                </button>
+                              )
+                            })
+                          )}
+                        </div>
                       </div>
-                      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1.5 pb-3 pt-1 sm:px-3">
-                        {!country ? (
-                          <p className="px-2 py-2.5 text-sm text-ui-fg-muted sm:px-1">
-                            {t("languageEmptySelectRegion")}
-                          </p>
-                        ) : languageChoices.length === 0 ? (
-                          <p className="px-2 py-2.5 text-sm text-ui-fg-muted sm:px-1">
-                            {t("languageEmptyNone")}
-                          </p>
-                        ) : (
-                          languageChoices.map(function languageItem(lang) {
-                            const selected = lang === language
+                      <div
+                        role="group"
+                        aria-labelledby={regionGroupLabelId}
+                        className="flex min-h-0 flex-col ps-1"
+                      >
+                        <div
+                          id={regionGroupLabelId}
+                          className="shrink-0 px-4 pt-3 pb-2.5"
+                        >
+                          <Text
+                            size="small"
+                            className="block uppercase tracking-wide text-ui-fg-base"
+                          >
+                            {t("region")}
+                          </Text>
+                        </div>
+                        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3 pt-1 sm:px-3">
+                          {countryOptions.map(function regionItem(o) {
+                            const selected = o.country === country
                             return (
                               <button
-                                key={lang}
+                                key={`${o.regionId}-${o.country}`}
                                 type="button"
                                 aria-current={selected ? "true" : undefined}
                                 className={clx(
-                                  "flex w-full min-h-11 min-w-0 items-center rounded-md px-2 py-2.5 text-start text-sm sm:px-3",
+                                  "flex w-full min-h-11 items-center gap-2.5 rounded-md px-3 py-2.5 text-start text-sm",
                                   "text-ui-fg-base transition-fg",
                                   "hover:bg-ui-bg-subtle-hover",
                                   "focus-visible:outline-none focus-visible:shadow-borders-interactive-with-active",
                                   selected &&
                                     "bg-ui-bg-subtle-hover font-medium text-ui-fg-base"
                                 )}
-                                onClick={function onPickLanguage() {
-                                  handleSelectLanguage(lang, close)
+                                onClick={function onPickRegion() {
+                                  handleSelectRegion(o, close)
                                 }}
                               >
-                                <span className="min-w-0 truncate">
-                                  {languageLabelsByCode.get(lang) ?? lang}
+                                <CountryFlagIcon countryCode={o.country} />
+                                <span className="min-w-0 flex-1 leading-snug">
+                                  {o.label}
                                 </span>
                               </button>
                             )
-                          })
-                        )}
-                      </div>
-                    </div>
-                    <div
-                      role="group"
-                      aria-labelledby={regionGroupLabelId}
-                      className="flex min-h-0 flex-col ps-1"
-                    >
-                      <div
-                        id={regionGroupLabelId}
-                        className="shrink-0 px-4 pt-3 pb-2.5"
-                      >
-                        <Text
-                          size="small"
-                          className="block uppercase tracking-wide text-ui-fg-base"
-                        >
-                          {t("region")}
-                        </Text>
-                      </div>
-                      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3 pt-1 sm:px-3">
-                        {countryOptions.map(function regionItem(o) {
-                          const selected = o.country === country
-                          return (
-                            <button
-                              key={`${o.regionId}-${o.country}`}
-                              type="button"
-                              aria-current={selected ? "true" : undefined}
-                              className={clx(
-                                "flex w-full min-h-11 items-center gap-2.5 rounded-md px-3 py-2.5 text-start text-sm",
-                                "text-ui-fg-base transition-fg",
-                                "hover:bg-ui-bg-subtle-hover",
-                                "focus-visible:outline-none focus-visible:shadow-borders-interactive-with-active",
-                                selected &&
-                                  "bg-ui-bg-subtle-hover font-medium text-ui-fg-base"
-                              )}
-                              onClick={function onPickRegion() {
-                                handleSelectRegion(o, close)
-                              }}
-                            >
-                              <CountryFlagIcon countryCode={o.country} />
-                              <span className="min-w-0 flex-1 leading-snug">
-                                {o.label}
-                              </span>
-                            </button>
-                          )
-                        })}
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
