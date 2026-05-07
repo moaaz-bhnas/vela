@@ -8,9 +8,11 @@ import { getBestSellers } from "@lib/data/best-sellers"
 import { getCollectionsWithProducts } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 import { getBrandingConfig } from "@lib/data/branding"
+import { getProductsById } from "@lib/data/products"
 import {
   getPersonalizationCategoryIds,
   getPersonalizationCollectionId,
+  getRecentProductIds,
 } from "@lib/data/cookies"
 import Container from "@modules/common/components/container-section"
 import { getBrandingSeo } from "@lib/util/metadata"
@@ -77,15 +79,29 @@ export default async function Home({
     ? [bestSellersSection, shopByCategorySection]
     : [shopByCategorySection, bestSellersSection]
 
+  const recentProductIds = await getRecentProductIds()
+  const recentlyVisitedProducts =
+    recentProductIds.length > 0
+      ? await getProductsById({
+          ids: recentProductIds.slice(0, 4),
+          regionId: region.id,
+        })
+      : []
+
+  const recentlyVisitedSection =
+    recentlyVisitedProducts.length > 0 ? (
+      <Container key="recently-visited">
+        <RecentlyVisited products={recentlyVisitedProducts} />
+      </Container>
+    ) : null
+
   return (
     <>
       <Container className="pt-below-nav">
         {carouselSlides && <Carousel carouselSlides={carouselSlides} />}
       </Container>
 
-      <Container>
-        <RecentlyVisited region={region} />
-      </Container>
+      {recentlyVisitedSection}
 
       {categorySections}
     </>

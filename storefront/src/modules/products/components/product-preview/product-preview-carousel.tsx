@@ -48,7 +48,7 @@ export default function ProductPreviewCarousel({
   images,
   size = "full",
 }: ProductPreviewCarouselProps) {
-  const MAX_SLIDES = 6
+  const MAX_SLIDES = 4
   const slideUrls = buildSlideUrls(thumbnail, images)
   const hasSlides = slideUrls.length > 0
   const displayUrls = hasSlides ? slideUrls.slice(0, MAX_SLIDES) : [""]

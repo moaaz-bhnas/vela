@@ -1,30 +1,16 @@
-import { getProductsById } from "@lib/data/products"
-import { getRecentProductIds } from "@lib/data/cookies"
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import ProductPreview from "@modules/products/components/product-preview"
 import { getTranslations } from "next-intl/server"
 
 type RecentlyVisitedProps = {
-  region: HttpTypes.StoreRegion
+  products: HttpTypes.StoreProduct[]
 }
 
 export default async function RecentlyVisited({
-  region,
+  products,
 }: RecentlyVisitedProps) {
   const t = await getTranslations("Home")
-  const recentProductIds = await getRecentProductIds()
-
-  const products = await (async function getProducts() {
-    if (recentProductIds.length === 0) return []
-
-    return await getProductsById({
-      ids: recentProductIds.slice(0, 4),
-      regionId: region.id,
-    })
-  })()
-
-  if (products.length === 0) return null
 
   return (
     <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
