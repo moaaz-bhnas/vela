@@ -69,7 +69,7 @@ export default async function Home({
 
   const shopByCategorySection = (
     <Container key="shop-by-category">
-      <ShopByCategory />
+      <ShopByCategory countryCode={countryCode} />
     </Container>
   )
 
