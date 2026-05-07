@@ -1,59 +1,46 @@
-import { Heading, Text } from "@medusajs/ui"
-import ShopByCategoryCard from "@modules/home/components/shop-by-category/shop-by-category-card"
 import { getCategoriesList } from "@lib/data/categories"
-import { getTranslations } from "next-intl/server"
+import { getProductsList } from "@lib/data/products"
+import ShopByCategoryTabs from "./shop-by-category-tabs"
 
-export default async function ShopByCategorySection() {
-  const t = await getTranslations("Home")
+type Props = {
+  countryCode: string
+}
+
+export default async function ShopByCategorySection({ countryCode }: Props) {
   const { product_categories } = await getCategoriesList(0, 12)
   const topLevelCategories =
     product_categories?.filter((c) => c.parent_category_id === null) ?? []
 
-  if (!topLevelCategories.length) {
-    return null
-  }
+  if (!topLevelCategories.length) return null
 
-  return (
-    <div className="flex flex-col gap-section-inner sm:gap-section-inner-lg">
-      <div className="flex flex-col gap-block-gap">
-        <Heading
-          level="h2"
-          className="text-ui-fg-base font-heading text-2xl sm:text-4xl font-bold"
-        >
-          {t("shopByCategory")}
-        </Heading>
-        <Text className="text-ui-fg-muted">
-          {t("shopByCategorySubtitle")}
-        </Text>
-      </div>
-      <div className="grid grid-cols-2 gap-section-inner md:grid-cols-3 lg:grid-cols-4">
-        {topLevelCategories.slice(0, 8).map((category) => {
-          const href = `/categories/${category.handle}`
-          const image = (
-            category.metadata as
-              | {
-                  image?: {
-                    url: string
-                    alt?: string
-                    width?: number
-                    height?: number
-                  }
-                }
-              | null
-              | undefined
-          )?.image
-
-          return (
-            <ShopByCategoryCard
-              key={category.id}
-              href={href}
-              name={category.name}
-              description={category.description}
-              image={image}
-            />
-          )
-        })}
-      </div>
-    </div>
+  // Fetch up to 4 products for each top-level category in parallel
+  const categoriesWithProducts = await Promise.all(
+    topLevelCategories.slice(0, 6).map(async (category) => {
+      const {
+        response: { products },
+      } = await getProductsList({
+        queryParams: {
+          // @ts-ignore – category_id accepted at runtime but missing from older type stubs
+          category_id: [category.id],
+          limit: 4,
+        },
+        countryCode,
+      })
+      return {
+        id: category.id,
+        name: category.name,
+        handle: category.handle,
+        products,
+      }
+    })
   )
+
+  // Drop categories that have no products so every tab has content
+  const nonEmptyCategories = categoriesWithProducts.filter(
+    (c) => c.products.length > 0
+  )
+
+  if (!nonEmptyCategories.length) return null
+
+  return <ShopByCategoryTabs categories={nonEmptyCategories} />
 }

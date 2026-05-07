@@ -195,7 +195,9 @@
     "shopByCategorySubtitle": "Browse our curated collection of categories",
     "bestSellers": "Best Sellers",
     "bestSellersSubtitle": "Discover our most popular products",
-    "recentlyViewedTitle": "Recently viewed"
+    "recentlyViewedTitle": "Recently viewed",
+    "viewAll": "View all",
+    "noCategoryProducts": "No products in this category"
   },
   "Product": {
     "selectVariant": "Select variant",

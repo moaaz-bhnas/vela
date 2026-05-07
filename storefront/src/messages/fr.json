@@ -195,7 +195,9 @@
     "shopByCategorySubtitle": "Découvrez notre sélection de catégories",
     "bestSellers": "Meilleures ventes",
     "bestSellersSubtitle": "Découvrez nos produits les plus populaires",
-    "recentlyViewedTitle": "Récemment consultés"
+    "recentlyViewedTitle": "Récemment consultés",
+    "viewAll": "Voir tout",
+    "noCategoryProducts": "Aucun produit dans cette catégorie"
   },
   "Product": {
     "selectVariant": "Choisir une variante",

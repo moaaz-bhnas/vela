@@ -5,8 +5,8 @@
 @layer base {
   :root {
     /* Spacing: single source of truth for section and block spacing */
-    --spacing-section-y: 2.5rem;
-    --spacing-section-y-lg: 4rem;
+    --spacing-section-y: 3rem;
+    --spacing-section-y-lg: 5rem;
     --spacing-section-inner: 1.5rem;
     --spacing-section-inner-lg: 2.5rem;
     --spacing-block-gap: 0.5rem;
@@ -84,7 +84,11 @@
 
   /* Section variant: adds consistent vertical padding (use with .container) */
   .container--section {
-    @apply py-section-y sm:py-section-y-lg;
+    @apply pt-section-y sm:pt-section-y-lg;
+
+    &:last-of-type {
+      @apply pb-section-y sm:pb-section-y-lg;
+    }
   }
 
   .contrast-btn {

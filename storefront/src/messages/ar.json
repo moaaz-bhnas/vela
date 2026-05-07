@@ -195,7 +195,9 @@
     "shopByCategorySubtitle": "تصفح مجموعتنا المختارة من الفئات",
     "bestSellers": "الأكثر مبيعاً",
     "bestSellersSubtitle": "اكتشف منتجاتنا الأكثر شعبية",
-    "recentlyViewedTitle": "شاهدته مؤخراً"
+    "recentlyViewedTitle": "شاهدته مؤخراً",
+    "viewAll": "عرض الكل",
+    "noCategoryProducts": "لا توجد منتجات في هذه الفئة"
   },
   "Product": {
     "selectVariant": "اختر المتغير",
