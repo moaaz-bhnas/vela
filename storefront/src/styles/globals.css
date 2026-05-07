@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* Spacing: single source of truth for section and block spacing */
-    --spacing-section-y: 3rem;
+    --spacing-section-y: 4rem;
     --spacing-section-y-lg: 5rem;
     --spacing-section-inner: 1.5rem;
     --spacing-section-inner-lg: 2.5rem;
